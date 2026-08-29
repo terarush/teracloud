@@ -1,19 +1,55 @@
-import React from "react"
+import React, { useState } from "react"
 import { useAdminData } from "../hooks/useAdminData"
 import { StatusBadge } from "@/modules/containers/components/StatusBadge"
-import { ArrowLeft, Loader2 } from "lucide-react"
+import { ArrowLeft, Loader2, RotateCcw, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { useNavigate } from "@tanstack/react-router"
 import { useTranslation } from "react-i18next"
+import { adminApi } from "@/service/api/admin"
+import { useQueryClient } from "@tanstack/react-query"
 
 export const AdminContainersView: React.FC = () => {
   const { containers, isLoading } = useAdminData()
   const navigate = useNavigate()
   const { t } = useTranslation()
+  const queryClient = useQueryClient()
+
+  const [loadingId, setLoadingId] = useState<number | null>(null)
+  const [actionType, setActionType] = useState<"restart" | "delete" | null>(null)
+  const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null)
+
+  const handleRestart = async (id: number) => {
+    setLoadingId(id)
+    setActionType("restart")
+    try {
+      await adminApi.adminRestartContainer(id)
+      await queryClient.invalidateQueries({ queryKey: ["admin"] })
+    } catch (err) {
+      console.error("Restart failed:", err)
+    } finally {
+      setLoadingId(null)
+      setActionType(null)
+    }
+  }
+
+  const handleDelete = async (id: number) => {
+    setLoadingId(id)
+    setActionType("delete")
+    try {
+      await adminApi.forceDeleteContainer(id)
+      await queryClient.invalidateQueries({ queryKey: ["admin"] })
+    } catch (err) {
+      console.error("Delete failed:", err)
+    } finally {
+      setLoadingId(null)
+      setActionType(null)
+      setConfirmDeleteId(null)
+    }
+  }
 
   return (
-    <div className="px-6 py-8 max-w-5xl mx-auto space-y-6">
+    <div className="px-6 py-8 max-w-6xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <Button
@@ -45,19 +81,20 @@ export const AdminContainersView: React.FC = () => {
                 <th className="px-4 py-3">{t("hosting.resourceAllocation", "Resource")}</th>
                 <th className="px-4 py-3">{t("hosting.status", "Status")}</th>
                 <th className="px-4 py-3">{t("hosting.date", "Dibuat")}</th>
+                <th className="px-4 py-3 text-right">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/50">
               {isLoading ? (
                 <tr>
-                  <td colSpan={6} className="px-4 py-12 text-center text-muted-foreground">
+                  <td colSpan={7} className="px-4 py-12 text-center text-muted-foreground">
                     <Loader2 className="size-5 animate-spin mx-auto mb-2 text-primary" />
                     <span className="text-xs">{t("common.loading", "Memuat daftar container...")}</span>
                   </td>
                 </tr>
               ) : containers.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-4 py-12 text-center text-xs text-muted-foreground">
+                  <td colSpan={7} className="px-4 py-12 text-center text-xs text-muted-foreground">
                     Belum ada container yang tercatat.
                   </td>
                 </tr>
@@ -74,13 +111,69 @@ export const AdminContainersView: React.FC = () => {
                       {container.image_name}:{container.image_tag}
                     </td>
                     <td className="px-4 py-3 text-xs text-muted-foreground">
-                      {container.cpu_limit} vCPU &bull; {container.memory_limit} MB RAM &bull; {container.disk_limit} GB
+                      {container.cpu_limit} vCPU &bull; {container.memory_limit} MB &bull; {container.disk_limit} GB
                     </td>
                     <td className="px-4 py-3">
                       <StatusBadge status={container.status} />
                     </td>
                     <td className="px-4 py-3 text-xs text-muted-foreground">
                       {new Date(container.created_at).toLocaleString("id-ID")}
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center justify-end gap-1.5">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-7 px-2.5 text-[11px] gap-1 cursor-pointer"
+                          disabled={loadingId === container.id}
+                          onClick={() => handleRestart(container.id)}
+                          title="Restart container"
+                        >
+                          {loadingId === container.id && actionType === "restart" ? (
+                            <Loader2 className="size-3 animate-spin" />
+                          ) : (
+                            <RotateCcw className="size-3" />
+                          )}
+                          Restart
+                        </Button>
+
+                        {confirmDeleteId === container.id ? (
+                          <div className="flex items-center gap-1">
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              className="h-7 px-2.5 text-[11px] cursor-pointer"
+                              disabled={loadingId === container.id}
+                              onClick={() => handleDelete(container.id)}
+                            >
+                              {loadingId === container.id && actionType === "delete" ? (
+                                <Loader2 className="size-3 animate-spin" />
+                              ) : (
+                                "Yakin?"
+                              )}
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="h-7 px-2 text-[11px] cursor-pointer"
+                              onClick={() => setConfirmDeleteId(null)}
+                            >
+                              Batal
+                            </Button>
+                          </div>
+                        ) : (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-7 px-2.5 text-[11px] gap-1 cursor-pointer text-destructive hover:text-destructive hover:bg-destructive/10"
+                            onClick={() => setConfirmDeleteId(container.id)}
+                            title="Hapus container"
+                          >
+                            <Trash2 className="size-3" />
+                            Hapus
+                          </Button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -92,3 +185,4 @@ export const AdminContainersView: React.FC = () => {
     </div>
   )
 }
+
