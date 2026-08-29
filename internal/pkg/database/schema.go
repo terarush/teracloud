@@ -11,7 +11,12 @@ import (
 // MySQL: empty — MySQL has no schemas, only databases.
 var SchemaPrefix string
 
-// T returns the fully-qualified table name for driver-aware schema prefixing.
+// HostingPrefix is the database schema prefix applied to hosting table names.
+// Postgres: "hosting." so tables live in hosting.plans.
+// MySQL: empty.
+var HostingPrefix string
+
+// T returns the fully-qualified table name for driver-aware schema prefixing in core schema.
 // Postgres → "core.users", MySQL → "users".
 func T(table string) string {
 	table = strings.TrimSpace(table)
@@ -19,6 +24,16 @@ func T(table string) string {
 		return table
 	}
 	return SchemaPrefix + table
+}
+
+// HT returns the fully-qualified table name for driver-aware schema prefixing in hosting schema.
+// Postgres → "hosting.plans", MySQL → "plans".
+func HT(table string) string {
+	table = strings.TrimSpace(table)
+	if HostingPrefix == "" {
+		return table
+	}
+	return HostingPrefix + table
 }
 
 // createSchema executes CREATE SCHEMA IF NOT EXISTS on the Postgres connection.
