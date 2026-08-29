@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"ruang-tukar/internal/pkg/bus"
@@ -16,6 +17,7 @@ import (
 	"ruang-tukar/internal/pkg/portmanager"
 	"ruang-tukar/modules/containers/domain/entity"
 	"ruang-tukar/modules/containers/domain/repository"
+	planEntity "ruang-tukar/modules/plans/domain/entity"
 	planRepo "ruang-tukar/modules/plans/domain/repository"
 
 	"gorm.io/gorm"
@@ -97,25 +99,47 @@ func (s *ProvisioningService) ProvisionContainer(ctx context.Context, userID, su
 	_ = os.MkdirAll(volumePath, 0750)
 	containerRecord.VolumePath = volumePath
 
-	// 4. Allocate ports (SSH: 22, HTTP: 80)
-	sshPort, err := s.portManager.Allocate(s.db, containerRecord.ID, 22, "SSH")
-	if err != nil {
-		s.log.Error("Port allocation error for SSH: %v", err)
+	// 4. Allocate ports based on Plan PortConfig
+	var portConfigs []planEntity.PortConfigItem
+	if len(plan.PortConfig) > 0 && string(plan.PortConfig) != "[]" && string(plan.PortConfig) != "null" {
+		_ = json.Unmarshal(plan.PortConfig, &portConfigs)
 	}
-	httpPort, err := s.portManager.Allocate(s.db, containerRecord.ID, 80, "HTTP")
-	if err != nil {
-		s.log.Error("Port allocation error for HTTP: %v", err)
+
+	// Fallback to default port 80 HTTP if no port configuration is defined on the plan
+	if len(portConfigs) == 0 {
+		portConfigs = []planEntity.PortConfigItem{
+			{
+				ContainerPort: 80,
+				Protocol:      "tcp",
+				Name:          "http",
+				Description:   "Web Application Port",
+				IsPrimary:     true,
+			},
+		}
 	}
 
 	portMap := make(map[int]int)
 	assignedMap := make(map[string]int)
-	if sshPort > 0 {
-		portMap[22] = sshPort
-		assignedMap["ssh"] = sshPort
-	}
-	if httpPort > 0 {
-		portMap[80] = httpPort
-		assignedMap["http"] = httpPort
+
+	for _, pc := range portConfigs {
+		if pc.ContainerPort <= 0 {
+			continue
+		}
+		desc := pc.Description
+		if desc == "" {
+			desc = pc.Name
+		}
+		hostPort, err := s.portManager.Allocate(s.db, containerRecord.ID, pc.ContainerPort, desc)
+		if err != nil {
+			s.log.Error("Port allocation error for %s (port %d): %v", pc.Name, pc.ContainerPort, err)
+			continue
+		}
+		portMap[pc.ContainerPort] = hostPort
+		key := pc.Name
+		if key == "" {
+			key = fmt.Sprintf("port_%d", pc.ContainerPort)
+		}
+		assignedMap[key] = hostPort
 	}
 
 	portMapBytes, _ := json.Marshal(portMap)
@@ -130,7 +154,7 @@ func (s *ProvisioningService) ProvisionContainer(ctx context.Context, userID, su
 	}
 
 	// 6. Create & Start Docker Container
-	dockerID, err := s.dockerClient.CreateAndStartContainer(ctx, docker.ContainerConfig{
+	dockerCfg := docker.ContainerConfig{
 		Name:          containerName,
 		ImageName:     plan.ImageName,
 		ImageTag:      plan.ImageTag,
@@ -139,7 +163,16 @@ func (s *ProvisioningService) ProvisionContainer(ctx context.Context, userID, su
 		MemoryLimitMB: plan.MemoryLimit,
 		VolumePath:    volumePath,
 		PortMappings:  portMap,
-	})
+	}
+
+	if plan.Command != nil && *plan.Command != "" {
+		dockerCfg.Command = strings.Fields(*plan.Command)
+	}
+	if plan.Entrypoint != nil && *plan.Entrypoint != "" {
+		dockerCfg.Entrypoint = strings.Fields(*plan.Entrypoint)
+	}
+
+	dockerID, err := s.dockerClient.CreateAndStartContainer(ctx, dockerCfg)
 
 	if err != nil {
 		s.log.Error("Failed to create docker container %s: %v", containerName, err)

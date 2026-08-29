@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"ruang-tukar/internal/pkg/audit"
@@ -197,7 +198,7 @@ func (s *ContainerService) ResetContainer(ctx context.Context, id, userID uint, 
 	var portMap map[int]int
 	_ = json.Unmarshal(c.PortMappings, &portMap)
 
-	dockerID, err := s.dockerClient.CreateAndStartContainer(ctx, docker.ContainerConfig{
+	dockerCfg := docker.ContainerConfig{
 		Name:          c.ContainerName,
 		ImageName:     c.ImageName,
 		ImageTag:      c.ImageTag,
@@ -206,7 +207,19 @@ func (s *ContainerService) ResetContainer(ctx context.Context, id, userID uint, 
 		MemoryLimitMB: c.MemoryLimit,
 		VolumePath:    c.VolumePath,
 		PortMappings:  portMap,
-	})
+	}
+
+	plan, err := s.planRepo.FindByID(ctx, c.PlanID)
+	if err == nil && plan != nil {
+		if plan.Command != nil && *plan.Command != "" {
+			dockerCfg.Command = strings.Fields(*plan.Command)
+		}
+		if plan.Entrypoint != nil && *plan.Entrypoint != "" {
+			dockerCfg.Entrypoint = strings.Fields(*plan.Entrypoint)
+		}
+	}
+
+	dockerID, err := s.dockerClient.CreateAndStartContainer(ctx, dockerCfg)
 	if err != nil {
 		c.Status = "error"
 		c.ErrorMessage = err.Error()

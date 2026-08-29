@@ -115,7 +115,10 @@ func (h *PlanHandler) CreatePlan(c *echo.Context) error {
 		IsActive:            true,
 		SortOrder:           req.SortOrder,
 		Features:            req.Features,
+		PortConfig:          req.PortConfig,
 		EnvironmentTemplate: req.EnvironmentTemplate,
+		Command:             req.Command,
+		Entrypoint:          req.Entrypoint,
 		Icon:                req.Icon,
 		MaxPerUser:          maxPerUser,
 		CreatedAt:           time.Now(),
@@ -188,7 +191,10 @@ func (h *PlanHandler) UpdatePlan(c *echo.Context) error {
 	plan.PriceMonthly = req.PriceMonthly
 	plan.IsActive = req.IsActive
 	plan.Features = req.Features
+	plan.PortConfig = req.PortConfig
 	plan.EnvironmentTemplate = req.EnvironmentTemplate
+	plan.Command = req.Command
+	plan.Entrypoint = req.Entrypoint
 	plan.Icon = req.Icon
 	plan.MaxPerUser = req.MaxPerUser
 	plan.SortOrder = req.SortOrder

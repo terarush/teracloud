@@ -92,13 +92,21 @@ func (h *TerminalHandler) HandleTerminal(c *echo.Context) error {
 	}
 	defer conn.Close()
 
+	if containerRecord.DockerContainerID == "" {
+		h.log.Error("Container #%d (%s) has no DockerContainerID associated", containerRecord.ID, containerRecord.ContainerName)
+		_ = conn.WriteJSON(map[string]string{"type": "error", "message": "Docker container ID not found or container not initialized"})
+		return nil
+	}
+
 	// 4. Create Docker Exec
 	execID, err := h.dockerClient.ExecCreate(ctx, containerRecord.DockerContainerID, []string{"/bin/bash"})
 	if err != nil {
+		h.log.Warn("Failed /bin/bash exec create for %s: %v, trying /bin/sh...", containerRecord.DockerContainerID, err)
 		// Fallback to /bin/sh
 		execID, err = h.dockerClient.ExecCreate(ctx, containerRecord.DockerContainerID, []string{"/bin/sh"})
 		if err != nil {
-			_ = conn.WriteJSON(map[string]string{"type": "error", "message": "Failed to create exec session"})
+			h.log.Error("ExecCreate failed for container %s (%s): %v", containerRecord.DockerContainerID, containerRecord.ContainerName, err)
+			_ = conn.WriteJSON(map[string]string{"type": "error", "message": "Failed to create exec session: " + err.Error()})
 			return nil
 		}
 	}
@@ -106,7 +114,8 @@ func (h *TerminalHandler) HandleTerminal(c *echo.Context) error {
 	// 5. Attach to Exec
 	hijackResp, err := h.dockerClient.ExecAttach(ctx, execID)
 	if err != nil {
-		_ = conn.WriteJSON(map[string]string{"type": "error", "message": "Failed to attach exec session"})
+		h.log.Error("ExecAttach failed for exec %s: %v", execID, err)
+		_ = conn.WriteJSON(map[string]string{"type": "error", "message": "Failed to attach exec session: " + err.Error()})
 		return nil
 	}
 	defer hijackResp.Close()

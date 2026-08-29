@@ -29,7 +29,10 @@ type PlanResponse struct {
 	IsActive            bool            `json:"is_active"`
 	SortOrder           int             `json:"sort_order"`
 	Features            json.RawMessage `json:"features"`
+	PortConfig          json.RawMessage `json:"port_config"`
 	EnvironmentTemplate json.RawMessage `json:"environment_template"`
+	Command             *string         `json:"command,omitempty"`
+	Entrypoint          *string         `json:"entrypoint,omitempty"`
 	Icon                string          `json:"icon"`
 	MaxPerUser          int             `json:"max_per_user"`
 	CreatedAt           time.Time       `json:"created_at"`
@@ -58,7 +61,10 @@ func FromEntity(plan *entity.Plan) *PlanResponse {
 		IsActive:            plan.IsActive,
 		SortOrder:           plan.SortOrder,
 		Features:            plan.Features,
+		PortConfig:          plan.PortConfig,
 		EnvironmentTemplate: plan.EnvironmentTemplate,
+		Command:             plan.Command,
+		Entrypoint:          plan.Entrypoint,
 		Icon:                plan.Icon,
 		MaxPerUser:          plan.MaxPerUser,
 		CreatedAt:           plan.CreatedAt,

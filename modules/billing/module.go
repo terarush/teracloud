@@ -3,7 +3,9 @@ package billing
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"ruang-tukar/internal/pkg/bus"
@@ -118,13 +120,23 @@ func (m *Module) Initialize(db *gorm.DB, log *logger.Logger, event *bus.EventBus
 
 			user, _ := uService.GetUserByID(ctx, container.UserID)
 			if user != nil {
+				var assigned map[string]int
+				_ = json.Unmarshal(container.AssignedPorts, &assigned)
+				var portSummary strings.Builder
+				for k, v := range assigned {
+					portSummary.WriteString(fmt.Sprintf("- %s: Port %d<br>", k, v))
+				}
+				if portSummary.Len() == 0 {
+					portSummary.WriteString("- Port internal diteruskan otomatis<br>")
+				}
+
 				_ = m.reminderService.SendContainerReadyEmail(
 					user.Email,
 					user.FirstName,
 					container.ContainerName,
 					container.ImageName+":"+container.ImageTag,
 					"localhost",
-					0, 0,
+					portSummary.String(),
 				)
 			}
 		}

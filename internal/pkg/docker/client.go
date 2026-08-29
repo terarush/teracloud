@@ -44,6 +44,9 @@ type ContainerConfig struct {
 	MemoryLimitMB int
 	VolumePath    string
 	PortMappings  map[int]int // containerPort -> hostPort
+	Command       []string
+	Entrypoint    []string
+	Env           []string
 }
 
 // PullImage pulls an image if not present locally.
@@ -87,6 +90,9 @@ func (c *Client) CreateAndStartContainer(ctx context.Context, cfg ContainerConfi
 		Image:        fullImage,
 		Hostname:     cfg.Hostname,
 		ExposedPorts: exposedPorts,
+		Cmd:          cfg.Command,
+		Entrypoint:   cfg.Entrypoint,
+		Env:          cfg.Env,
 		Tty:          true,
 		OpenStdin:    true,
 		AttachStdin:  true,

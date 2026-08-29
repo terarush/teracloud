@@ -20,7 +20,10 @@ type CreatePlanRequest struct {
 	BandwidthLimit      *int            `json:"bandwidth_limit"`
 	PriceMonthly        int64           `json:"price_monthly" validate:"required"`
 	Features            json.RawMessage `json:"features"`
+	PortConfig          json.RawMessage `json:"port_config"`
 	EnvironmentTemplate json.RawMessage `json:"environment_template"`
+	Command             *string         `json:"command"`
+	Entrypoint          *string         `json:"entrypoint"`
 	Icon                string          `json:"icon"`
 	MaxPerUser          int             `json:"max_per_user"`
 	SortOrder           int             `json:"sort_order"`
@@ -44,7 +47,10 @@ type UpdatePlanRequest struct {
 	PriceMonthly        int64           `json:"price_monthly" validate:"required"`
 	IsActive            bool            `json:"is_active"`
 	Features            json.RawMessage `json:"features"`
+	PortConfig          json.RawMessage `json:"port_config"`
 	EnvironmentTemplate json.RawMessage `json:"environment_template"`
+	Command             *string         `json:"command"`
+	Entrypoint          *string         `json:"entrypoint"`
 	Icon                string          `json:"icon"`
 	MaxPerUser          int             `json:"max_per_user"`
 	SortOrder           int             `json:"sort_order"`

@@ -36,8 +36,8 @@ func (s *ReminderService) SendPaymentSuccessEmail(email, name, planName string, 
 	return s.mailer.Send(email, "Pembayaran Berhasil — Teracloud", html)
 }
 
-func (s *ReminderService) SendContainerReadyEmail(email, name, containerName, imageName, host string, sshPort, httpPort int) error {
-	body := fmt.Sprintf("Halo %s,<br><br>Container <b>%s</b> (%s) Anda sudah aktif dan siap digunakan!<br><br><b>Akses:</b><br>- Web Terminal: Akses via Dashboard<br>- SSH Port: %d<br>- HTTP Port: %d", name, containerName, imageName, sshPort, httpPort)
+func (s *ReminderService) SendContainerReadyEmail(email, name, containerName, imageName, host string, portSummary string) error {
+	body := fmt.Sprintf("Halo %s,<br><br>Container <b>%s</b> (%s) Anda sudah aktif dan siap digunakan!<br><br><b>Akses Port:</b><br>%s", name, containerName, imageName, portSummary)
 	html, _ := mailer.RenderTemplate(mailer.EmailData{
 		AppName:     "Teracloud",
 		Title:       "Container Anda Telah Siap!",
