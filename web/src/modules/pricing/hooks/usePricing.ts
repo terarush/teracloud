@@ -3,9 +3,11 @@ import { useCreateOrderMutation } from "@/service/mutation/orders"
 import type { Plan } from "@/service/api/plans"
 import { useNavigate } from "@tanstack/react-router"
 import { toast } from "sonner"
+import { useTranslation } from "react-i18next"
 
 export function usePricing() {
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const { data: plans, isLoading, error, refetch } = usePlansQuery()
   const createOrderMutation = useCreateOrderMutation()
 
@@ -18,7 +20,7 @@ export function usePricing() {
         navigate({ to: "/app/orders" })
       }
     } catch (err: any) {
-      toast.error(err.response?.data?.message || "Gagal membuat pesanan paket hosting")
+      toast.error(err.response?.data?.message || t("common.error", "Gagal membuat pesanan paket hosting"))
     }
   }
 
