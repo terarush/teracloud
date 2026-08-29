@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuSeparator,
@@ -74,23 +75,25 @@ function AppHeader({ pageTitle }: { pageTitle: string }) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-44 p-1.5 rounded-xl">
-            <DropdownMenuLabel className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider px-2 py-1">
-              {t("common.language", "Language / Bahasa")}
-            </DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => changeLocale("id")}
-              className="flex items-center justify-between text-xs cursor-pointer rounded-lg"
-            >
-              <span>Bahasa Indonesia</span>
-              {activeLang === "id" && <Check className="w-3.5 h-3.5 text-primary" />}
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => changeLocale("en")}
-              className="flex items-center justify-between text-xs cursor-pointer rounded-lg"
-            >
-              <span>English (US)</span>
-              {activeLang === "en" && <Check className="w-3.5 h-3.5 text-primary" />}
-            </DropdownMenuItem>
+            <DropdownMenuGroup>
+              <DropdownMenuLabel className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider px-2 py-1">
+                {t("common.language", "Language / Bahasa")}
+              </DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => changeLocale("id")}
+                className="flex items-center justify-between text-xs cursor-pointer rounded-lg"
+              >
+                <span>Bahasa Indonesia</span>
+                {activeLang === "id" && <Check className="w-3.5 h-3.5 text-primary" />}
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => changeLocale("en")}
+                className="flex items-center justify-between text-xs cursor-pointer rounded-lg"
+              >
+                <span>English (US)</span>
+                {activeLang === "en" && <Check className="w-3.5 h-3.5 text-primary" />}
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
 

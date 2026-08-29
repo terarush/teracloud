@@ -25,6 +25,7 @@ import { UserAvatar } from "@/components/user-avatar"
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuSeparator,
@@ -126,7 +127,7 @@ export function AppSidebar() {
         })}
       </SidebarContent>
 
-      {/* 3. Refined Non-AI-Slop Footer */}
+      {/* 3. Refined Footer */}
       <SidebarFooter className="border-t border-border/50 p-2 gap-1.5 group-data-[collapsible=icon]:p-1.5 group-data-[collapsible=icon]:py-2">
         {/* User Profile Card with Dropdown Settings */}
         <DropdownMenu>
@@ -145,62 +146,66 @@ export function AppSidebar() {
           </DropdownMenuTrigger>
 
           <DropdownMenuContent align="end" side="top" className="w-56 p-1.5 rounded-xl">
-            <DropdownMenuLabel className="text-xs font-normal text-muted-foreground px-2 py-1.5">
+            <div className="text-xs font-normal text-muted-foreground px-2 py-1.5">
               Signed in as <strong className="text-foreground">{user?.email}</strong>
-            </DropdownMenuLabel>
+            </div>
             <DropdownMenuSeparator />
 
             {/* Language Selection */}
-            <DropdownMenuLabel className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider px-2 pt-2">
-              Language / Bahasa
-            </DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => changeLocale("id")}
-              className="flex items-center justify-between text-xs cursor-pointer rounded-lg"
-            >
-              <span className="flex items-center gap-2">
-                <Globe className="w-3.5 h-3.5" />
-                Bahasa Indonesia
-              </span>
-              {activeLang === "id" && <Check className="w-3.5 h-3.5 text-primary" />}
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => changeLocale("en")}
-              className="flex items-center justify-between text-xs cursor-pointer rounded-lg"
-            >
-              <span className="flex items-center gap-2">
-                <Globe className="w-3.5 h-3.5" />
-                English (US)
-              </span>
-              {activeLang === "en" && <Check className="w-3.5 h-3.5 text-primary" />}
-            </DropdownMenuItem>
+            <DropdownMenuGroup>
+              <DropdownMenuLabel className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider px-2 pt-2">
+                Language / Bahasa
+              </DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => changeLocale("id")}
+                className="flex items-center justify-between text-xs cursor-pointer rounded-lg"
+              >
+                <span className="flex items-center gap-2">
+                  <Globe className="w-3.5 h-3.5" />
+                  Bahasa Indonesia
+                </span>
+                {activeLang === "id" && <Check className="w-3.5 h-3.5 text-primary" />}
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => changeLocale("en")}
+                className="flex items-center justify-between text-xs cursor-pointer rounded-lg"
+              >
+                <span className="flex items-center gap-2">
+                  <Globe className="w-3.5 h-3.5" />
+                  English (US)
+                </span>
+                {activeLang === "en" && <Check className="w-3.5 h-3.5 text-primary" />}
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
 
             <DropdownMenuSeparator />
 
             {/* Theme Selection */}
-            <DropdownMenuLabel className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider px-2 pt-1">
-              Theme Mode
-            </DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => setTheme("light")}
-              className="flex items-center justify-between text-xs cursor-pointer rounded-lg"
-            >
-              <span className="flex items-center gap-2">
-                <Sun className="w-3.5 h-3.5 text-amber-500" />
-                Light
-              </span>
-              {theme === "light" && <Check className="w-3.5 h-3.5 text-primary" />}
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => setTheme("dark")}
-              className="flex items-center justify-between text-xs cursor-pointer rounded-lg"
-            >
-              <span className="flex items-center gap-2">
-                <Moon className="w-3.5 h-3.5 text-indigo-500" />
-                Dark
-              </span>
-              {theme === "dark" && <Check className="w-3.5 h-3.5 text-primary" />}
-            </DropdownMenuItem>
+            <DropdownMenuGroup>
+              <DropdownMenuLabel className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider px-2 pt-1">
+                Theme Mode
+              </DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => setTheme("light")}
+                className="flex items-center justify-between text-xs cursor-pointer rounded-lg"
+              >
+                <span className="flex items-center gap-2">
+                  <Sun className="w-3.5 h-3.5 text-amber-500" />
+                  Light
+                </span>
+                {theme === "light" && <Check className="w-3.5 h-3.5 text-primary" />}
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setTheme("dark")}
+                className="flex items-center justify-between text-xs cursor-pointer rounded-lg"
+              >
+                <span className="flex items-center gap-2">
+                  <Moon className="w-3.5 h-3.5 text-indigo-500" />
+                  Dark
+                </span>
+                {theme === "dark" && <Check className="w-3.5 h-3.5 text-primary" />}
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
 
             <DropdownMenuSeparator />
 
