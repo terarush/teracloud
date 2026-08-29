@@ -23,6 +23,7 @@ type ContainerResponse struct {
 	DiskLimit     int             `json:"disk_limit"`
 	PortMappings  json.RawMessage `json:"port_mappings,omitempty"`
 	AssignedPorts json.RawMessage `json:"assigned_ports,omitempty"`
+	TunnelRoutes  json.RawMessage `json:"tunnel_routes,omitempty"`
 	LastStartedAt *time.Time      `json:"last_started_at,omitempty"`
 	LastStoppedAt *time.Time      `json:"last_stopped_at,omitempty"`
 	ErrorMessage  string          `json:"error_message,omitempty"`
@@ -46,6 +47,7 @@ func FromEntity(c *entity.Container) *ContainerResponse {
 		DiskLimit:     c.DiskLimit,
 		PortMappings:  c.PortMappings,
 		AssignedPorts: c.AssignedPorts,
+		TunnelRoutes:  c.TunnelRoutes,
 		LastStartedAt: c.LastStartedAt,
 		LastStoppedAt: c.LastStoppedAt,
 		ErrorMessage:  c.ErrorMessage,

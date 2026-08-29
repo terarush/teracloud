@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"ruang-tukar/internal/pkg/bus"
+	cloudflare "ruang-tukar/internal/pkg/cloudflare"
 	"ruang-tukar/internal/pkg/docker"
 	"ruang-tukar/internal/pkg/logger"
 	"ruang-tukar/internal/pkg/portmanager"
@@ -24,14 +25,15 @@ import (
 )
 
 type ProvisioningService struct {
-	containerRepo repository.ContainerRepository
-	eventRepo     repository.EventRepository
-	planRepo      planRepo.PlanRepository
-	dockerClient  *docker.Client
-	portManager   *portmanager.Manager
-	log           *logger.Logger
-	event         *bus.EventBus
-	db            *gorm.DB
+	containerRepo    repository.ContainerRepository
+	eventRepo        repository.EventRepository
+	planRepo         planRepo.PlanRepository
+	dockerClient     *docker.Client
+	portManager      *portmanager.Manager
+	log              *logger.Logger
+	event            *bus.EventBus
+	db               *gorm.DB
+	cloudflareClient *cloudflare.Client
 }
 
 func NewProvisioningService(
@@ -43,16 +45,18 @@ func NewProvisioningService(
 	log *logger.Logger,
 	event *bus.EventBus,
 	db *gorm.DB,
+	cloudflareClient *cloudflare.Client,
 ) *ProvisioningService {
 	return &ProvisioningService{
-		containerRepo: containerRepo,
-		eventRepo:     eventRepo,
-		planRepo:      planRepo,
-		dockerClient:  dockerClient,
-		portManager:   portManager,
-		log:           log,
-		event:         event,
-		db:            db,
+		containerRepo:    containerRepo,
+		eventRepo:        eventRepo,
+		planRepo:         planRepo,
+		dockerClient:     dockerClient,
+		portManager:      portManager,
+		log:              log,
+		event:            event,
+		db:               db,
+		cloudflareClient: cloudflareClient,
 	}
 }
 
@@ -209,6 +213,83 @@ func (s *ProvisioningService) ProvisionContainer(ctx context.Context, userID, su
 		Payload: containerRecord,
 	})
 
+	// 9. Auto-configure Cloudflare Tunnel routes
+	if s.cloudflareClient != nil && s.cloudflareClient.IsEnabled() {
+		var routes []cloudflare.TunnelRoute
+		containerHex := ""
+		parts := strings.Split(containerName, "-")
+		if len(parts) > 0 {
+			containerHex = parts[len(parts)-1]
+		}
+
+		for _, pc := range portConfigs {
+			if pc.ContainerPort <= 0 {
+				continue
+			}
+
+			key := pc.Name
+			if key == "" {
+				key = fmt.Sprintf("port_%d", pc.ContainerPort)
+			}
+
+			if hostPort, ok := assignedMap[key]; ok {
+				subdomain := fmt.Sprintf("%s-%s", containerHex, key)
+				domain := os.Getenv("TUNNEL_DOMAIN")
+				if domain == "" {
+					panic("TUNNEL_DOMAIN is missingg")
+				}
+				url := fmt.Sprintf("https://%s.%s", subdomain, domain)
+
+				routes = append(routes, cloudflare.TunnelRoute{
+					Subdomain: subdomain,
+					HostPort:  hostPort,
+					Name:      key,
+					URL:       url,
+				})
+			}
+		}
+
+		if len(routes) > 0 {
+			err := s.cloudflareClient.AddRoutes(ctx, routes)
+			if err != nil {
+				s.log.Errorf("Failed to add Cloudflare routes for container %s: %v", containerName, err)
+			} else {
+				routesJSON, _ := json.Marshal(routes)
+				containerRecord.TunnelRoutes = routesJSON
+				_ = s.containerRepo.Update(ctx, containerRecord)
+			}
+		}
+	}
+
 	s.log.Infof("Container %s (ID: %d, Docker: %s) successfully provisioned", containerName, containerRecord.ID, dockerID)
+	return nil
+}
+
+func (s *ProvisioningService) CleanupTunnelRoutes(ctx context.Context, container *entity.Container) error {
+	if s.cloudflareClient == nil || !s.cloudflareClient.IsEnabled() {
+		return nil
+	}
+
+	if container.TunnelRoutes == nil || string(container.TunnelRoutes) == "[]" || string(container.TunnelRoutes) == "null" {
+		return nil
+	}
+
+	var routes []cloudflare.TunnelRoute
+	if err := json.Unmarshal(container.TunnelRoutes, &routes); err != nil {
+		return err
+	}
+
+	var subdomains []string
+	for _, r := range routes {
+		subdomains = append(subdomains, r.Subdomain)
+	}
+
+	if len(subdomains) > 0 {
+		if err := s.cloudflareClient.RemoveRoutes(ctx, subdomains); err != nil {
+			s.log.Errorf("Failed to cleanup Cloudflare routes for container %d: %v", container.ID, err)
+			return err
+		}
+	}
+
 	return nil
 }

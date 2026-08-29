@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"ruang-tukar/internal/pkg/bus"
+	cloudflare "ruang-tukar/internal/pkg/cloudflare"
 	"ruang-tukar/internal/pkg/docker"
 	"ruang-tukar/internal/pkg/logger"
 	"ruang-tukar/internal/pkg/portmanager"
@@ -67,12 +68,15 @@ func (m *Module) Initialize(db *gorm.DB, log *logger.Logger, event *bus.EventBus
 	subRepo := billingRepo.NewSubscriptionRepositoryImpl()
 	subService := billingService.NewSubscriptionService(subRepo)
 
+	// Cloudflare Client
+	cfClient := cloudflare.NewClient()
+
 	// Services
 	m.containerService = service.NewContainerService(
 		containerRepo, eventRepo, pRepo, m.dockerClient, portMgr, m.logger, m.event, m.db,
 	)
 	m.provisioningService = service.NewProvisioningService(
-		containerRepo, eventRepo, pRepo, m.dockerClient, portMgr, m.logger, m.event, m.db,
+		containerRepo, eventRepo, pRepo, m.dockerClient, portMgr, m.logger, m.event, m.db, cfClient,
 	)
 
 	// Handlers

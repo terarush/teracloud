@@ -25,6 +25,7 @@ type Container struct {
 	VolumePath        string          `json:"volume_path" gorm:"type:text"`
 	PortMappings      json.RawMessage `json:"port_mappings" gorm:"type:jsonb"`
 	AssignedPorts     json.RawMessage `json:"assigned_ports" gorm:"type:jsonb"`
+	TunnelRoutes      json.RawMessage `json:"tunnel_routes" gorm:"type:jsonb;default:'[]'"`
 	InternalIP        string          `json:"internal_ip" gorm:"type:varchar(45)"`
 	LastStartedAt     *time.Time      `json:"last_started_at"`
 	LastStoppedAt     *time.Time      `json:"last_stopped_at"`
