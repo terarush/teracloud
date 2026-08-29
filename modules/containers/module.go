@@ -82,28 +82,28 @@ func (m *Module) Initialize(db *gorm.DB, log *logger.Logger, event *bus.EventBus
 	// Event listener: order.paid -> triggers container provisioning
 	m.event.SubscribeFunc("order.paid", func(ev bus.Event) {
 		if order, ok := ev.Payload.(*orderEntity.Order); ok {
-			m.logger.Info("Received order.paid event for order %s, provisioning containers...", order.OrderNumber)
+			m.logger.Infof("Received order.paid event for order %s, provisioning containers...", order.OrderNumber)
 			go func() {
 				ctx := context.Background()
 				if len(order.Items) > 0 {
 					for _, item := range order.Items {
 						sub, err := subService.EnsureSubscription(ctx, order.UserID, item.PlanID, order.ID)
 						if err != nil {
-							m.logger.Error("Failed to ensure subscription for order %s, plan %d: %v", order.OrderNumber, item.PlanID, err)
+							m.logger.Errorf("Failed to ensure subscription for order %s, plan %d: %v", order.OrderNumber, item.PlanID, err)
 							continue
 						}
 						if err := m.provisioningService.ProvisionContainer(ctx, order.UserID, sub.ID, item.PlanID); err != nil {
-							m.logger.Error("Failed to provision container for order %s, plan %d: %v", order.OrderNumber, item.PlanID, err)
+							m.logger.Errorf("Failed to provision container for order %s, plan %d: %v", order.OrderNumber, item.PlanID, err)
 						}
 					}
 				} else if order.PlanID != nil {
 					sub, err := subService.EnsureSubscription(ctx, order.UserID, *order.PlanID, order.ID)
 					if err != nil {
-						m.logger.Error("Failed to ensure subscription for order %s, plan %d: %v", order.OrderNumber, *order.PlanID, err)
+						m.logger.Errorf("Failed to ensure subscription for order %s, plan %d: %v", order.OrderNumber, *order.PlanID, err)
 						return
 					}
 					if err := m.provisioningService.ProvisionContainer(ctx, order.UserID, sub.ID, *order.PlanID); err != nil {
-						m.logger.Error("Failed to provision container for order %s, plan %d: %v", order.OrderNumber, *order.PlanID, err)
+						m.logger.Errorf("Failed to provision container for order %s, plan %d: %v", order.OrderNumber, *order.PlanID, err)
 					}
 				}
 			}()
