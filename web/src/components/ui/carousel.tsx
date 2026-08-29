@@ -60,10 +60,10 @@ function Carousel({
   const [canScrollPrev, setCanScrollPrev] = React.useState(false)
   const [canScrollNext, setCanScrollNext] = React.useState(false)
 
-  const onSelect = React.useCallback((emblaApi: CarouselApi) => {
-    if (!emblaApi) return
-    setCanScrollPrev(emblaApi.canScrollPrev())
-    setCanScrollNext(emblaApi.canScrollNext())
+  const onSelect = React.useCallback((carouselApi: CarouselApi) => {
+    if (!carouselApi) return
+    setCanScrollPrev(carouselApi.canScrollPrev())
+    setCanScrollNext(carouselApi.canScrollNext())
   }, [])
 
   const scrollPrev = React.useCallback(() => {
@@ -110,6 +110,7 @@ function Carousel({
         api: api,
         opts,
         orientation,
+
         scrollPrev,
         scrollNext,
         canScrollPrev,
@@ -183,7 +184,7 @@ function CarouselPrevious({
       variant={variant}
       size={size}
       className={cn(
-        "absolute touch-manipulation rounded-full",
+        "absolute touch-manipulation rounded-full border-border/70 bg-background/90 backdrop-blur-md shadow-2xs hover:shadow-xs transition-all duration-200 focus-visible:ring-2 focus-visible:ring-ring/40",
         orientation === "horizontal"
           ? "inset-y-0 -left-12 my-auto"
           : "-top-12 left-1/2 -translate-x-1/2 rotate-90",
@@ -213,7 +214,7 @@ function CarouselNext({
       variant={variant}
       size={size}
       className={cn(
-        "absolute touch-manipulation rounded-full",
+        "absolute touch-manipulation rounded-full border-border/70 bg-background/90 backdrop-blur-md shadow-2xs hover:shadow-xs transition-all duration-200 focus-visible:ring-2 focus-visible:ring-ring/40",
         orientation === "horizontal"
           ? "inset-y-0 -right-12 my-auto"
           : "-bottom-12 left-1/2 -translate-x-1/2 rotate-90",

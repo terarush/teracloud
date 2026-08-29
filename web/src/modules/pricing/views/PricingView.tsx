@@ -2,38 +2,79 @@ import React from "react"
 import { usePricing } from "../hooks/usePricing"
 import { PlanCard } from "../components/PlanCard"
 import { PlanComparison } from "../components/PlanComparison"
-import { Loader2, ArrowLeft, Sun, Moon, Globe, Check } from "lucide-react"
+import { Loader2, ArrowLeft, Sun, Moon, Globe, Check, ShoppingCart } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useNavigate } from "@tanstack/react-router"
 import { useTheme } from "@/components/theme-provider"
+import { useCartQuery } from "@/service/query/cart"
+import { useAddToCartMutation } from "@/service/mutation/cart"
 import { companyMeta } from "@/meta"
 import { useTranslation } from "react-i18next"
 import { currentLocale, changeLocale } from "@/lib/i18n"
+import { toast } from "sonner"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import type { Plan } from "@/service/api/plans"
 
 export const PricingView: React.FC = () => {
   const { plans, isLoading, handleSelectPlan } = usePricing()
+  const { data: cart } = useCartQuery()
+  const addToCartMutation = useAddToCartMutation()
   const navigate = useNavigate()
   const { theme, setTheme } = useTheme()
   const { t } = useTranslation()
   const activeLang = currentLocale()
+
+  const handleAddToCart = async (plan: Plan) => {
+    try {
+      await addToCartMutation.mutateAsync({
+        plan_id: plan.id,
+        duration_months: 1,
+      })
+      toast.success(`${plan.name} berhasil ditambahkan ke keranjang!`, {
+        action: {
+          label: "Lihat Keranjang",
+          onClick: () => navigate({ to: "/app/cart" as any }),
+        },
+      })
+    } catch (err: any) {
+      toast.error(err?.message || "Gagal menambahkan ke keranjang")
+    }
+  }
+
+  const totalCartItems = cart?.total_items || cart?.items?.length || 0
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       {/* Top Bar */}
       <header className="border-b border-border/60 bg-background/80 backdrop-blur-md sticky top-0 z-50">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
-          <Button variant="ghost" size="sm" className="gap-2" onClick={() => navigate({ to: "/" })}>
+          <Button variant="ghost" size="sm" className="gap-2 cursor-pointer" onClick={() => navigate({ to: "/" })}>
             <ArrowLeft className="h-4 w-4" />
             {t("common.back", "Kembali ke Beranda")}
           </Button>
 
           <div className="flex items-center gap-3">
+            {/* Cart Header Button */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate({ to: "/app/cart" as any })}
+              className="relative gap-1.5 text-xs font-semibold cursor-pointer"
+            >
+              <ShoppingCart className="size-3.5" />
+              <span className="hidden sm:inline">Keranjang</span>
+              {totalCartItems > 0 && (
+                <span className="flex size-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+                  {totalCartItems}
+                </span>
+              )}
+            </Button>
+
             {/* Language Switcher */}
             <DropdownMenu>
               <DropdownMenuTrigger className="h-9 px-3 gap-1.5 inline-flex items-center justify-center rounded-xl border border-border bg-background text-xs font-semibold hover:bg-muted hover:text-foreground cursor-pointer transition-colors outline-hidden">
@@ -41,11 +82,11 @@ export const PricingView: React.FC = () => {
                 <span className="uppercase">{activeLang}</span>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-40 rounded-xl">
-                <DropdownMenuItem onClick={() => changeLocale("id")} className="flex justify-between text-xs">
+                <DropdownMenuItem onClick={() => changeLocale("id")} className="flex justify-between text-xs cursor-pointer">
                   <span>Bahasa Indonesia</span>
                   {activeLang === "id" && <Check className="w-3.5 h-3.5 text-primary" />}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => changeLocale("en")} className="flex justify-between text-xs">
+                <DropdownMenuItem onClick={() => changeLocale("en")} className="flex justify-between text-xs cursor-pointer">
                   <span>English (US)</span>
                   {activeLang === "en" && <Check className="w-3.5 h-3.5 text-primary" />}
                 </DropdownMenuItem>
@@ -61,7 +102,7 @@ export const PricingView: React.FC = () => {
               {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </button>
 
-            <Button size="sm" onClick={() => navigate({ to: "/app" })}>
+            <Button size="sm" onClick={() => navigate({ to: "/app" })} className="cursor-pointer">
               {t("hosting.dashboard", "Console")}
             </Button>
           </div>
@@ -96,6 +137,8 @@ export const PricingView: React.FC = () => {
                   key={plan.id}
                   plan={plan}
                   onSelect={handleSelectPlan}
+                  onAddToCart={handleAddToCart}
+                  isAddingToCart={addToCartMutation.isPending}
                   isPopular={index === 1 || plan.slug.includes("standard")}
                 />
               ))}

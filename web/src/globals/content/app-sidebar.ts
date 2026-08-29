@@ -48,6 +48,12 @@ export const getSidebarContentList = (
           icon: Server,
         },
         {
+          titleKey: "hosting.cart",
+          title: translate("hosting.cart", "Keranjang Belanja"),
+          href: "/app/cart",
+          icon: ShoppingCart,
+        },
+        {
           titleKey: "hosting.billingTitle",
           title: translate("hosting.billingTitle", "Billing & Invoices"),
           href: "/app/billing",
@@ -55,9 +61,9 @@ export const getSidebarContentList = (
         },
         {
           titleKey: "hosting.orderSummary",
-          title: translate("hosting.orderSummary", "Orders & Checkout"),
+          title: translate("hosting.orderSummary", "Orders Transaksi"),
           href: "/app/orders",
-          icon: ShoppingCart,
+          icon: Package,
         },
       ],
     },

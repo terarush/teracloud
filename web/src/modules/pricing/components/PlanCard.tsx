@@ -1,15 +1,23 @@
 import React from "react"
 import type { Plan } from "@/service/api/plans"
 import { Button } from "@/components/ui/button"
-import { Check, Zap, Server, Shield } from "lucide-react"
+import { Check, ShoppingCart, ArrowRight } from "lucide-react"
 
 interface PlanCardProps {
   plan: Plan
   onSelect: (plan: Plan) => void
+  onAddToCart?: (plan: Plan) => void
+  isAddingToCart?: boolean
   isPopular?: boolean
 }
 
-export const PlanCard: React.FC<PlanCardProps> = ({ plan, onSelect, isPopular = false }) => {
+export const PlanCard: React.FC<PlanCardProps> = ({
+  plan,
+  onSelect,
+  onAddToCart,
+  isAddingToCart = false,
+  isPopular = false,
+}) => {
   const formattedPrice = new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
@@ -88,14 +96,30 @@ export const PlanCard: React.FC<PlanCardProps> = ({ plan, onSelect, isPopular = 
         </ul>
       </div>
 
-      <Button
-        variant={isPopular ? "default" : "outline"}
-        size="lg"
-        className="w-full font-semibold cursor-pointer"
-        onClick={() => onSelect(plan)}
-      >
-        Pilih Paket
-      </Button>
+      <div className="space-y-2 pt-2">
+        <Button
+          variant={isPopular ? "default" : "secondary"}
+          size="lg"
+          className="w-full font-semibold cursor-pointer gap-2"
+          onClick={() => onSelect(plan)}
+        >
+          <span>Beli Langsung</span>
+          <ArrowRight className="size-4" />
+        </Button>
+
+        {onAddToCart && (
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={isAddingToCart}
+            className="w-full text-xs font-semibold cursor-pointer gap-1.5"
+            onClick={() => onAddToCart(plan)}
+          >
+            <ShoppingCart className="size-3.5" />
+            <span>Tambah ke Keranjang</span>
+          </Button>
+        )}
+      </div>
     </div>
   )
 }

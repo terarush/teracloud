@@ -1,18 +1,19 @@
 import React from "react"
 import { useAdminData } from "../hooks/useAdminData"
 import { AdminStats } from "../components/AdminStats"
-import { ArrowRight } from "lucide-react"
+import { ArrowRight, Layers, ShoppingCart, Server, ScrollText, Terminal } from "lucide-react"
 import { useNavigate } from "@tanstack/react-router"
+import { Card, CardContent } from "@/components/ui/card"
 
 export const AdminDashboardView: React.FC = () => {
   const { stats, plans, containers, orders } = useAdminData()
   const navigate = useNavigate()
 
   return (
-    <div className="p-6 sm:p-8 space-y-8 max-w-7xl mx-auto">
+    <div className="px-6 py-8 max-w-5xl mx-auto space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">Admin Console</h1>
-        <p className="text-sm text-muted-foreground mt-1">
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">Admin Console</h1>
+        <p className="text-sm text-muted-foreground mt-0.5">
           Pusat kontrol sistem, alokasi paket hosting, pemantauan pesanan, dan log audit.
         </p>
       </div>
@@ -29,42 +30,57 @@ export const AdminDashboardView: React.FC = () => {
         {[
           {
             title: "Kelola Paket Hosting",
-            desc: "Tambah, perbarui konfigurasi hardware, atau aktifkan/nonaktifkan paket container.",
+            desc: "Tambah, perbarui konfigurasi hardware, atau aktifkan paket container.",
             href: "/app/plans",
+            icon: Layers,
           },
           {
             title: "Daftar Transaksi Pesanan",
             desc: "Pantau status verifikasi pembayaran Midtrans dari pengguna.",
             href: "/app/orders-list",
+            icon: ShoppingCart,
           },
           {
             title: "Semua Container",
             desc: "Lihat seluruh container aktif milik semua pengguna platform.",
             href: "/app/admin/containers",
+            icon: Server,
           },
           {
             title: "Log Audit Sistem",
             desc: "Riwayat aksi admin dan pengguna untuk kebutuhan audit trail.",
             href: "/app/admin/audit",
+            icon: ScrollText,
           },
           {
             title: "Console Container User",
-            desc: "Buka tampilan console pengguna untuk menguji provisioning dan terminal.",
+            desc: "Buka tampilan console pengguna untuk menguji provisioning.",
             href: "/app",
+            icon: Terminal,
           },
-        ].map((card) => (
-          <div
-            key={card.href}
-            onClick={() => navigate({ to: card.href as any })}
-            className="p-6 bg-card ring-1 ring-foreground/10 rounded-xl cursor-pointer hover:ring-primary/40 transition group"
-          >
-            <h3 className="font-bold text-base text-foreground group-hover:text-primary transition flex items-center justify-between">
-              <span>{card.title}</span>
-              <ArrowRight className="w-4 h-4" />
-            </h3>
-            <p className="text-xs text-muted-foreground mt-2">{card.desc}</p>
-          </div>
-        ))}
+        ].map((card) => {
+          const Icon = card.icon
+          return (
+            <Card
+              key={card.href}
+              onClick={() => navigate({ to: card.href as any })}
+              className="ring-1 ring-foreground/10 hover:ring-foreground/20 cursor-pointer transition-all group"
+            >
+              <CardContent className="p-5 flex flex-col justify-between h-full space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Icon className="size-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                    <h3 className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors">
+                      {card.title}
+                    </h3>
+                  </div>
+                  <ArrowRight className="size-3.5 text-muted-foreground group-hover:text-primary transition-colors" />
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">{card.desc}</p>
+              </CardContent>
+            </Card>
+          )
+        })}
       </div>
     </div>
   )

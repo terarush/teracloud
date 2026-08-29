@@ -21,6 +21,7 @@ import { DashboardPage } from "@/modules/dashboard/pages/DashboardPage"
 import { ContainerDetailPage } from "@/modules/containers/pages/ContainerDetailPage"
 import { TerminalPage } from "@/modules/containers/pages/TerminalPage"
 import { BillingPage } from "@/modules/billing/pages/BillingPage"
+import { CartPage } from "@/modules/cart/pages/CartPage"
 import { CheckoutPage } from "@/modules/orders/pages/CheckoutPage"
 import { OrderStatusPage } from "@/modules/orders/pages/OrderStatusPage"
 import { AdminDashboard } from "@/modules/admin/pages/AdminDashboard"
@@ -186,6 +187,12 @@ const appBillingRoute = createRoute({
   component: BillingPage,
 })
 
+const appCartRoute = createRoute({
+  getParentRoute: () => appLayoutRoute,
+  path: "/cart",
+  component: CartPage,
+})
+
 const appOrdersRoute = createRoute({
   getParentRoute: () => appLayoutRoute,
   path: "/orders",
@@ -199,6 +206,16 @@ const appCheckoutRoute = createRoute({
     const { orderId } = appCheckoutRoute.useParams()
     return <CheckoutPage orderId={Number(orderId)} />
   },
+})
+
+const rootCheckoutRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/orders/checkout/$orderId",
+  component: () => {
+    const { orderId } = rootCheckoutRoute.useParams()
+    return <CheckoutPage orderId={Number(orderId)} />
+  },
+  beforeLoad: authMiddleware.requireAuth,
 })
 
 const appOrdersFinishRoute = createRoute({
@@ -251,11 +268,13 @@ export const routeTree = rootRoute.addChildren([
   legacyAppDashboardRoute,
   legacyAdminRoute,
   appContainerTerminalRoute,
+  rootCheckoutRoute,
   appLayoutRoute.addChildren([
     appOverviewRoute,
     appContainersListRoute,
     appContainerDetailRoute,
     appBillingRoute,
+    appCartRoute,
     appOrdersRoute,
     appCheckoutRoute,
     appOrdersFinishRoute,

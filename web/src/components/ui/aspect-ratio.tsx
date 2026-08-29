@@ -13,7 +13,7 @@ function AspectRatio({
           "--ratio": ratio,
         } as React.CSSProperties
       }
-      className={cn("relative aspect-(--ratio)", className)}
+      className={cn("relative aspect-(--ratio) overflow-hidden transition-all duration-200", className)}
       {...props}
     />
   )

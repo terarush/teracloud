@@ -1,6 +1,7 @@
 import React from "react"
 import { Server, Cpu, HardDrive } from "lucide-react"
 import { useTranslation } from "react-i18next"
+import { Card, CardContent } from "@/components/ui/card"
 
 interface DashboardStatsProps {
   totalContainers: number
@@ -35,20 +36,20 @@ export const DashboardStats: React.FC<DashboardStatsProps> = ({
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-      {stats.map((stat, idx) => (
-        <div
-          key={idx}
-          className="p-5 bg-card ring-1 ring-foreground/10 rounded-xl flex items-center gap-4"
-        >
-          <div className="p-3 bg-muted text-muted-foreground rounded-lg">
-            <stat.icon className="w-5 h-5" />
-          </div>
-          <div>
-            <div className="text-2xl font-bold text-foreground">{stat.value}</div>
-            <div className="text-xs text-muted-foreground">{stat.label}</div>
-          </div>
-        </div>
-      ))}
+      {stats.map((stat, idx) => {
+        const Icon = stat.icon
+        return (
+          <Card key={idx} className="ring-1 ring-foreground/10">
+            <CardContent className="py-4 px-4">
+              <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                <Icon className="size-4" />
+                <span className="text-xs font-medium">{stat.label}</span>
+              </div>
+              <p className="text-xl font-bold text-foreground">{stat.value}</p>
+            </CardContent>
+          </Card>
+        )
+      })}
     </div>
   )
 }

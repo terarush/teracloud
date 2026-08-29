@@ -83,7 +83,7 @@ function ChartContainer({
 
 const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
   const colorConfig = Object.entries(config).filter(
-    ([, itemConf]) => itemConf.theme ?? itemConf.color
+    ([, itemConfig]) => itemConfig.theme ?? itemConfig.color
   )
 
   if (!colorConfig.length) {
@@ -191,7 +191,7 @@ function ChartTooltipContent({
   return (
     <div
       className={cn(
-        "grid min-w-32 items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl",
+        "grid min-w-32 items-start gap-1.5 rounded-xl border border-border/70 bg-popover/95 backdrop-blur-md px-3 py-2 text-xs text-popover-foreground shadow-lg transition-all duration-150",
         className
       )}
     >
