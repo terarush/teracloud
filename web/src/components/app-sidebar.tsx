@@ -1,9 +1,10 @@
 import { useMemo } from "react"
 import { useRouterState, useNavigate } from "@tanstack/react-router"
-import { LogOut, Moon, Sun, Globe, Check } from "lucide-react"
+import { LogOut, Moon, Sun, Languages } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/contexts/auth-context"
 import { useTheme } from "@/components/theme-provider"
+import { useCartQuery } from "@/service/query/cart"
 import { companyMeta } from "@/meta"
 import { getSidebarContentList } from "@/globals/content/app-sidebar"
 import { currentLocale, changeLocale } from "@/lib/i18n"
@@ -21,17 +22,9 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
+  SidebarMenuBadge,
 } from "@/components/ui/sidebar"
 import { UserAvatar } from "@/components/user-avatar"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
-  DropdownMenuLabel,
-} from "@/components/ui/dropdown-menu"
 
 export function AppSidebar() {
   const routerState = useRouterState()
@@ -41,11 +34,20 @@ export function AppSidebar() {
   const { isMobile, setOpenMobile } = useSidebar()
   const { theme, setTheme } = useTheme()
   const { t, i18n } = useTranslation()
+  const { data: cart } = useCartQuery()
 
+  const activeLocale = currentLocale()
   const isAdmin = user?.role === "admin"
-  const activeLang = currentLocale()
+  const cartItemCount = cart?.total_items || cart?.items?.length || 0
 
-  const sidebarList = useMemo(() => getSidebarContentList(t), [i18n.language, t])
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark")
+  }
+
+  const toggleLanguage = () => {
+    const nextLocale = activeLocale === "en" ? "id" : "en"
+    changeLocale(nextLocale)
+  }
 
   const handleLogout = async () => {
     await logout()
@@ -57,167 +59,133 @@ export function AppSidebar() {
     navigate({ to: href as any })
   }
 
-  const logoSrc = theme === "dark" && companyMeta.logoWhite ? companyMeta.logoWhite : companyMeta.logo
+  const sidebarList = useMemo(() => getSidebarContentList(t), [i18n.language, t])
+
+  const filteredSidebarContent = sidebarList.filter((group) => {
+    if (group.admin && !isAdmin) return false
+    return true
+  })
 
   return (
-    <Sidebar collapsible="icon" className="select-none border-r border-sidebar-border bg-sidebar">
-      {/* 1. Header with Logo & Brand */}
-      <SidebarHeader className="flex h-16 flex-row items-center border-b border-sidebar-border p-0">
+    <Sidebar collapsible="icon" variant="sidebar" className="border-r bg-sidebar text-sidebar-foreground">
+      <SidebarHeader className="h-14 flex flex-row items-center justify-center border-b border-border/50 group-data-[collapsible=icon]:px-0">
         <div
-          className="flex h-full w-full cursor-pointer items-center gap-3 overflow-hidden px-4 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0"
+          className="flex items-center gap-2.5 overflow-hidden w-full px-5 cursor-pointer group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0"
           onClick={() => handleItemClick("/app")}
         >
-          <span className="flex size-8 shrink-0 items-center justify-center rounded-md bg-primary text-sm font-semibold text-primary-foreground">T</span>
-          <div className="flex flex-col truncate group-data-[collapsible=icon]:hidden">
-            <span className="text-sm font-bold tracking-tight text-foreground truncate">
-              {companyMeta.name}
-            </span>
-            <span className="text-[10px] text-muted-foreground font-medium truncate">
-              Container workspace
-            </span>
+          <div className="flex size-6 shrink-0 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground text-xs font-bold">
+            {companyMeta.name.charAt(0) || "T"}
           </div>
+          <span className="text-sm font-semibold tracking-tight text-sidebar-foreground truncate group-data-[collapsible=icon]:hidden">
+            {companyMeta.name}
+          </span>
         </div>
       </SidebarHeader>
 
-      {/* 2. Content & Nav Groups */}
-      <SidebarContent className="gap-7 px-2 py-5 group-data-[collapsible=icon]:px-0">
-        {sidebarList.map((group, idx) => {
-          if (group.admin && !isAdmin) return null
+      <SidebarContent className="py-3">
+        {filteredSidebarContent.map((group, idx) => (
+          <SidebarGroup key={group.groupNameKey || idx}>
+            {group.groupName && (
+              <SidebarGroupLabel>
+                {group.groupName}
+              </SidebarGroupLabel>
+            )}
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {group.items.map((item) => {
+                  const Icon = item.icon
+                  const isActive = currentPath === item.href
+                  const badgeValue = item.href === "/app/cart" && cartItemCount > 0 ? String(cartItemCount) : item.badge
 
-          return (
-            <SidebarGroup key={idx} className="p-0 group-data-[collapsible=icon]:px-0">
-              {group.groupName && (
-                <SidebarGroupLabel className="mb-2 px-3 text-[9px] font-semibold uppercase tracking-[0.16em] text-muted-foreground group-data-[collapsible=icon]:hidden">
-                  {group.groupName}
-                </SidebarGroupLabel>
-              )}
-              <SidebarGroupContent>
-                <SidebarMenu className="gap-1 group-data-[collapsible=icon]:items-center">
-                  {group.items.map((item) => {
-                    const Icon = item.icon
-                    const isActive = currentPath === item.href
-
-                    return (
-                      <SidebarMenuItem
-                        key={item.href}
-                        className="group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:justify-center w-full"
+                  return (
+                    <SidebarMenuItem key={item.href}>
+                      <SidebarMenuButton
+                        isActive={isActive}
+                        onClick={() => handleItemClick(item.href)}
+                        tooltip={item.title}
+                        className={cn("cursor-pointer")}
                       >
-                        <SidebarMenuButton
-                          tooltip={item.title}
-                          isActive={isActive}
-                          onClick={() => handleItemClick(item.href)}
-                          className={cn(
-                            "h-9 cursor-pointer rounded-lg px-3 text-[13px] font-medium transition-colors",
-                            isActive
-                              ? "bg-sidebar-accent text-sidebar-accent-foreground font-semibold"
-                                                            : "text-muted-foreground hover:bg-muted/80 hover:text-foreground"
-                          )}
-                        >
-                          <Icon className="w-4 h-4 shrink-0" />
-                          <span className="truncate">{item.title}</span>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    )
-                  })}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-          )
-        })}
+                        <Icon />
+                        <span>{item.title}</span>
+                      </SidebarMenuButton>
+                      {badgeValue && (
+                        <SidebarMenuBadge className="bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary transition-colors">
+                          {badgeValue}
+                        </SidebarMenuBadge>
+                      )}
+                    </SidebarMenuItem>
+                  )
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ))}
       </SidebarContent>
 
-      {/* 3. Refined Footer */}
-      <SidebarFooter className="gap-1.5 border-t border-sidebar-border p-2.5 group-data-[collapsible=icon]:p-1.5 group-data-[collapsible=icon]:py-2">
-        {/* User Profile Card with Dropdown Settings */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild className="flex w-full cursor-pointer items-center justify-between rounded-lg p-2 text-left transition-colors hover:bg-muted group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-1">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <UserAvatar user={user} className="h-7 w-7 shrink-0 rounded-lg ring-1 ring-border" />
-              <div className="flex flex-col truncate group-data-[collapsible=icon]:hidden">
-                <span className="text-xs font-semibold text-foreground truncate">
-                  {user ? `${user.first_name} ${user.last_name ?? ""}`.trim() : "User"}
-                </span>
-                <span className="text-[10px] text-muted-foreground truncate">
-                  {user?.email ?? ""}
+      <SidebarFooter className="border-t border-border/50 p-2 group-data-[collapsible=icon]:p-1.5">
+        {user && (
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                size="lg"
+                tooltip={user ? `${user.first_name} ${user.last_name || ""}` : "User"}
+                className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground rounded-lg hover:bg-sidebar-accent/60 text-sidebar-foreground group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-1 cursor-pointer transition-all mb-1"
+              >
+                <UserAvatar user={user} className="size-7 group-data-[collapsible=icon]:size-5 shrink-0 ring-1 ring-white/20 transition-all" />
+                <div className="grid flex-1 text-left text-xs leading-tight min-w-0 group-data-[collapsible=icon]:hidden">
+                  <span className="truncate font-semibold text-sidebar-foreground">
+                    {user.first_name} {user.last_name || ""}
+                  </span>
+                  <span className="truncate text-[11px] font-medium text-sidebar-foreground/80">
+                    {user.email}
+                  </span>
+                </div>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        )}
+
+        <SidebarMenu className="gap-0.5">
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              onClick={toggleLanguage}
+              tooltip={activeLocale === "en" ? "Switch to Bahasa Indonesia" : "Switch to English"}
+              className="cursor-pointer justify-between group-data-[collapsible=icon]:justify-center"
+            >
+              <div className="flex items-center gap-2 min-w-0">
+                <Languages className="size-4 shrink-0" />
+                <span className="truncate group-data-[collapsible=icon]:hidden">
+                  {activeLocale === "en" ? "English" : "Bahasa Indonesia"}
                 </span>
               </div>
-            </div>
-          </DropdownMenuTrigger>
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-sidebar-accent text-sidebar-accent-foreground border border-border/50 group-data-[collapsible=icon]:hidden">
+                {activeLocale}
+              </span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
 
-          <DropdownMenuContent align="end" side="top" className="w-56 p-1.5 rounded-xl">
-            <div className="text-xs font-normal text-muted-foreground px-2 py-1.5">
-              Signed in as <strong className="text-foreground">{user?.email}</strong>
-            </div>
-            <DropdownMenuSeparator />
-
-            {/* Language Selection */}
-            <DropdownMenuGroup>
-              <DropdownMenuLabel className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider px-2 pt-2">
-                Language / Bahasa
-              </DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() => changeLocale("id")}
-                className="flex items-center justify-between text-xs cursor-pointer rounded-lg"
-              >
-                <span className="flex items-center gap-2">
-                  <Globe className="w-3.5 h-3.5" />
-                  Bahasa Indonesia
-                </span>
-                {activeLang === "id" && <Check className="w-3.5 h-3.5 text-primary" />}
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => changeLocale("en")}
-                className="flex items-center justify-between text-xs cursor-pointer rounded-lg"
-              >
-                <span className="flex items-center gap-2">
-                  <Globe className="w-3.5 h-3.5" />
-                  English (US)
-                </span>
-                {activeLang === "en" && <Check className="w-3.5 h-3.5 text-primary" />}
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-
-            <DropdownMenuSeparator />
-
-            {/* Theme Selection */}
-            <DropdownMenuGroup>
-              <DropdownMenuLabel className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider px-2 pt-1">
-                Theme Mode
-              </DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() => setTheme("light")}
-                className="flex items-center justify-between text-xs cursor-pointer rounded-lg"
-              >
-                <span className="flex items-center gap-2">
-                  <Sun className="w-3.5 h-3.5" />
-                  Light
-                </span>
-                {theme === "light" && <Check className="w-3.5 h-3.5 text-primary" />}
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => setTheme("dark")}
-                className="flex items-center justify-between text-xs cursor-pointer rounded-lg"
-              >
-                <span className="flex items-center gap-2">
-                  <Moon className="w-3.5 h-3.5" />
-                  Dark
-                </span>
-                {theme === "dark" && <Check className="w-3.5 h-3.5 text-primary" />}
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-
-            <DropdownMenuSeparator />
-
-            {/* Sign Out */}
-            <DropdownMenuItem
-              onClick={handleLogout}
-              className="text-xs text-destructive hover:bg-destructive/10 cursor-pointer rounded-lg gap-2"
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              onClick={toggleTheme}
+              tooltip={theme === "light" ? t("nav.darkMode", "Dark Mode") : t("nav.lightMode", "Light Mode")}
+              className="cursor-pointer"
             >
-              <LogOut className="w-3.5 h-3.5" />
+              {theme === "light" ? <Moon className="size-4" /> : <Sun className="size-4" />}
+              <span>{theme === "light" ? t("nav.darkMode", "Dark Mode") : t("nav.lightMode", "Light Mode")}</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              onClick={handleLogout}
+              tooltip={t("nav.signOut", "Keluar")}
+              className="cursor-pointer text-destructive hover:bg-destructive/10 hover:text-destructive transition-colors"
+            >
+              <LogOut className="size-4" />
               <span>{t("nav.signOut", "Keluar")}</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
   )
