@@ -22,6 +22,7 @@ import { ContainerDetailPage } from "@/modules/containers/pages/ContainerDetailP
 import { TerminalPage } from "@/modules/containers/pages/TerminalPage"
 import { BillingPage } from "@/modules/billing/pages/BillingPage"
 import { CheckoutPage } from "@/modules/orders/pages/CheckoutPage"
+import { OrderStatusPage } from "@/modules/orders/pages/OrderStatusPage"
 import { AdminDashboard } from "@/modules/admin/pages/AdminDashboard"
 import { AdminPlans } from "@/modules/admin/pages/AdminPlans"
 import { AdminOrders } from "@/modules/admin/pages/AdminOrders"
@@ -198,6 +199,12 @@ const appCheckoutRoute = createRoute({
   },
 })
 
+const appOrdersFinishRoute = createRoute({
+  getParentRoute: () => appLayoutRoute,
+  path: "/orders/finish",
+  component: OrderStatusPage,
+})
+
 const appConsoleRoute = createRoute({
   getParentRoute: () => appLayoutRoute,
   path: "/console",
@@ -237,6 +244,7 @@ export const routeTree = rootRoute.addChildren([
     appBillingRoute,
     appOrdersRoute,
     appCheckoutRoute,
+    appOrdersFinishRoute,
     appConsoleRoute,
     appPlansManageRoute,
     appOrdersListRoute,

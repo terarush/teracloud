@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { plansApi, type CreatePlanRequest, type UpdatePlanRequest } from "../api/plans"
+import { plansApi   } from "../api/plans"
+import type {CreatePlanRequest, UpdatePlanRequest} from "../api/plans";
 
 export function useCreatePlanMutation() {
   const queryClient = useQueryClient()
