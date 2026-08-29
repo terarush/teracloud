@@ -8,8 +8,6 @@ RUN --mount=type=cache,target=/root/.npm \
 
 COPY . .
 
-COPY .env.prod .env
-
 RUN npm run build
 
 FROM nginx:1.27-alpine AS runtime
