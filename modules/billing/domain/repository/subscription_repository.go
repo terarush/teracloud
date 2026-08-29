@@ -15,6 +15,7 @@ type SubscriptionRepository interface {
 	FindExpiringActive(ctx context.Context, before time.Time) ([]*entity.Subscription, error)
 	FindExpiredGrace(ctx context.Context, now time.Time) ([]*entity.Subscription, error)
 	FindSuspendedToTerminate(ctx context.Context, before time.Time) ([]*entity.Subscription, error)
+	FindByOrderIDAndPlanID(ctx context.Context, orderID, planID uint) (*entity.Subscription, error)
 	Create(ctx context.Context, sub *entity.Subscription) error
 	Update(ctx context.Context, sub *entity.Subscription) error
 }

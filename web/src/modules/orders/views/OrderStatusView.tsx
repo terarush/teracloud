@@ -15,6 +15,8 @@ import {
   HardDrive
 } from "lucide-react"
 
+import { ordersApi } from "@/service/api/orders"
+
 export const OrderStatusView: React.FC = () => {
   const search = useSearch({ strict: false }) as {
     order_id?: string
@@ -29,6 +31,20 @@ export const OrderStatusView: React.FC = () => {
   const cleanOrderNumber = rawOrderId.startsWith("TERA-") ? rawOrderId.replace("TERA-", "") : rawOrderId
 
   const { data: order, isLoading, isError, refetch } = useOrderStatusQuery(cleanOrderNumber, !!cleanOrderNumber)
+
+  // If redirected with settlement or mock_token and backend order is not yet marked paid, trigger confirmation
+  React.useEffect(() => {
+    if (
+      cleanOrderNumber &&
+      order &&
+      order.status !== "paid" &&
+      (search.transaction_status === "settlement" || search.transaction_status === "capture" || search.mock_token)
+    ) {
+      ordersApi.simulatePayment(cleanOrderNumber).then(() => {
+        refetch()
+      }).catch(console.error)
+    }
+  }, [cleanOrderNumber, order?.status, search.transaction_status, search.mock_token, refetch])
 
   const isPaid = order?.status === "paid" || search.transaction_status === "settlement" || search.transaction_status === "capture"
   const isFailed = order?.status === "failed" || search.transaction_status === "deny" || search.transaction_status === "expire"

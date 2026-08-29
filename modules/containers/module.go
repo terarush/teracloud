@@ -10,6 +10,8 @@ import (
 	"ruang-tukar/internal/pkg/docker"
 	"ruang-tukar/internal/pkg/logger"
 	"ruang-tukar/internal/pkg/portmanager"
+	billingRepo "ruang-tukar/modules/billing/domain/repository"
+	billingService "ruang-tukar/modules/billing/domain/service"
 	"ruang-tukar/modules/containers/domain/repository"
 	"ruang-tukar/modules/containers/domain/service"
 	"ruang-tukar/modules/containers/handler"
@@ -62,6 +64,8 @@ func (m *Module) Initialize(db *gorm.DB, log *logger.Logger, event *bus.EventBus
 	containerRepo := repository.NewContainerRepositoryImpl()
 	eventRepo := repository.NewEventRepositoryImpl()
 	pRepo := planRepo.NewPlanRepositoryImpl()
+	subRepo := billingRepo.NewSubscriptionRepositoryImpl()
+	subService := billingService.NewSubscriptionService(subRepo)
 
 	// Services
 	m.containerService = service.NewContainerService(
@@ -83,18 +87,24 @@ func (m *Module) Initialize(db *gorm.DB, log *logger.Logger, event *bus.EventBus
 				ctx := context.Background()
 				if len(order.Items) > 0 {
 					for _, item := range order.Items {
-						subID := uint(0)
-						if item.SubscriptionID != nil {
-							subID = *item.SubscriptionID
+						sub, err := subService.EnsureSubscription(ctx, order.UserID, item.PlanID, order.ID)
+						if err != nil {
+							m.logger.Error("Failed to ensure subscription for order %s, plan %d: %v", order.OrderNumber, item.PlanID, err)
+							continue
 						}
-						_ = m.provisioningService.ProvisionContainer(ctx, order.UserID, subID, item.PlanID)
+						if err := m.provisioningService.ProvisionContainer(ctx, order.UserID, sub.ID, item.PlanID); err != nil {
+							m.logger.Error("Failed to provision container for order %s, plan %d: %v", order.OrderNumber, item.PlanID, err)
+						}
 					}
 				} else if order.PlanID != nil {
-					subID := uint(0)
-					if order.SubscriptionID != nil {
-						subID = *order.SubscriptionID
+					sub, err := subService.EnsureSubscription(ctx, order.UserID, *order.PlanID, order.ID)
+					if err != nil {
+						m.logger.Error("Failed to ensure subscription for order %s, plan %d: %v", order.OrderNumber, *order.PlanID, err)
+						return
 					}
-					_ = m.provisioningService.ProvisionContainer(ctx, order.UserID, subID, *order.PlanID)
+					if err := m.provisioningService.ProvisionContainer(ctx, order.UserID, sub.ID, *order.PlanID); err != nil {
+						m.logger.Error("Failed to provision container for order %s, plan %d: %v", order.OrderNumber, *order.PlanID, err)
+					}
 				}
 			}()
 		}

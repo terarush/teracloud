@@ -337,6 +337,43 @@ func (s *OrderService) HandleWebhookNotification(ctx context.Context, payload ma
 	return nil
 }
 
+// MarkOrderAsPaid marks an order as paid and triggers order.paid event.
+func (s *OrderService) MarkOrderAsPaid(ctx context.Context, orderID uint, paymentType, transactionID string) (*entity.Order, error) {
+	order, err := s.orderRepo.FindByID(ctx, orderID)
+	if err != nil {
+		if err == repository.ErrRecordNotFound {
+			return nil, orderErrs.ErrOrderNotFound
+		}
+		return nil, err
+	}
+
+	if order.Status == "paid" {
+		return order, nil
+	}
+
+	now := time.Now()
+	order.Status = "paid"
+	order.PaidAt = &now
+	if paymentType != "" {
+		order.MidtransPaymentType = paymentType
+	}
+	if transactionID != "" {
+		order.MidtransTransactionID = transactionID
+	}
+	order.UpdatedAt = now
+
+	if err := s.orderRepo.Update(ctx, order); err != nil {
+		return nil, err
+	}
+
+	s.event.Publish(bus.Event{
+		Type:    "order.paid",
+		Payload: order,
+	})
+
+	return order, nil
+}
+
 func (s *OrderService) GetOrdersByUserID(ctx context.Context, userID uint) ([]*entity.Order, error) {
 	return s.orderRepo.FindByUserID(ctx, userID)
 }

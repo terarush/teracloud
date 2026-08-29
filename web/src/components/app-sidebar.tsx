@@ -87,7 +87,7 @@ export function AppSidebar() {
           return (
             <SidebarGroup key={idx} className="p-0 group-data-[collapsible=icon]:px-0">
               {group.groupName && (
-                className="mb-2 px-3 text-[9px] font-semibold uppercase tracking-[0.16em] text-muted-foreground group-data-[collapsible=icon]:hidden"
+                <SidebarGroupLabel className="mb-2 px-3 text-[9px] font-semibold uppercase tracking-[0.16em] text-muted-foreground group-data-[collapsible=icon]:hidden">
                   {group.groupName}
                 </SidebarGroupLabel>
               )}
@@ -130,7 +130,7 @@ export function AppSidebar() {
       <SidebarFooter className="gap-1.5 border-t border-sidebar-border p-2.5 group-data-[collapsible=icon]:p-1.5 group-data-[collapsible=icon]:py-2">
         {/* User Profile Card with Dropdown Settings */}
         <DropdownMenu>
-          className="flex w-full cursor-pointer items-center justify-between rounded-lg p-2 text-left transition-colors hover:bg-muted group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-1"
+          <DropdownMenuTrigger asChild className="flex w-full cursor-pointer items-center justify-between rounded-lg p-2 text-left transition-colors hover:bg-muted group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-1">
             <div className="flex items-center gap-2.5 min-w-0">
               <UserAvatar user={user} className="h-7 w-7 shrink-0 rounded-lg ring-1 ring-border" />
               <div className="flex flex-col truncate group-data-[collapsible=icon]:hidden">

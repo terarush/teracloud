@@ -73,4 +73,9 @@ export const ordersApi = {
     const res = await apiClient.get<any>("/orders/stats")
     return (res as any)?.data ?? res.data ?? {}
   },
+
+  simulatePayment: async (orderIdOrNumber: string | number): Promise<Order> => {
+    const res = await apiClient.post<Order>(`/orders/${orderIdOrNumber}/pay`)
+    return (res as any)?.data ?? res.data
+  },
 }

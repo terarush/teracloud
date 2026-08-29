@@ -46,6 +46,25 @@ func (s *SubscriptionService) CreateSubscription(
 	return sub, nil
 }
 
+func (s *SubscriptionService) GetSubscriptionByOrderIDAndPlanID(ctx context.Context, orderID, planID uint) (*entity.Subscription, error) {
+	sub, err := s.subRepo.FindByOrderIDAndPlanID(ctx, orderID, planID)
+	if err != nil {
+		if err == repository.ErrRecordNotFound {
+			return nil, billingErrs.ErrSubscriptionNotFound
+		}
+		return nil, err
+	}
+	return sub, nil
+}
+
+func (s *SubscriptionService) EnsureSubscription(ctx context.Context, userID, planID, orderID uint) (*entity.Subscription, error) {
+	sub, err := s.subRepo.FindByOrderIDAndPlanID(ctx, orderID, planID)
+	if err == nil && sub != nil {
+		return sub, nil
+	}
+	return s.CreateSubscription(ctx, userID, planID, orderID)
+}
+
 func (s *SubscriptionService) GetUserSubscriptions(ctx context.Context, userID uint) ([]*entity.Subscription, error) {
 	return s.subRepo.FindByUserID(ctx, userID)
 }

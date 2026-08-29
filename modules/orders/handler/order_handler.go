@@ -215,12 +215,45 @@ func (h *OrderHandler) GetOrderStats(c *echo.Context) error {
 	return h.r.SuccessResponse(c, stats, "Order statistics retrieved successfully")
 }
 
+// SimulatePayment marks an order as paid (for development/testing or direct confirmation)
+func (h *OrderHandler) SimulatePayment(c *echo.Context) error {
+	ctx := c.Request().Context()
+	userID := utils.UserIDFromCtx(c)
+	userRole := utils.UserRoleFromCtx(c)
+	param := c.Param("id")
+
+	var order *entity.Order
+	var err error
+
+	if id, parseErr := strconv.ParseUint(param, 10, 32); parseErr == nil {
+		order, err = h.orderService.GetOrderByID(ctx, uint(id))
+	} else {
+		order, err = h.orderService.GetOrderByOrderNumber(ctx, param)
+	}
+
+	if err != nil {
+		return h.r.NotFoundResponse(c, orderErrs.ErrOrderNotFound)
+	}
+
+	if userRole != middleware.RoleAdmin && order.UserID != userID {
+		return h.r.ForbiddenResponse(c, utils.NewAppError(utils.CodeForbidden, "Access denied"))
+	}
+
+	updatedOrder, err := h.orderService.MarkOrderAsPaid(ctx, order.ID, "simulated", "SIM-"+strconv.FormatInt(order.Amount, 10))
+	if err != nil {
+		return h.r.InternalServerErrorResponse(c, err)
+	}
+
+	return h.r.SuccessResponse(c, response.FromEntity(updatedOrder), "Payment confirmed successfully")
+}
+
 // RegisterRoutes registers order routes
 func (h *OrderHandler) RegisterRoutes(e *echo.Echo, basePath string) {
 	// Protected user/admin routes
 	group := e.Group(basePath+"/orders", middleware.Auth)
 	group.POST("", h.CreateOrder)
 	group.POST("/checkout", h.CheckoutCart)
+	group.POST("/:id/pay", h.SimulatePayment)
 	group.GET("", h.GetOrders)
 	group.GET("/stats", h.GetOrderStats, middleware.RequireAdmin)
 	group.GET("/:id/status", h.GetOrderStatus)

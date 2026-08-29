@@ -71,6 +71,20 @@ func (r *SubscriptionRepositoryImpl) FindSuspendedToTerminate(ctx context.Contex
 	return subs, result.Error
 }
 
+func (r *SubscriptionRepositoryImpl) FindByOrderIDAndPlanID(ctx context.Context, orderID, planID uint) (*entity.Subscription, error) {
+	var sub entity.Subscription
+	result := database.DB.WithContext(ctx).
+		Where("current_order_id = ? AND plan_id = ?", orderID, planID).
+		First(&sub)
+	if result.Error != nil {
+		if result.RowsAffected == 0 {
+			return nil, ErrRecordNotFound
+		}
+		return nil, result.Error
+	}
+	return &sub, nil
+}
+
 func (r *SubscriptionRepositoryImpl) Create(ctx context.Context, sub *entity.Subscription) error {
 	return database.DB.WithContext(ctx).Create(sub).Error
 }
