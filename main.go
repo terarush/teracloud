@@ -12,6 +12,7 @@ import (
 	"ruang-tukar/internal/pkg/middleware"
 	"ruang-tukar/modules/auth"
 	"ruang-tukar/modules/billing"
+	"ruang-tukar/modules/cart"
 	"ruang-tukar/modules/containers"
 	"ruang-tukar/modules/orders"
 	"ruang-tukar/modules/plans"
@@ -63,6 +64,7 @@ func main() {
 	application.RegisterModule(user.NewModule())
 	application.RegisterModule(auth.NewModule())
 	application.RegisterModule(plans.NewModule())
+	application.RegisterModule(cart.NewModule())
 	application.RegisterModule(orders.NewModule())
 	application.RegisterModule(containers.NewModule())
 	application.RegisterModule(billing.NewModule())
