@@ -5,7 +5,7 @@ import { ContainerActions } from "../components/ContainerActions"
 import { ContainerStats } from "../components/ContainerStats"
 import { ContainerEventsTable } from "../components/ContainerEventsTable"
 import { Terminal } from "../components/Terminal"
-import { ArrowLeft, Loader2, Terminal as TerminalIcon, BarChart3, ListOrdered, Info } from "lucide-react"
+import { ArrowLeft, Loader2, Terminal as TerminalIcon, BarChart3, ListOrdered, Info, ExternalLink } from "lucide-react"
 import { useNavigate } from "@tanstack/react-router"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -112,7 +112,8 @@ export const ContainerDetailView: React.FC<ContainerDetailViewProps> = ({ contai
 
       {/* Tab Panels with persistent Terminal session */}
       {activeTab === "overview" && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Card className="ring-1 ring-foreground/10">
             <CardContent className="p-5 space-y-3">
               <h2 className="text-sm font-semibold text-foreground">Alokasi Hardware</h2>
@@ -135,18 +136,32 @@ export const ContainerDetailView: React.FC<ContainerDetailViewProps> = ({ contai
 
           <Card className="ring-1 ring-foreground/10">
             <CardContent className="p-5 space-y-3">
-              <h2 className="text-sm font-semibold text-foreground">Koneksi &amp; Port Terbuka</h2>
+              <h2 className="text-sm font-semibold text-foreground">Akses Domain &amp; Layanan</h2>
               <div className="space-y-2 text-xs">
-                {Object.keys(assigned).length > 0 ? (
+                {container.tunnel_routes && container.tunnel_routes.length > 0 ? (
+                  container.tunnel_routes.map((route, idx) => (
+                    <div key={idx} className="flex justify-between items-center py-1.5 border-b border-border/50">
+                      <span className="text-muted-foreground capitalize font-medium">{route.name.replace("_", " ")}:</span>
+                      <a
+                        href={route.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex items-center gap-1.5 font-mono font-semibold text-primary hover:underline"
+                      >
+                        {route.url} <ExternalLink className="size-3" />
+                      </a>
+                    </div>
+                  ))
+                ) : Object.keys(assigned).length > 0 ? (
                   Object.entries(assigned).map(([name, port]) => (
                     <div key={name} className="flex justify-between items-center py-1.5 border-b border-border/50">
                       <span className="text-muted-foreground capitalize font-medium">{name.replace("_", " ")}:</span>
-                      <span className="font-mono font-semibold text-primary">Port {port}</span>
+                      <span className="font-mono text-muted-foreground">Port {port} (Menunggu DNS)</span>
                     </div>
                   ))
                 ) : (
                   <div className="py-2 text-muted-foreground italic">
-                    Belum ada port yang dialokasikan
+                    Belum ada port atau domain yang dialokasikan
                   </div>
                 )}
                 <div className="flex justify-between items-center py-1.5">
@@ -157,6 +172,7 @@ export const ContainerDetailView: React.FC<ContainerDetailViewProps> = ({ contai
             </CardContent>
           </Card>
         </div>
+      </div>
       )}
 
       {/* Terminal is kept mounted to maintain WebSocket & history state */}

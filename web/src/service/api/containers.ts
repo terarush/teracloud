@@ -15,6 +15,12 @@ export interface Container {
   disk_limit: number
   port_mappings?: Record<string, number>
   assigned_ports?: Record<string, number>
+  tunnel_routes?: Array<{
+    subdomain: string
+    host_port: number
+    name: string
+    url: string
+  }>
   last_started_at?: string
   last_stopped_at?: string
   error_message?: string
