@@ -6,6 +6,7 @@ export const companyMeta = {
   logoWhite: "/company/logo.png",
   icon: "/favicon.ico",
   title: "TeraRush - Open Source Development Agency",
+  baseDomain: "terarush.dev",
   description:
     "Empowering developers worldwide through open-source innovation. Build, collaborate, and scale with reliable web solutions.",
   tagline: "Build. Collaborate. Innovate.",

@@ -1,16 +1,23 @@
 "use client"
-
 import * as React from "react"
 import {
   DayPicker,
-  getDefaultClassNames,
-  type DayButton,
-  type Locale,
+  getDefaultClassNames
+
+  
 } from "react-day-picker"
+import type {DayButton, Locale} from "react-day-picker";
+import { enUS, id as idLocale } from "date-fns/locale"
+import { useTranslation } from "react-i18next"
 
 import { cn } from "@/lib/utils"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon } from "lucide-react"
+
+const dayPickerLocales: Record<string, Locale> = {
+  en: enUS,
+  id: idLocale,
+}
 
 function Calendar({
   className,
@@ -26,21 +33,27 @@ function Calendar({
   buttonVariant?: React.ComponentProps<typeof Button>["variant"]
 }) {
   const defaultClassNames = getDefaultClassNames()
+  const { i18n } = useTranslation()
+
+  const fallbackLocale = dayPickerLocales[
+    i18n.resolvedLanguage ?? "id"
+  ] as Locale | undefined
+  const resolvedLocale = locale ?? fallbackLocale ?? enUS
 
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
       className={cn(
-        "group/calendar bg-background p-2 [--cell-radius:var(--radius-md)] [--cell-size:--spacing(7)] in-data-[slot=card-content]:bg-transparent in-data-[slot=popover-content]:bg-transparent",
+        "group/calendar bg-background/95 backdrop-blur-xs p-3 rounded-xl border border-border/70 shadow-xs [--cell-radius:var(--radius-md)] [--cell-size:--spacing(7)] in-data-[slot=card-content]:bg-transparent in-data-[slot=card-content]:border-none in-data-[slot=card-content]:p-0 in-data-[slot=card-content]:shadow-none in-data-[slot=popover-content]:bg-transparent in-data-[slot=popover-content]:border-none in-data-[slot=popover-content]:p-0 in-data-[slot=popover-content]:shadow-none",
         String.raw`rtl:**:[.rdp-button\_next>svg]:rotate-180`,
         String.raw`rtl:**:[.rdp-button\_previous>svg]:rotate-180`,
         className
       )}
       captionLayout={captionLayout}
-      locale={locale}
+      locale={resolvedLocale}
       formatters={{
         formatMonthDropdown: (date) =>
-          date.toLocaleString(locale?.code, { month: "short" }),
+          date.toLocaleString(resolvedLocale.code, { month: "short" }),
         ...formatters,
       }}
       classNames={{
@@ -134,39 +147,39 @@ function Calendar({
         ...classNames,
       }}
       components={{
-        Root: ({ className, rootRef, ...props }) => {
+        Root: ({ className: rootClassName, rootRef, ...restProps }) => {
           return (
             <div
               data-slot="calendar"
               ref={rootRef}
-              className={cn(className)}
-              {...props}
+              className={cn(rootClassName)}
+              {...restProps}
             />
           )
         },
-        Chevron: ({ className, orientation, ...props }) => {
+        Chevron: ({ className: chevronClassName, orientation, ...chevronProps }) => {
           if (orientation === "left") {
             return (
-              <ChevronLeftIcon className={cn("size-4", className)} {...props} />
+              <ChevronLeftIcon className={cn("size-4", chevronClassName)} {...chevronProps} />
             )
           }
 
           if (orientation === "right") {
             return (
-              <ChevronRightIcon className={cn("size-4", className)} {...props} />
+              <ChevronRightIcon className={cn("size-4", chevronClassName)} {...chevronProps} />
             )
           }
 
           return (
-            <ChevronDownIcon className={cn("size-4", className)} {...props} />
+            <ChevronDownIcon className={cn("size-4", chevronClassName)} {...chevronProps} />
           )
         },
-        DayButton: ({ ...props }) => (
-          <CalendarDayButton locale={locale} {...props} />
+        DayButton: ({ ...dayButtonProps }) => (
+          <CalendarDayButton locale={resolvedLocale} {...dayButtonProps} />
         ),
-        WeekNumber: ({ children, ...props }) => {
+        WeekNumber: ({ children, ...weekNumberProps }) => {
           return (
-            <td {...props}>
+            <td {...weekNumberProps}>
               <div className="flex size-(--cell-size) items-center justify-center text-center">
                 {children}
               </div>
@@ -209,7 +222,7 @@ function CalendarDayButton({
       data-range-end={modifiers.range_end}
       data-range-middle={modifiers.range_middle}
       className={cn(
-        "relative isolate z-10 flex aspect-square size-auto w-full min-w-(--cell-size) flex-col gap-1 border-0 leading-none font-normal group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10 group-data-[focused=true]/day:border-ring group-data-[focused=true]/day:ring-[3px] group-data-[focused=true]/day:ring-ring/50 data-[range-end=true]:rounded-(--cell-radius) data-[range-end=true]:rounded-r-(--cell-radius) data-[range-end=true]:bg-primary data-[range-end=true]:text-primary-foreground data-[range-middle=true]:rounded-none data-[range-middle=true]:bg-muted data-[range-middle=true]:text-foreground data-[range-start=true]:rounded-(--cell-radius) data-[range-start=true]:rounded-l-(--cell-radius) data-[range-start=true]:bg-primary data-[range-start=true]:text-primary-foreground data-[selected-single=true]:bg-primary data-[selected-single=true]:text-primary-foreground dark:hover:text-foreground [&>span]:text-xs [&>span]:opacity-70",
+        "relative isolate z-10 flex aspect-square size-auto w-full min-w-(--cell-size) flex-col gap-1 border-0 leading-none font-normal transition-all duration-150 group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10 group-data-[focused=true]/day:border-ring group-data-[focused=true]/day:ring-2 group-data-[focused=true]/day:ring-ring/40 data-[range-end=true]:rounded-(--cell-radius) data-[range-end=true]:rounded-r-(--cell-radius) data-[range-end=true]:bg-primary data-[range-end=true]:text-primary-foreground data-[range-middle=true]:rounded-none data-[range-middle=true]:bg-muted/80 data-[range-middle=true]:text-foreground data-[range-start=true]:rounded-(--cell-radius) data-[range-start=true]:rounded-l-(--cell-radius) data-[range-start=true]:bg-primary data-[range-start=true]:text-primary-foreground data-[selected-single=true]:bg-primary data-[selected-single=true]:text-primary-foreground dark:hover:text-foreground [&>span]:text-xs [&>span]:opacity-70",
         defaultClassNames.day,
         className
       )}

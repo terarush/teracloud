@@ -83,7 +83,7 @@ function ChartContainer({
 
 const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
   const colorConfig = Object.entries(config).filter(
-    ([, config]) => config.theme ?? config.color
+    ([, itemConfig]) => itemConfig.theme ?? itemConfig.color
   )
 
   if (!colorConfig.length) {
@@ -152,11 +152,11 @@ function ChartTooltipContent({
     }
 
     const [item] = payload
-    const key = `${labelKey ?? item?.dataKey ?? item?.name ?? "value"}`
+    const key = `${labelKey ?? item.dataKey ?? item.name ?? "value"}`
     const itemConfig = getPayloadConfigFromPayload(config, item, key)
     const value =
       !labelKey && typeof label === "string"
-        ? (config[label]?.label ?? label)
+        ? (config[label].label ?? label)
         : itemConfig?.label
 
     if (labelFormatter) {
@@ -191,7 +191,7 @@ function ChartTooltipContent({
   return (
     <div
       className={cn(
-        "grid min-w-32 items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl",
+        "grid min-w-32 items-start gap-1.5 rounded-xl border border-border/70 bg-popover/95 backdrop-blur-md px-3 py-2 text-xs text-popover-foreground shadow-lg transition-all duration-150",
         className
       )}
     >
@@ -212,7 +212,7 @@ function ChartTooltipContent({
                   indicator === "dot" && "items-center"
                 )}
               >
-                {formatter && item?.value !== undefined && item.name ? (
+                {formatter && item.value !== undefined && item.name ? (
                   formatter(item.value, item.name, item, index, item.payload)
                 ) : (
                   <>
@@ -349,7 +349,7 @@ function getPayloadConfigFromPayload(
     key in payload &&
     typeof payload[key as keyof typeof payload] === "string"
   ) {
-    configLabelKey = payload[key as keyof typeof payload] as string
+    configLabelKey = payload[key as keyof typeof payload]
   } else if (
     payloadPayload &&
     key in payloadPayload &&
@@ -357,7 +357,7 @@ function getPayloadConfigFromPayload(
   ) {
     configLabelKey = payloadPayload[
       key as keyof typeof payloadPayload
-    ] as string
+    ]
   }
 
   return configLabelKey in config ? config[configLabelKey] : config[key]

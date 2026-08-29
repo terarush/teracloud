@@ -1,7 +1,9 @@
 package handler
 
 import (
+	"ruang-tukar/internal/pkg/audit"
 	"ruang-tukar/internal/pkg/bus"
+	"ruang-tukar/internal/pkg/database"
 	"ruang-tukar/internal/pkg/logger"
 	"ruang-tukar/internal/pkg/middleware"
 	"ruang-tukar/internal/pkg/utils"
@@ -240,11 +242,71 @@ func (h *UserHandler) GetUserProfile(c *echo.Context) error {
 	return h.r.SuccessResponse(c, response.FromEntity(user), "Profile retrieved successfully")
 }
 
+// GetStats returns global platform statistics (admin)
+func (h *UserHandler) GetStats(c *echo.Context) error {
+	ctx := c.Request().Context()
+
+	var totalUsers int64
+	_ = database.DB.WithContext(ctx).Table(database.T("users")).Count(&totalUsers).Error
+
+	var totalPlans int64
+	_ = database.DB.WithContext(ctx).Table(database.HT("plans")).Where("deleted_at IS NULL").Count(&totalPlans).Error
+
+	var totalOrders int64
+	var totalRevenue int64
+	type orderAgg struct {
+		Count   int64
+		Revenue int64
+	}
+	var agg orderAgg
+	_ = database.DB.WithContext(ctx).Table(database.HT("orders")).
+		Select("COUNT(*) as count, COALESCE(SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END), 0) as revenue").
+		Scan(&agg).Error
+	totalOrders = agg.Count
+	totalRevenue = agg.Revenue
+
+	var activeContainers int64
+	_ = database.DB.WithContext(ctx).Table(database.HT("containers")).
+		Where("status = ? AND deleted_at IS NULL", "running").
+		Count(&activeContainers).Error
+
+	stats := map[string]interface{}{
+		"total_revenue":     totalRevenue,
+		"active_containers": activeContainers,
+		"total_orders":      totalOrders,
+		"total_plans":       totalPlans,
+		"total_users":       totalUsers,
+	}
+
+	return h.r.SuccessResponse(c, stats, "Platform statistics retrieved successfully")
+}
+
+// GetAuditLogs returns audit logs (admin)
+func (h *UserHandler) GetAuditLogs(c *echo.Context) error {
+	ctx := c.Request().Context()
+
+	var logs []audit.AuditLog
+	result := database.DB.WithContext(ctx).
+		Order("created_at DESC").
+		Limit(100).
+		Find(&logs)
+	if result.Error != nil {
+		return h.r.InternalServerErrorResponse(c, result.Error)
+	}
+
+	return h.r.SuccessResponse(c, logs, "Audit logs retrieved successfully")
+}
+
 // RegisterRoutes registers the user routes
 func (h *UserHandler) RegisterRoutes(e *echo.Echo, basePath string) {
 	// Public routes
 	pub := e.Group(basePath)
 	pub.GET("/u/:username", h.GetUserProfile)
+
+	// Admin platform stats & audit routes
+	adminGroup := e.Group(basePath, middleware.RequireAdmin)
+	adminGroup.GET("/stats", h.GetStats)
+	adminGroup.GET("/audit-logs", h.GetAuditLogs)
 
 	// Auth routes
 	group := e.Group(basePath+"/users", middleware.Auth)

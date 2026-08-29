@@ -1,9 +1,8 @@
 "use client"
 
 import * as React from "react"
-import useEmblaCarousel, {
-  type UseEmblaCarouselType,
-} from "embla-carousel-react"
+import useEmblaCarousel from "embla-carousel-react"
+import type {UseEmblaCarouselType} from "embla-carousel-react";
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -61,10 +60,10 @@ function Carousel({
   const [canScrollPrev, setCanScrollPrev] = React.useState(false)
   const [canScrollNext, setCanScrollNext] = React.useState(false)
 
-  const onSelect = React.useCallback((api: CarouselApi) => {
-    if (!api) return
-    setCanScrollPrev(api.canScrollPrev())
-    setCanScrollNext(api.canScrollNext())
+  const onSelect = React.useCallback((carouselApi: CarouselApi) => {
+    if (!carouselApi) return
+    setCanScrollPrev(carouselApi.canScrollPrev())
+    setCanScrollNext(carouselApi.canScrollNext())
   }, [])
 
   const scrollPrev = React.useCallback(() => {
@@ -100,7 +99,7 @@ function Carousel({
     api.on("select", onSelect)
 
     return () => {
-      api?.off("select", onSelect)
+      api.off("select", onSelect)
     }
   }, [api, onSelect])
 
@@ -110,8 +109,8 @@ function Carousel({
         carouselRef,
         api: api,
         opts,
-        orientation:
-          orientation || (opts?.axis === "y" ? "vertical" : "horizontal"),
+        orientation,
+
         scrollPrev,
         scrollNext,
         canScrollPrev,
@@ -185,7 +184,7 @@ function CarouselPrevious({
       variant={variant}
       size={size}
       className={cn(
-        "absolute touch-manipulation rounded-full",
+        "absolute touch-manipulation rounded-full border-border/70 bg-background/90 backdrop-blur-md shadow-2xs hover:shadow-xs transition-all duration-200 focus-visible:ring-2 focus-visible:ring-ring/40",
         orientation === "horizontal"
           ? "inset-y-0 -left-12 my-auto"
           : "-top-12 left-1/2 -translate-x-1/2 rotate-90",
@@ -215,7 +214,7 @@ function CarouselNext({
       variant={variant}
       size={size}
       className={cn(
-        "absolute touch-manipulation rounded-full",
+        "absolute touch-manipulation rounded-full border-border/70 bg-background/90 backdrop-blur-md shadow-2xs hover:shadow-xs transition-all duration-200 focus-visible:ring-2 focus-visible:ring-ring/40",
         orientation === "horizontal"
           ? "inset-y-0 -right-12 my-auto"
           : "-bottom-12 left-1/2 -translate-x-1/2 rotate-90",

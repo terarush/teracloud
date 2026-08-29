@@ -1,16 +1,17 @@
 import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
+import { cva  } from "class-variance-authority"
+import type {VariantProps} from "class-variance-authority";
 
 import { cn } from "@/lib/utils"
 
 const alertVariants = cva(
-  "group/alert relative grid w-full gap-0.5 rounded-lg border px-2.5 py-2 text-left text-sm has-data-[slot=alert-action]:relative has-data-[slot=alert-action]:pr-18 has-[>svg]:grid-cols-[auto_1fr] has-[>svg]:gap-x-2 *:[svg]:row-span-2 *:[svg]:translate-y-0.5 *:[svg]:text-current *:[svg:not([class*='size-'])]:size-4",
+  "group/alert relative grid w-full gap-0.5 rounded-xl border border-border/70 bg-card/90 px-3.5 py-3 text-left text-sm shadow-2xs backdrop-blur-2xs transition-all duration-150 ease-out has-data-[slot=alert-action]:relative has-data-[slot=alert-action]:pr-18 has-[>svg]:grid-cols-[auto_1fr] has-[>svg]:gap-x-2.5 *:[svg]:row-span-2 *:[svg]:translate-y-0.5 *:[svg]:text-current *:[svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
-        default: "bg-card text-card-foreground",
+        default: "bg-card/95 text-card-foreground",
         destructive:
-          "bg-card text-destructive *:data-[slot=alert-description]:text-destructive/90 *:[svg]:text-current",
+          "bg-destructive/10 border-destructive/30 text-destructive *:data-[slot=alert-description]:text-destructive/90 *:[svg]:text-current dark:bg-destructive/20",
       },
     },
     defaultVariants: {

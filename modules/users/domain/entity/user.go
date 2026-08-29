@@ -2,6 +2,8 @@ package entity
 
 import (
 	"time"
+
+	"ruang-tukar/internal/pkg/database"
 )
 
 // User represents a user entity in Teracloud
@@ -22,7 +24,7 @@ type User struct {
 
 // TableName specifies the table name for User
 func (*User) TableName() string {
-	return "users"
+	return database.T("users")
 }
 
 // FullName returns the full display name.

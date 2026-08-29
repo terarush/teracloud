@@ -11,6 +11,11 @@ import (
 	"ruang-tukar/internal/pkg/logger"
 	"ruang-tukar/internal/pkg/middleware"
 	"ruang-tukar/modules/auth"
+	"ruang-tukar/modules/billing"
+	"ruang-tukar/modules/cart"
+	"ruang-tukar/modules/containers"
+	"ruang-tukar/modules/orders"
+	"ruang-tukar/modules/plans"
 	user "ruang-tukar/modules/users"
 )
 
@@ -58,6 +63,11 @@ func main() {
 	// register modules
 	application.RegisterModule(user.NewModule())
 	application.RegisterModule(auth.NewModule())
+	application.RegisterModule(plans.NewModule())
+	application.RegisterModule(cart.NewModule())
+	application.RegisterModule(orders.NewModule())
+	application.RegisterModule(containers.NewModule())
+	application.RegisterModule(billing.NewModule())
 
 	// initialize the application
 	if err := application.Initialize(); err != nil {

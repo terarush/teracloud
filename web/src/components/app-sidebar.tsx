@@ -1,11 +1,14 @@
+import { useMemo } from "react"
 import { useRouterState, useNavigate } from "@tanstack/react-router"
-import { LogOut, Moon, Sun } from "lucide-react"
-
+import { LogOut, Moon, Sun, Languages } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/contexts/auth-context"
 import { useTheme } from "@/components/theme-provider"
+import { useCartQuery } from "@/service/query/cart"
 import { companyMeta } from "@/meta"
-import { sidebarContentList } from "@/globals/content/app-sidebar"
+import { getSidebarContentList } from "@/globals/content/app-sidebar"
+import { currentLocale, changeLocale } from "@/lib/i18n"
+import { useTranslation } from "react-i18next"
 
 import {
   Sidebar,
@@ -19,6 +22,7 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
+  SidebarMenuBadge,
 } from "@/components/ui/sidebar"
 import { UserAvatar } from "@/components/user-avatar"
 
@@ -29,11 +33,20 @@ export function AppSidebar() {
   const { user, logout } = useAuth()
   const { isMobile, setOpenMobile } = useSidebar()
   const { theme, setTheme } = useTheme()
+  const { t, i18n } = useTranslation()
+  const { data: cart } = useCartQuery()
 
+  const activeLocale = currentLocale()
   const isAdmin = user?.role === "admin"
+  const cartItemCount = cart ? (cart.total_items || cart.items.length || 0) : 0
 
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark")
+  }
+
+  const toggleLanguage = () => {
+    const nextLocale = activeLocale === "en" ? "id" : "en"
+    changeLocale(nextLocale)
   }
 
   const handleLogout = async () => {
@@ -46,112 +59,133 @@ export function AppSidebar() {
     navigate({ to: href as any })
   }
 
-  const logoSrc = theme === "dark" && companyMeta.logoWhite ? companyMeta.logoWhite : companyMeta.logo
+  const sidebarList = useMemo(() => getSidebarContentList(t), [i18n.language, t])
+
+  const filteredSidebarContent = sidebarList.filter((group) => {
+    if (group.admin && !isAdmin) return false
+    return true
+  })
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-border/50 bg-sidebar">
-      {/* 1. Header with Logo & Brand */}
-      <SidebarHeader className="h-14 border-b border-border/50 p-0 flex flex-row items-center">
+    <Sidebar collapsible="icon" variant="sidebar" className="border-r bg-sidebar text-sidebar-foreground">
+      <SidebarHeader className="h-14 flex flex-row items-center justify-center border-b border-border/50 group-data-[collapsible=icon]:px-0">
         <div
-          className="flex items-center gap-3 cursor-pointer overflow-hidden w-full h-full px-4 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center"
+          className="flex items-center gap-2.5 overflow-hidden w-full px-5 cursor-pointer group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0"
           onClick={() => handleItemClick("/app")}
         >
-          <img
-            src={logoSrc}
-            alt={companyMeta.name}
-            className="size-7 rounded-lg object-contain shrink-0"
-          />
-          <div className="flex flex-col truncate group-data-[collapsible=icon]:hidden">
-            <span className="text-sm font-bold tracking-tight text-foreground truncate">
-              {companyMeta.name}
-            </span>
-            <span className="text-[10px] text-muted-foreground truncate">
-              Cloud Console
-            </span>
+          <div className="flex size-6 shrink-0 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground text-xs font-bold">
+            {companyMeta.name.charAt(0) || "T"}
           </div>
+          <span className="text-sm font-semibold tracking-tight text-sidebar-foreground truncate group-data-[collapsible=icon]:hidden">
+            {companyMeta.name}
+          </span>
         </div>
       </SidebarHeader>
 
-      {/* 2. Content & Nav Groups */}
-      <SidebarContent className="px-2 py-4 gap-6 group-data-[collapsible=icon]:px-0">
-        {sidebarContentList.map((group, idx) => {
-          if (group.admin && !isAdmin) return null
+      <SidebarContent className="py-3">
+        {filteredSidebarContent.map((group, idx) => (
+          <SidebarGroup key={group.groupNameKey || idx}>
+            {group.groupName && (
+              <SidebarGroupLabel>
+                {group.groupName}
+              </SidebarGroupLabel>
+            )}
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {group.items.map((item) => {
+                  const Icon = item.icon
+                  const isActive = currentPath === item.href
+                  const badgeValue = item.href === "/app/cart" && cartItemCount > 0 ? String(cartItemCount) : item.badge
 
-          return (
-            <SidebarGroup key={idx} className="p-0 group-data-[collapsible=icon]:px-0">
-              {group.groupName && (
-                <SidebarGroupLabel className="px-2 mb-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70 group-data-[collapsible=icon]:hidden">
-                  {group.groupName}
-                </SidebarGroupLabel>
-              )}
-              <SidebarGroupContent>
-                <SidebarMenu className="gap-1 group-data-[collapsible=icon]:items-center">
-                  {group.items.map((item) => {
-                    const Icon = item.icon
-                    const isActive = currentPath === item.href
-
-                    return (
-                      <SidebarMenuItem key={item.href} className="group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:justify-center w-full">
-                        <SidebarMenuButton
-                          tooltip={item.title}
-                          isActive={isActive}
-                          onClick={() => handleItemClick(item.href)}
-                          className={cn(
-                            "h-9 px-3 rounded-lg text-sm font-medium transition-colors cursor-pointer",
-                            isActive
-                              ? "bg-primary/10 text-primary hover:bg-primary/15 font-semibold"
-                              : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                          )}
-                        >
-                          <Icon />
-                          <span>{item.title}</span>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    )
-                  })}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-          )
-        })}
+                  return (
+                    <SidebarMenuItem key={item.href}>
+                      <SidebarMenuButton
+                        isActive={isActive}
+                        onClick={() => handleItemClick(item.href)}
+                        tooltip={item.title}
+                        className={cn("cursor-pointer")}
+                      >
+                        <Icon />
+                        <span>{item.title}</span>
+                      </SidebarMenuButton>
+                      {badgeValue && (
+                        <SidebarMenuBadge className="bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary transition-colors">
+                          {badgeValue}
+                        </SidebarMenuBadge>
+                      )}
+                    </SidebarMenuItem>
+                  )
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ))}
       </SidebarContent>
 
-      {/* 3. Footer with Theme Switcher & User Profile */}
-      <SidebarFooter className="border-t border-border/50 p-2 gap-2 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:py-2">
-        <div className="flex items-center justify-between px-2 py-1 group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:gap-2 group-data-[collapsible=icon]:px-0">
-          <button
-            onClick={toggleTheme}
-            className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors group-data-[collapsible=icon]:justify-center cursor-pointer p-1.5 rounded-md hover:bg-muted"
-            title="Toggle theme"
-          >
-            {theme === "dark" ? (
-              <Sun className="h-4 w-4 text-amber-500 shrink-0" />
-            ) : (
-              <Moon className="h-4 w-4 text-slate-700 shrink-0" />
-            )}
-            <span className="text-xs group-data-[collapsible=icon]:hidden">Theme</span>
-          </button>
+      <SidebarFooter className="border-t border-border/50 p-2 group-data-[collapsible=icon]:p-1.5">
+        {user && (
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                size="lg"
+                tooltip={`${user.first_name} ${user.last_name || ""}`}
+                className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground rounded-lg hover:bg-sidebar-accent/60 text-sidebar-foreground group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-1 cursor-pointer transition-all mb-1"
+              >
+                <UserAvatar user={user} className="size-7 group-data-[collapsible=icon]:size-5 shrink-0 ring-1 ring-white/20 transition-all" />
+                <div className="grid flex-1 text-left text-xs leading-tight min-w-0 group-data-[collapsible=icon]:hidden">
+                  <span className="truncate font-semibold text-sidebar-foreground">
+                    {user.first_name} {user.last_name || ""}
+                  </span>
+                  <span className="truncate text-[11px] font-medium text-sidebar-foreground/80">
+                    {user.email}
+                  </span>
+                </div>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        )}
 
-          <button
-            onClick={handleLogout}
-            title="Logout"
-            className="text-muted-foreground hover:text-destructive transition-colors p-1.5 rounded-md hover:bg-muted group-data-[collapsible=icon]:justify-center cursor-pointer"
-          >
-            <LogOut className="h-4 w-4 shrink-0" />
-          </button>
-        </div>
+        <SidebarMenu className="gap-0.5">
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              onClick={toggleLanguage}
+              tooltip={activeLocale === "en" ? "Switch to Bahasa Indonesia" : "Switch to English"}
+              className="cursor-pointer justify-between group-data-[collapsible=icon]:justify-center"
+            >
+              <div className="flex items-center gap-2 min-w-0">
+                <Languages className="size-4 shrink-0" />
+                <span className="truncate group-data-[collapsible=icon]:hidden">
+                  {activeLocale === "en" ? "English" : "Bahasa Indonesia"}
+                </span>
+              </div>
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-sidebar-accent text-sidebar-accent-foreground border border-border/50 group-data-[collapsible=icon]:hidden">
+                {activeLocale}
+              </span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
 
-        <div className="flex items-center gap-3 p-2 rounded-lg bg-card/60 border border-border/40 group-data-[collapsible=icon]:border-0 group-data-[collapsible=icon]:bg-transparent group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:w-full">
-          <UserAvatar user={user} className="h-7 w-7 shrink-0 ring-1 ring-primary/20" />
-          <div className="flex flex-col truncate group-data-[collapsible=icon]:hidden">
-            <span className="text-xs font-semibold text-foreground truncate">
-              {user ? `${user.first_name} ${user.last_name ?? ""}`.trim() : "User"}
-            </span>
-            <span className="text-[10px] text-muted-foreground truncate">
-              {user?.email ?? ""}
-            </span>
-          </div>
-        </div>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              onClick={toggleTheme}
+              tooltip={theme === "light" ? t("nav.darkMode", "Dark Mode") : t("nav.lightMode", "Light Mode")}
+              className="cursor-pointer"
+            >
+              {theme === "light" ? <Moon className="size-4" /> : <Sun className="size-4" />}
+              <span>{theme === "light" ? t("nav.darkMode", "Dark Mode") : t("nav.lightMode", "Light Mode")}</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              onClick={handleLogout}
+              tooltip={t("nav.signOut", "Keluar")}
+              className="cursor-pointer text-destructive hover:bg-destructive/10 hover:text-destructive transition-colors"
+            >
+              <LogOut className="size-4" />
+              <span>{t("nav.signOut", "Keluar")}</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
   )

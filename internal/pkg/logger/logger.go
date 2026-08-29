@@ -157,9 +157,19 @@ func (l *Logger) Debug(msg string, fields ...interface{}) {
 	l.sugar.Debugw(msg, fields...)
 }
 
+// Debugf logs a debug message with fmt-style formatting
+func (l *Logger) Debugf(format string, args ...interface{}) {
+	l.sugar.Debugf(format, args...)
+}
+
 // Info logs an info message
 func (l *Logger) Info(msg string, fields ...interface{}) {
 	l.sugar.Infow(msg, fields...)
+}
+
+// Infof logs an info message with fmt-style formatting
+func (l *Logger) Infof(format string, args ...interface{}) {
+	l.sugar.Infof(format, args...)
 }
 
 // Warn logs a warning message
@@ -167,14 +177,29 @@ func (l *Logger) Warn(msg string, fields ...interface{}) {
 	l.sugar.Warnw(msg, fields...)
 }
 
+// Warnf logs a warning message with fmt-style formatting
+func (l *Logger) Warnf(format string, args ...interface{}) {
+	l.sugar.Warnf(format, args...)
+}
+
 // Error logs an error message
 func (l *Logger) Error(msg string, fields ...interface{}) {
 	l.sugar.Errorw(msg, fields...)
 }
 
+// Errorf logs an error message with fmt-style formatting
+func (l *Logger) Errorf(format string, args ...interface{}) {
+	l.sugar.Errorf(format, args...)
+}
+
 // Fatal logs a fatal message
 func (l *Logger) Fatal(msg string, fields ...interface{}) {
 	l.sugar.Fatalw(msg, fields...)
+}
+
+// Fatalf logs a fatal message with fmt-style formatting
+func (l *Logger) Fatalf(format string, args ...interface{}) {
+	l.sugar.Fatalf(format, args...)
 }
 
 // Sync flushes the logger buffers

@@ -1,4 +1,5 @@
-import { cva, type VariantProps } from "class-variance-authority"
+import { cva  } from "class-variance-authority"
+import type {VariantProps} from "class-variance-authority";
 
 import { cn } from "@/lib/utils"
 
@@ -7,7 +8,7 @@ function Empty({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="empty"
       className={cn(
-        "flex w-full min-w-0 flex-1 flex-col items-center justify-center gap-4 rounded-xl border-dashed p-6 text-center text-balance",
+        "flex w-full min-w-0 flex-1 flex-col items-center justify-center gap-4 rounded-xl border border-dashed border-border/70 bg-muted/15 p-8 text-center text-balance shadow-2xs backdrop-blur-xs transition-colors",
         className
       )}
       {...props}
@@ -26,12 +27,12 @@ function EmptyHeader({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 const emptyMediaVariants = cva(
-  "mb-2 flex shrink-0 items-center justify-center [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  "mb-2 flex shrink-0 items-center justify-center [&_svg]:pointer-events-none [&_svg]:shrink-0 transition-transform duration-200 hover:scale-105",
   {
     variants: {
       variant: {
         default: "bg-transparent",
-        icon: "flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-foreground [&_svg:not([class*='size-'])]:size-4",
+        icon: "flex size-10 shrink-0 items-center justify-center rounded-xl border border-border/60 bg-background/80 text-foreground shadow-2xs backdrop-blur-xs [&_svg:not([class*='size-'])]:size-5",
       },
     },
     defaultVariants: {
@@ -60,7 +61,7 @@ function EmptyTitle({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="empty-title"
       className={cn(
-        "font-heading text-sm font-medium tracking-tight",
+        "font-heading text-base font-semibold tracking-tight text-foreground",
         className
       )}
       {...props}
@@ -73,7 +74,7 @@ function EmptyDescription({ className, ...props }: React.ComponentProps<"p">) {
     <div
       data-slot="empty-description"
       className={cn(
-        "text-sm/relaxed text-muted-foreground [&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary",
+        "text-sm/relaxed text-muted-foreground max-w-sm [&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary transition-colors",
         className
       )}
       {...props}

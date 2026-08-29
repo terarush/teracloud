@@ -133,6 +133,7 @@ func splitStatements(sql string) []string {
 				cur.WriteRune(r)
 			}
 		}
+		cur.WriteRune(' ')
 	}
 	if stmt := strings.TrimSpace(cur.String()); stmt != "" {
 		out = append(out, stmt)

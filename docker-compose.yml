@@ -15,6 +15,15 @@ services:
     #     condition: service_healthy
     env_file:
       - .env
+    volumes:
+      # Mount Docker socket so backend can manage host containers
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Mount volume base dir so provisioned container volumes are persistent on host
+      - /var/lib/teracloud/volumes:/var/lib/teracloud/volumes
+    group_add:
+      # Add docker group so backend process can access the socket without root
+      # Find your host docker GID with: getent group docker | cut -d: -f3
+      - "${DOCKER_GID:-999}"
 
 #   db:
 #     image: postgres:16-alpine

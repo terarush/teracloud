@@ -23,7 +23,7 @@ function PaginationContent({
   return (
     <ul
       data-slot="pagination-content"
-      className={cn("flex items-center gap-0.5", className)}
+      className={cn("flex items-center gap-1", className)}
       {...props}
     />
   )
@@ -48,7 +48,10 @@ function PaginationLink({
     <Button
       variant={isActive ? "outline" : "ghost"}
       size={size}
-      className={cn(className)}
+      className={cn(
+        isActive && "border-border/80 bg-background/80 shadow-2xs backdrop-blur-2xs hover:bg-accent hover:border-border/90",
+        className
+      )}
       nativeButton={false}
       render={
         <a
@@ -71,7 +74,7 @@ function PaginationPrevious({
     <PaginationLink
       aria-label="Go to previous page"
       size="default"
-      className={cn("pl-1.5!", className)}
+      className={cn("pl-2!", className)}
       {...props}
     >
       <ChevronLeftIcon data-icon="inline-start" />
@@ -89,7 +92,7 @@ function PaginationNext({
     <PaginationLink
       aria-label="Go to next page"
       size="default"
-      className={cn("pr-1.5!", className)}
+      className={cn("pr-2!", className)}
       {...props}
     >
       <span className="hidden sm:block">{text}</span>
@@ -107,13 +110,12 @@ function PaginationEllipsis({
       aria-hidden
       data-slot="pagination-ellipsis"
       className={cn(
-        "flex size-8 items-center justify-center [&_svg:not([class*='size-'])]:size-4",
+        "flex size-8 items-center justify-center text-muted-foreground/70 transition-colors hover:text-foreground [&_svg:not([class*='size-'])]:size-4",
         className
       )}
       {...props}
     >
-      <MoreHorizontalIcon
-      />
+      <MoreHorizontalIcon />
       <span className="sr-only">More pages</span>
     </span>
   )

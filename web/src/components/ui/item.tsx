@@ -1,7 +1,8 @@
 import * as React from "react"
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
-import { cva, type VariantProps } from "class-variance-authority"
+import { cva  } from "class-variance-authority"
+import type {VariantProps} from "class-variance-authority";
 
 import { cn } from "@/lib/utils"
 import { Separator } from "@/components/ui/separator"
@@ -28,25 +29,25 @@ function ItemSeparator({
     <Separator
       data-slot="item-separator"
       orientation="horizontal"
-      className={cn("my-2", className)}
+      className={cn("my-2 bg-border/70", className)}
       {...props}
     />
   )
 }
 
 const itemVariants = cva(
-  "group/item flex w-full flex-wrap items-center rounded-lg border text-sm transition-colors duration-100 outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 [a]:transition-colors [a]:hover:bg-muted",
+  "group/item flex w-full flex-wrap items-center rounded-lg border text-sm transition-all duration-150 outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30 [a]:transition-colors [a]:hover:bg-muted/60",
   {
     variants: {
       variant: {
-        default: "border-transparent",
-        outline: "border-border",
-        muted: "border-transparent bg-muted/50",
+        default: "border-transparent hover:bg-muted/50",
+        outline: "border-border/70 bg-card/40 shadow-2xs hover:border-border hover:bg-accent/40",
+        muted: "border-border/40 bg-muted/40 hover:bg-muted/70",
       },
       size: {
-        default: "gap-2.5 px-3 py-2.5",
-        sm: "gap-2.5 px-3 py-2.5",
-        xs: "gap-2 px-2.5 py-2 in-data-[slot=dropdown-menu-content]:p-0",
+        default: "gap-2.5 px-3.5 py-2.5",
+        sm: "gap-2 px-3 py-2 text-xs",
+        xs: "gap-1.5 px-2.5 py-1.5 text-xs in-data-[slot=dropdown-menu-content]:p-0",
       },
     },
     defaultVariants: {
@@ -86,9 +87,9 @@ const itemMediaVariants = cva(
     variants: {
       variant: {
         default: "bg-transparent",
-        icon: "[&_svg:not([class*='size-'])]:size-4",
+        icon: "[&_svg:not([class*='size-'])]:size-4 text-muted-foreground group-hover/item:text-foreground transition-colors",
         image:
-          "size-10 overflow-hidden rounded-sm group-data-[size=sm]/item:size-8 group-data-[size=xs]/item:size-6 [&_img]:size-full [&_img]:object-cover",
+          "size-10 overflow-hidden rounded-md border border-border/60 shadow-2xs group-data-[size=sm]/item:size-8 group-data-[size=xs]/item:size-6 [&_img]:size-full [&_img]:object-cover",
       },
     },
     defaultVariants: {
@@ -130,7 +131,7 @@ function ItemTitle({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="item-title"
       className={cn(
-        "line-clamp-1 flex w-fit items-center gap-2 text-sm leading-snug font-medium underline-offset-4",
+        "line-clamp-1 flex w-fit items-center gap-2 font-heading text-sm leading-snug font-medium text-foreground underline-offset-4",
         className
       )}
       {...props}

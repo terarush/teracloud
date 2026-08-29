@@ -55,14 +55,20 @@ func (c *DBModel) OpenDB() (*gorm.DB, *error) {
 	// Set schema prefix based on driver. MySQL has no schemas — leave empty.
 	if c.Driver == "postgres" {
 		SchemaPrefix = "core."
+		HostingPrefix = "hosting."
 
-		// Ensure the core schema exists before GORM builds table names against it.
+		// Ensure the core and hosting schemas exist before GORM builds table names against them.
 		if err := createSchema(db, "core"); err != nil {
 			log.Fatalf("Cannot Create Core Schema: %s", err.Error())
 			os.Exit(1)
 		}
+		if err := createSchema(db, "hosting"); err != nil {
+			log.Fatalf("Cannot Create Hosting Schema: %s", err.Error())
+			os.Exit(1)
+		}
 	} else {
 		SchemaPrefix = ""
+		HostingPrefix = ""
 	}
 
 	conPool, err := db.DB()

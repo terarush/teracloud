@@ -60,21 +60,25 @@ func (bus *EventBus) Publish(event Event) {
 // processEvents processes events from the event channel
 func (bus *EventBus) processEvents() {
 	for event := range bus.eventChannel {
-		bus.mu.RLock()
-		handlers, exists := bus.handlers[event.Type]
-		bus.mu.RUnlock()
+		func(ev Event) {
+			defer bus.wg.Done()
 
-		if exists {
-			for _, handler := range handlers {
-				// Create a closure to ensure we use the correct handler and event
-				func(handler EventHandler, event Event) {
-					defer bus.wg.Done()
-					handler.Handle(event)
-				}(handler, event)
+			bus.mu.RLock()
+			handlers, exists := bus.handlers[ev.Type]
+			// Copy slice to avoid holding lock during execution
+			var handlersCopy []EventHandler
+			if exists {
+				handlersCopy = make([]EventHandler, len(handlers))
+				copy(handlersCopy, handlers)
 			}
-		} else {
-			bus.wg.Done()
-		}
+			bus.mu.RUnlock()
+
+			if exists {
+				for _, handler := range handlersCopy {
+					handler.Handle(ev)
+				}
+			}
+		}(event)
 	}
 }
 
