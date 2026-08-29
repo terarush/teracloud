@@ -60,38 +60,34 @@ export function AppSidebar() {
   const logoSrc = theme === "dark" && companyMeta.logoWhite ? companyMeta.logoWhite : companyMeta.logo
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-border/50 bg-sidebar select-none">
+    <Sidebar collapsible="icon" className="select-none border-r border-sidebar-border bg-sidebar">
       {/* 1. Header with Logo & Brand */}
-      <SidebarHeader className="h-14 border-b border-border/50 p-0 flex flex-row items-center">
+      <SidebarHeader className="flex h-16 flex-row items-center border-b border-sidebar-border p-0">
         <div
-          className="flex items-center gap-3 cursor-pointer overflow-hidden w-full h-full px-4 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center"
+          className="flex h-full w-full cursor-pointer items-center gap-3 overflow-hidden px-4 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0"
           onClick={() => handleItemClick("/app")}
         >
-          <img
-            src={logoSrc}
-            alt={companyMeta.name}
-            className="size-7 rounded-lg object-contain shrink-0 ring-1 ring-primary/20"
-          />
+          <span className="flex size-8 shrink-0 items-center justify-center rounded-md bg-primary text-sm font-semibold text-primary-foreground">T</span>
           <div className="flex flex-col truncate group-data-[collapsible=icon]:hidden">
             <span className="text-sm font-bold tracking-tight text-foreground truncate">
               {companyMeta.name}
             </span>
             <span className="text-[10px] text-muted-foreground font-medium truncate">
-              Cloud Console
+              Container workspace
             </span>
           </div>
         </div>
       </SidebarHeader>
 
       {/* 2. Content & Nav Groups */}
-      <SidebarContent className="px-2 py-4 gap-6 group-data-[collapsible=icon]:px-0">
+      <SidebarContent className="gap-7 px-2 py-5 group-data-[collapsible=icon]:px-0">
         {sidebarList.map((group, idx) => {
           if (group.admin && !isAdmin) return null
 
           return (
             <SidebarGroup key={idx} className="p-0 group-data-[collapsible=icon]:px-0">
               {group.groupName && (
-                <SidebarGroupLabel className="px-2 mb-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80 group-data-[collapsible=icon]:hidden">
+                className="mb-2 px-3 text-[9px] font-semibold uppercase tracking-[0.16em] text-muted-foreground group-data-[collapsible=icon]:hidden"
                   {group.groupName}
                 </SidebarGroupLabel>
               )}
@@ -111,10 +107,10 @@ export function AppSidebar() {
                           isActive={isActive}
                           onClick={() => handleItemClick(item.href)}
                           className={cn(
-                            "h-9 px-3 rounded-lg text-sm font-medium transition-colors cursor-pointer",
+                            "h-9 cursor-pointer rounded-lg px-3 text-[13px] font-medium transition-colors",
                             isActive
-                              ? "bg-primary/10 text-primary hover:bg-primary/15 font-semibold"
-                              : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                              ? "bg-sidebar-accent text-sidebar-accent-foreground font-semibold"
+                                                            : "text-muted-foreground hover:bg-muted/80 hover:text-foreground"
                           )}
                         >
                           <Icon className="w-4 h-4 shrink-0" />
@@ -131,10 +127,10 @@ export function AppSidebar() {
       </SidebarContent>
 
       {/* 3. Refined Footer */}
-      <SidebarFooter className="border-t border-border/50 p-2 gap-1.5 group-data-[collapsible=icon]:p-1.5 group-data-[collapsible=icon]:py-2">
+      <SidebarFooter className="gap-1.5 border-t border-sidebar-border p-2.5 group-data-[collapsible=icon]:p-1.5 group-data-[collapsible=icon]:py-2">
         {/* User Profile Card with Dropdown Settings */}
         <DropdownMenu>
-          <DropdownMenuTrigger className="w-full flex items-center justify-between p-2 rounded-xl bg-muted/40 hover:bg-muted/80 border border-border/40 transition-colors text-left group-data-[collapsible=icon]:p-1 group-data-[collapsible=icon]:justify-center cursor-pointer outline-hidden">
+          className="flex w-full cursor-pointer items-center justify-between rounded-lg p-2 text-left transition-colors hover:bg-muted group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-1"
             <div className="flex items-center gap-2.5 min-w-0">
               <UserAvatar user={user} className="h-7 w-7 shrink-0 rounded-lg ring-1 ring-border" />
               <div className="flex flex-col truncate group-data-[collapsible=icon]:hidden">
@@ -193,7 +189,7 @@ export function AppSidebar() {
                 className="flex items-center justify-between text-xs cursor-pointer rounded-lg"
               >
                 <span className="flex items-center gap-2">
-                  <Sun className="w-3.5 h-3.5 text-amber-500" />
+                  <Sun className="w-3.5 h-3.5" />
                   Light
                 </span>
                 {theme === "light" && <Check className="w-3.5 h-3.5 text-primary" />}
@@ -203,7 +199,7 @@ export function AppSidebar() {
                 className="flex items-center justify-between text-xs cursor-pointer rounded-lg"
               >
                 <span className="flex items-center gap-2">
-                  <Moon className="w-3.5 h-3.5 text-indigo-500" />
+                  <Moon className="w-3.5 h-3.5" />
                   Dark
                 </span>
                 {theme === "dark" && <Check className="w-3.5 h-3.5 text-primary" />}
@@ -215,7 +211,7 @@ export function AppSidebar() {
             {/* Sign Out */}
             <DropdownMenuItem
               onClick={handleLogout}
-              className="text-xs text-rose-500 hover:text-rose-600 hover:bg-rose-500/10 cursor-pointer rounded-lg gap-2"
+              className="text-xs text-destructive hover:bg-destructive/10 cursor-pointer rounded-lg gap-2"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span>{t("nav.signOut", "Keluar")}</span>

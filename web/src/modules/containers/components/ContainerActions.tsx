@@ -30,18 +30,16 @@ export const ContainerActions: React.FC<ContainerActionsProps> = ({
           size="sm"
           disabled={isPending}
           onClick={onStop}
-          className="text-amber-500 hover:text-amber-600 hover:bg-amber-500/10 border-amber-500/20"
         >
           {isPending ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Square className="w-4 h-4 mr-1" />}
           Stop
         </Button>
       ) : (
         <Button
-          variant="outline"
+          variant="default"
           size="sm"
           disabled={isPending}
           onClick={onStart}
-          className="text-emerald-500 hover:text-emerald-600 hover:bg-emerald-500/10 border-emerald-500/20"
         >
           {isPending ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Play className="w-4 h-4 mr-1" />}
           Start
@@ -64,11 +62,10 @@ export const ContainerActions: React.FC<ContainerActionsProps> = ({
       </Button>
 
       <Button
-        variant="outline"
+        variant="destructive"
         size="sm"
         disabled={isPending}
         onClick={onDelete}
-        className="text-rose-500 hover:text-rose-600 hover:bg-rose-500/10 border-rose-500/20"
       >
         <Trash2 className="w-4 h-4 mr-1" />
         Hapus

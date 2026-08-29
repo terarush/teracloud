@@ -26,6 +26,8 @@ import { OrderStatusPage } from "@/modules/orders/pages/OrderStatusPage"
 import { AdminDashboard } from "@/modules/admin/pages/AdminDashboard"
 import { AdminPlans } from "@/modules/admin/pages/AdminPlans"
 import { AdminOrders } from "@/modules/admin/pages/AdminOrders"
+import { AdminContainers } from "@/modules/admin/pages/AdminContainers"
+import { AdminAudit } from "@/modules/admin/pages/AdminAudit"
 
 import "../styles.css"
 import { Toaster } from "@/components/ui/sonner"
@@ -223,6 +225,18 @@ const appOrdersListRoute = createRoute({
   component: AdminOrders,
 })
 
+const appAdminContainersRoute = createRoute({
+  getParentRoute: () => appLayoutRoute,
+  path: "/admin/containers",
+  component: AdminContainers,
+})
+
+const appAdminAuditRoute = createRoute({
+  getParentRoute: () => appLayoutRoute,
+  path: "/admin/audit",
+  component: AdminAudit,
+})
+
 export const routeTree = rootRoute.addChildren([
   homeRoute,
   pricingRoute,
@@ -248,5 +262,7 @@ export const routeTree = rootRoute.addChildren([
     appConsoleRoute,
     appPlansManageRoute,
     appOrdersListRoute,
+    appAdminContainersRoute,
+    appAdminAuditRoute,
   ]),
 ])

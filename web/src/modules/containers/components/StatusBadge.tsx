@@ -9,26 +9,26 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
     switch (status) {
       case "running":
       case "active":
-        return "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+        return "bg-primary/10 text-primary"
       case "creating":
       case "provisioning":
-        return "bg-sky-500/10 text-sky-500 border-sky-500/20"
+        return "bg-muted text-muted-foreground"
       case "stopped":
       case "grace_period":
-        return "bg-amber-500/10 text-amber-500 border-amber-500/20"
+        return "bg-muted text-muted-foreground"
       case "suspended":
       case "error":
       case "failed":
       case "terminated":
-        return "bg-rose-500/10 text-rose-500 border-rose-500/20"
+        return "bg-destructive/10 text-destructive"
       default:
-        return "bg-muted text-muted-foreground border-border"
+        return "bg-muted text-muted-foreground"
     }
   }
 
   return (
     <span
-      className={`inline-flex items-center px-3 py-1 text-xs font-bold rounded-full uppercase border ${getBadgeClass()}`}
+      className={`inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-md uppercase tracking-wide ${getBadgeClass()}`}
     >
       {status}
     </span>

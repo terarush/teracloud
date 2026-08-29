@@ -19,7 +19,7 @@ export const BillingAlert: React.FC<BillingAlertProps> = ({ subscriptions }) => 
   if (expiring.length === 0) return null
 
   return (
-    <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-sm text-amber-500">
+    <div className="p-4 bg-destructive/10 ring-1 ring-destructive/20 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-sm text-destructive">
       <div className="flex items-center gap-3">
         <AlertTriangle className="h-5 w-5 shrink-0" />
         <span>
@@ -31,7 +31,7 @@ export const BillingAlert: React.FC<BillingAlertProps> = ({ subscriptions }) => 
       </div>
       <button
         onClick={() => navigate({ to: "/app/billing" })}
-        className="font-semibold underline flex items-center gap-1 hover:text-amber-400 transition cursor-pointer"
+        className="font-semibold underline flex items-center gap-1 hover:opacity-80 transition cursor-pointer"
       >
         <span>{t("hosting.manageBilling", "Kelola Billing")}</span>
         <ArrowRight className="h-4 w-4" />

@@ -1,20 +1,20 @@
-import { useMemo, useRef } from "react"
-import { Outlet, useRouterState, useNavigate } from "@tanstack/react-router"
-import { useTranslation } from "react-i18next"
-import { LogOut, Moon, Sun, Globe, Check } from "lucide-react"
+import { useMemo, useRef } from 'react'
+import { Outlet, useRouterState, useNavigate } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
+import { LogOut, Moon, Sun, Globe, Check } from 'lucide-react'
 
 import {
   SidebarProvider,
   SidebarInset,
   SidebarTrigger,
   useSidebar,
-} from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/app-sidebar"
-import { useAuth } from "@/contexts/auth-context"
-import { useTheme } from "@/components/theme-provider"
-import { getSidebarContentList } from "@/globals/content/app-sidebar"
-import { currentLocale, changeLocale } from "@/lib/i18n"
-import { UserAvatar } from "@/components/user-avatar"
+} from '@/components/ui/sidebar'
+import { AppSidebar } from '@/components/app-sidebar'
+import { useAuth } from '@/contexts/auth-context'
+import { useTheme } from '@/components/theme-provider'
+import { getSidebarContentList } from '@/globals/content/app-sidebar'
+import { currentLocale, changeLocale } from '@/lib/i18n'
+import { UserAvatar } from '@/components/user-avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,10 +22,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuLabel,
-} from "@/components/ui/dropdown-menu"
+} from '@/components/ui/dropdown-menu'
 
-const SIDEBAR_WIDTH = "16rem"
-const SIDEBAR_WIDTH_ICON = "3rem"
+const SIDEBAR_WIDTH = '16rem'
+const SIDEBAR_WIDTH_ICON = '3rem'
 
 function AppHeader({ pageTitle }: { pageTitle: string }) {
   const { state, isMobile } = useSidebar()
@@ -36,14 +36,14 @@ function AppHeader({ pageTitle }: { pageTitle: string }) {
   const activeLang = currentLocale()
 
   const leftOffset = isMobile
-    ? "0px"
-    : state === "collapsed"
-    ? SIDEBAR_WIDTH_ICON
-    : SIDEBAR_WIDTH
+    ? '0px'
+    : state === 'collapsed'
+      ? SIDEBAR_WIDTH_ICON
+      : SIDEBAR_WIDTH
 
   const handleLogout = async () => {
     await logout()
-    navigate({ to: "/login" as any })
+    navigate({ to: '/login' as any })
   }
 
   return (
@@ -60,72 +60,19 @@ function AppHeader({ pageTitle }: { pageTitle: string }) {
       </div>
 
       <div className="flex items-center gap-2.5">
-        {/* Language Switcher Button */}
-        <DropdownMenu>
-          <DropdownMenuTrigger className="h-8 px-2.5 gap-1.5 inline-flex items-center justify-center rounded-lg border border-border bg-background text-xs font-semibold hover:bg-muted hover:text-foreground cursor-pointer shadow-2xs transition-colors outline-hidden">
-            <Globe className="h-3.5 w-3.5 text-primary" />
-            <span className="uppercase">{activeLang}</span>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-44 p-1.5 rounded-xl">
-            <DropdownMenuGroup>
-              <DropdownMenuLabel className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider px-2 py-1">
-                {t("common.language", "Language / Bahasa")}
-              </DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() => changeLocale("id")}
-                className="flex items-center justify-between text-xs cursor-pointer rounded-lg"
-              >
-                <span>Bahasa Indonesia</span>
-                {activeLang === "id" && <Check className="w-3.5 h-3.5 text-primary" />}
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => changeLocale("en")}
-                className="flex items-center justify-between text-xs cursor-pointer rounded-lg"
-              >
-                <span>English (US)</span>
-                {activeLang === "en" && <Check className="w-3.5 h-3.5 text-primary" />}
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-
-        {/* Theme Toggle Button */}
-        <button
-          type="button"
-          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-          className="h-8 w-8 inline-flex items-center justify-center rounded-lg border border-border bg-background text-foreground hover:bg-muted cursor-pointer shadow-2xs transition-colors"
-          title={theme === "dark" ? "Mode Terang" : "Mode Gelap"}
-        >
-          {theme === "dark" ? (
-            <Sun className="h-4 w-4 text-amber-500" />
-          ) : (
-            <Moon className="h-4 w-4 text-indigo-500" />
-          )}
-        </button>
-
-        {/* Logout Quick Button */}
-        <button
-          type="button"
-          onClick={handleLogout}
-          className="h-8 w-8 inline-flex items-center justify-center rounded-lg border border-border bg-background text-rose-500 hover:text-rose-600 hover:bg-rose-500/10 cursor-pointer shadow-2xs transition-colors"
-          title={t("nav.signOut", "Keluar")}
-        >
-          <LogOut className="h-3.5 w-3.5" />
-        </button>
-
-        <div className="h-4 w-px bg-border/60 mx-1" />
-
-        {/* User Info */}
         <div className="flex items-center gap-3">
           <div className="flex-col text-right hidden md:flex">
             <span className="text-xs font-bold text-foreground">
-              {user ? `${user.first_name} ${user.last_name || ""}` : "User"}
+              {user ? `${user.first_name} ${user.last_name || ''}` : 'User'}
             </span>
             <span className="text-[10px] text-muted-foreground font-mono">
-              {user?.email || ""}
+              {user?.email || ''}
             </span>
           </div>
-          <UserAvatar user={user} className="h-8 w-8 ring-2 ring-primary/20 rounded-xl" />
+          <UserAvatar
+            user={user}
+            className="h-8 w-8 ring-2 ring-primary/20 rounded-xl"
+          />
         </div>
       </div>
     </header>
@@ -138,14 +85,17 @@ export function GlobalsAppLayout() {
   const mainRef = useRef<HTMLElement>(null)
   const { t, i18n } = useTranslation()
 
-  const sidebarList = useMemo(() => getSidebarContentList(t), [i18n.language, t])
+  const sidebarList = useMemo(
+    () => getSidebarContentList(t),
+    [i18n.language, t],
+  )
 
   const pageTitle = useMemo(() => {
     for (const group of sidebarList) {
       const matched = group.items.find((item) => item.href === currentPath)
       if (matched) return matched.title
     }
-    return t("hosting.dashboard", "Dashboard")
+    return t('hosting.dashboard', 'Dashboard')
   }, [currentPath, sidebarList, t])
 
   return (
@@ -159,7 +109,10 @@ export function GlobalsAppLayout() {
           {/* Spacer for fixed header */}
           <div className="h-14 shrink-0" />
 
-          <main ref={mainRef} className="flex-1 overflow-y-auto overflow-x-hidden bg-muted/30 min-w-0">
+          <main
+            ref={mainRef}
+            className="flex-1 overflow-y-auto overflow-x-hidden bg-muted/30 min-w-0"
+          >
             <Outlet />
           </main>
         </SidebarInset>

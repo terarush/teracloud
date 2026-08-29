@@ -9,7 +9,7 @@ interface SubscriptionCardProps {
 
 export const SubscriptionCard: React.FC<SubscriptionCardProps> = ({ subscription }) => {
   return (
-    <div className="p-6 bg-card border border-border rounded-3xl space-y-4 shadow-xs">
+    <div className="p-6 bg-card ring-1 ring-foreground/10 rounded-xl space-y-4">
       <div className="flex items-center justify-between">
         <div>
           <h3 className="font-bold text-lg text-foreground">Subscription #{subscription.id}</h3>
@@ -34,7 +34,7 @@ export const SubscriptionCard: React.FC<SubscriptionCardProps> = ({ subscription
           </span>
         </div>
         {subscription.grace_period_end && (
-          <div className="flex justify-between text-amber-500 font-medium">
+          <div className="flex justify-between text-destructive font-medium">
             <span>Batas Grace Period:</span>
             <span>{new Date(subscription.grace_period_end).toLocaleDateString("id-ID")}</span>
           </div>

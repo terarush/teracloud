@@ -64,7 +64,7 @@ export const DashboardView: React.FC = () => {
             <p>{t("hosting.loadingContainers", "Memuat daftar container...")}</p>
           </div>
         ) : containers.length === 0 ? (
-          <div className="p-12 text-center bg-card border border-border rounded-3xl space-y-4">
+          <div className="p-12 text-center bg-card ring-1 ring-foreground/10 rounded-xl space-y-4">
             <div className="p-4 bg-muted rounded-full w-16 h-16 flex items-center justify-center mx-auto">
               <Server className="w-8 h-8 text-muted-foreground" />
             </div>
@@ -83,7 +83,7 @@ export const DashboardView: React.FC = () => {
             {containers.map((container) => (
               <div
                 key={container.id}
-                className="p-6 bg-card border border-border rounded-3xl flex flex-col justify-between space-y-5 hover:border-primary/40 hover:shadow-md transition"
+                className="p-6 bg-card ring-1 ring-foreground/10 rounded-xl flex flex-col justify-between space-y-5 hover:ring-primary/40 transition"
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between gap-2">
@@ -91,10 +91,10 @@ export const DashboardView: React.FC = () => {
                       {container.container_name}
                     </h3>
                     <span
-                      className={`px-2.5 py-0.5 text-xs font-bold rounded-full uppercase ${
+                      className={`px-2.5 py-0.5 text-xs font-semibold rounded-md uppercase tracking-wide ${
                         container.status === "running"
-                          ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"
-                          : "bg-amber-500/10 text-amber-500 border border-amber-500/20"
+                          ? "bg-primary/10 text-primary"
+                          : "bg-muted text-muted-foreground"
                       }`}
                     >
                       {container.status}

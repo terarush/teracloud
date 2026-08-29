@@ -18,7 +18,7 @@ export const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({ plan, order })
   }).format(amount)
 
   return (
-    <div className="bg-card border border-border rounded-3xl p-6 sm:p-8 space-y-6 shadow-xs">
+    <div className="bg-card ring-1 ring-foreground/10 rounded-xl p-6 sm:p-8 space-y-6">
       <div className="border-b border-border pb-4">
         <h2 className="text-xl font-bold text-foreground">Ringkasan Pesanan</h2>
         <p className="text-xs text-muted-foreground mt-0.5">
@@ -36,7 +36,7 @@ export const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({ plan, order })
             <span className="font-extrabold text-lg text-primary">{formattedAmount}</span>
           </div>
 
-          <div className="p-4 bg-muted/50 rounded-2xl space-y-2 text-xs text-muted-foreground">
+          <div className="p-4 bg-muted rounded-lg space-y-2 text-xs text-muted-foreground">
             <div className="flex justify-between">
               <span>Alokasi CPU:</span>
               <span className="font-medium text-foreground">{plan.cpu_limit} vCPU</span>
@@ -72,7 +72,7 @@ export const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({ plan, order })
         </div>
       </div>
 
-      <div className="p-4 bg-primary/5 border border-primary/10 rounded-2xl flex items-center gap-3 text-xs text-muted-foreground">
+      <div className="p-4 bg-primary/5 ring-1 ring-primary/10 rounded-lg flex items-center gap-3 text-xs text-muted-foreground">
         <ShieldCheck className="w-5 h-5 text-primary shrink-0" />
         <span>Pembayaran aman terenkripsi melalui Midtrans Snap payment gateway.</span>
       </div>

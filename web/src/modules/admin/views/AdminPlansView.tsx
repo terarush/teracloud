@@ -53,7 +53,7 @@ export const AdminPlansView: React.FC = () => {
         </Button>
       </div>
 
-      <div className="bg-card border border-border rounded-3xl overflow-hidden shadow-xs">
+      <div className="bg-card ring-1 ring-foreground/10 rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead className="bg-muted/50 border-b border-border text-muted-foreground text-xs uppercase">
@@ -108,12 +108,12 @@ export const AdminPlansView: React.FC = () => {
                         className="cursor-pointer inline-flex items-center gap-1.5 text-xs font-semibold"
                       >
                         {plan.is_active ? (
-                          <span className="text-emerald-500 flex items-center gap-1">
+                          <span className="text-primary flex items-center gap-1">
                             <CheckCircle className="w-4 h-4" />
                             <span>{t("hosting.active", "Aktif")}</span>
                           </span>
                         ) : (
-                          <span className="text-rose-500 flex items-center gap-1">
+                          <span className="text-muted-foreground flex items-center gap-1">
                             <XCircle className="w-4 h-4" />
                             <span>{t("hosting.inactive", "Nonaktif")}</span>
                           </span>
@@ -132,10 +132,9 @@ export const AdminPlansView: React.FC = () => {
                         <Edit className="w-4 h-4" />
                       </Button>
                       <Button
-                        variant="ghost"
+                        variant="destructive"
                         size="sm"
                         onClick={() => handleDeletePlan(plan.id)}
-                        className="text-rose-500 hover:text-rose-600 hover:bg-rose-500/10"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>

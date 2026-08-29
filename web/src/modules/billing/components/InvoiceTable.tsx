@@ -10,14 +10,14 @@ interface InvoiceTableProps {
 export const InvoiceTable: React.FC<InvoiceTableProps> = ({ invoices, onSelectInvoice }) => {
   if (invoices.length === 0) {
     return (
-      <div className="p-8 text-center bg-card border border-border rounded-2xl text-sm text-muted-foreground">
+      <div className="p-8 text-center bg-card ring-1 ring-foreground/10 rounded-xl text-sm text-muted-foreground">
         Belum ada riwayat tagihan invoice.
       </div>
     )
   }
 
   return (
-    <div className="bg-card border border-border rounded-3xl overflow-hidden shadow-xs">
+    <div className="bg-card ring-1 ring-foreground/10 rounded-xl overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm">
           <thead className="bg-muted/50 border-b border-border text-muted-foreground text-xs uppercase">

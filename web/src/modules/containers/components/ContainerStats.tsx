@@ -27,19 +27,19 @@ export const ContainerStats: React.FC<ContainerStatsProps> = ({ stats, memoryLim
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="p-5 bg-card border border-border rounded-2xl">
+        <div className="p-5 bg-card ring-1 ring-foreground/10 rounded-xl">
           <div className="text-xs text-muted-foreground">CPU Usage (Current)</div>
           <div className="text-2xl font-bold text-foreground mt-1">
             {cpuText}
           </div>
         </div>
-        <div className="p-5 bg-card border border-border rounded-2xl">
+        <div className="p-5 bg-card ring-1 ring-foreground/10 rounded-xl">
           <div className="text-xs text-muted-foreground">RAM Usage (Current)</div>
           <div className="text-2xl font-bold text-foreground mt-1">
             {ramText}
           </div>
         </div>
-        <div className="p-5 bg-card border border-border rounded-2xl">
+        <div className="p-5 bg-card ring-1 ring-foreground/10 rounded-xl">
           <div className="text-xs text-muted-foreground">Network I/O (Total)</div>
           <div className="text-2xl font-bold text-foreground mt-1">
             {netText}
@@ -47,21 +47,15 @@ export const ContainerStats: React.FC<ContainerStatsProps> = ({ stats, memoryLim
         </div>
       </div>
 
-      <div className="p-6 bg-card border border-border rounded-2xl space-y-4">
+      <div className="p-6 bg-card ring-1 ring-foreground/10 rounded-xl space-y-4">
         <h3 className="text-sm font-semibold text-foreground">Grafik Realtime CPU &amp; RAM</h3>
         <div className="h-64 w-full">
           {chartData.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData}>
-                <defs>
-                  <linearGradient id="colorCpu" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.4} />
-                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-                <XAxis dataKey="time" tick={{ fontSize: 10 }} />
-                <YAxis tick={{ fontSize: 10 }} unit="%" />
+                <CartesianGrid strokeDasharray="3 3" opacity={0.2} stroke="var(--border)" />
+                <XAxis dataKey="time" tick={{ fontSize: 10 }} stroke="var(--muted-foreground)" />
+                <YAxis tick={{ fontSize: 10 }} unit="%" stroke="var(--muted-foreground)" />
                 <Tooltip
                   contentStyle={{
                     backgroundColor: "var(--card)",
@@ -72,9 +66,10 @@ export const ContainerStats: React.FC<ContainerStatsProps> = ({ stats, memoryLim
                 <Area
                   type="monotone"
                   dataKey="cpu"
-                  stroke="#3b82f6"
-                  fillOpacity={1}
-                  fill="url(#colorCpu)"
+                  stroke="var(--primary)"
+                  fillOpacity={0.12}
+                  fill="var(--primary)"
+                  strokeWidth={1.5}
                   name="CPU %"
                 />
               </AreaChart>

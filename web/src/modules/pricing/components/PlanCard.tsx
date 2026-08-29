@@ -20,14 +20,14 @@ export const PlanCard: React.FC<PlanCardProps> = ({ plan, onSelect, isPopular = 
 
   return (
     <div
-      className={`relative flex flex-col justify-between p-8 rounded-3xl transition-all duration-200 ${
+      className={`relative flex flex-col justify-between p-8 rounded-xl transition-all duration-200 ${
         isPopular
-          ? "bg-card border-2 border-primary shadow-xl shadow-primary/10 ring-1 ring-primary/20 scale-105 z-10"
-          : "bg-card border border-border/80 hover:border-primary/40 shadow-xs"
+          ? "bg-card ring-2 ring-primary z-10"
+          : "bg-card ring-1 ring-foreground/10 hover:ring-primary/40"
       }`}
     >
       {isPopular && (
-        <div className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-primary px-4 py-1 text-xs font-bold text-primary-foreground uppercase tracking-widest shadow-md">
+        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-primary px-4 py-1 text-xs font-bold text-primary-foreground uppercase tracking-widest">
           Paling Populer
         </div>
       )}
@@ -50,7 +50,7 @@ export const PlanCard: React.FC<PlanCardProps> = ({ plan, onSelect, isPopular = 
         </div>
 
         {/* Specs Overview */}
-        <div className="grid grid-cols-3 gap-2 py-4 mb-6 rounded-2xl bg-muted/50 border border-border/50 text-center">
+        <div className="grid grid-cols-3 gap-2 py-4 mb-6 rounded-lg bg-muted text-center">
           <div>
             <div className="text-xs text-muted-foreground">vCPU</div>
             <div className="font-bold text-sm text-foreground">{plan.cpu_limit} Core</div>

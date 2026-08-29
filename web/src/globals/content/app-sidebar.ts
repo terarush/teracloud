@@ -5,6 +5,7 @@ import {
   ShieldCheck,
   Package,
   ShoppingCart,
+  ScrollText,
 } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 import type { ComponentType } from "react"
@@ -81,6 +82,18 @@ export const getSidebarContentList = (
           title: translate("hosting.adminOrders", "Orders Transaksi"),
           href: "/app/orders-list",
           icon: ShoppingCart,
+        },
+        {
+          titleKey: "hosting.adminContainers",
+          title: translate("hosting.adminContainers", "Semua Container"),
+          href: "/app/admin/containers",
+          icon: Server,
+        },
+        {
+          titleKey: "hosting.adminAudit",
+          title: translate("hosting.adminAudit", "Log Audit"),
+          href: "/app/admin/audit",
+          icon: ScrollText,
         },
       ],
     },

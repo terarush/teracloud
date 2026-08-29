@@ -18,11 +18,11 @@ export default function AppPage() {
   return (
     <div className="p-6 md:p-8 space-y-6 max-w-7xl mx-auto">
       {/* Welcome Banner */}
-      <div className="rounded-2xl border border-border/50 bg-gradient-to-br from-card to-muted/40 p-6 md:p-8 shadow-sm">
+      <div className="rounded-2xl ring-1 ring-foreground/10 bg-card p-6 md:p-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
             <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
-              Selamat datang kembali, {firstName}! 👋
+              Selamat datang kembali, {firstName}
             </h2>
             <p className="text-sm text-muted-foreground">
               Kelola container, docker host online, dan monitoring resource cloud Anda dari satu console.
@@ -71,10 +71,10 @@ export default function AppPage() {
         <Card className="border-border/50">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Status Akun Cloud</CardTitle>
-            <Shield className="h-4 w-4 text-emerald-500" />
+            <Shield className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-emerald-500">
+            <div className="text-2xl font-bold text-foreground">
               Aktif
             </div>
             <p className="text-xs text-muted-foreground mt-1">

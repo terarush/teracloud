@@ -68,7 +68,7 @@ export const ContainerDetailView: React.FC<ContainerDetailViewProps> = ({ contai
       </div>
 
       {/* Main Info Card */}
-      <div className="bg-card border border-border p-6 sm:p-8 rounded-3xl flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-xs">
+      <div className="bg-card ring-1 ring-foreground/10 p-6 sm:p-8 rounded-xl flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-2">
           <div className="flex items-center gap-3">
             <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
@@ -149,25 +149,25 @@ export const ContainerDetailView: React.FC<ContainerDetailViewProps> = ({ contai
       {/* Tab Panels */}
       {activeTab === "overview" && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-card border border-border p-6 rounded-3xl space-y-4 shadow-xs">
+          <div className="bg-card ring-1 ring-foreground/10 p-6 rounded-xl space-y-4">
             <h2 className="text-lg font-bold text-foreground">Alokasi Hardware</h2>
             <div className="grid grid-cols-3 gap-3 text-center">
-              <div className="p-4 bg-muted/60 rounded-2xl">
+              <div className="p-4 bg-muted rounded-lg">
                 <div className="text-xs text-muted-foreground">vCPU</div>
                 <div className="text-xl font-bold text-foreground mt-1">{container.cpu_limit} Core</div>
               </div>
-              <div className="p-4 bg-muted/60 rounded-2xl">
+              <div className="p-4 bg-muted rounded-lg">
                 <div className="text-xs text-muted-foreground">RAM</div>
                 <div className="text-xl font-bold text-foreground mt-1">{container.memory_limit} MB</div>
               </div>
-              <div className="p-4 bg-muted/60 rounded-2xl">
+              <div className="p-4 bg-muted rounded-lg">
                 <div className="text-xs text-muted-foreground">Storage</div>
                 <div className="text-xl font-bold text-foreground mt-1">{container.disk_limit} GB</div>
               </div>
             </div>
           </div>
 
-          <div className="bg-card border border-border p-6 rounded-3xl space-y-4 shadow-xs">
+          <div className="bg-card ring-1 ring-foreground/10 p-6 rounded-xl space-y-4">
             <h2 className="text-lg font-bold text-foreground">Koneksi &amp; Port Terbuka</h2>
             <div className="space-y-3 text-sm">
               <div className="flex justify-between items-center py-2 border-b border-border">
@@ -192,7 +192,7 @@ export const ContainerDetailView: React.FC<ContainerDetailViewProps> = ({ contai
       )}
 
       {activeTab === "terminal" && (
-        <div className="h-[520px] bg-card border border-border rounded-3xl p-2 shadow-xs overflow-hidden">
+        <div className="h-[520px] bg-card ring-1 ring-foreground/10 rounded-xl p-2 overflow-hidden">
           <Terminal containerId={container.id} />
         </div>
       )}

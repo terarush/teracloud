@@ -58,7 +58,7 @@ export const PricingView: React.FC = () => {
               className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-border text-foreground hover:bg-muted transition cursor-pointer"
               aria-label="Toggle theme"
             >
-              {theme === "dark" ? <Sun className="h-4 w-4 text-amber-500" /> : <Moon className="h-4 w-4 text-indigo-500" />}
+              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </button>
 
             <Button size="sm" onClick={() => navigate({ to: "/app" })}>
@@ -86,7 +86,7 @@ export const PricingView: React.FC = () => {
               <p>{t("common.loading", "Memuat daftar paket...")}</p>
             </div>
           ) : plans.length === 0 ? (
-            <div className="text-center py-16 bg-card border border-border rounded-2xl">
+            <div className="text-center py-16 bg-card ring-1 ring-foreground/10 rounded-xl">
               <p className="text-muted-foreground">Belum ada paket hosting yang aktif saat ini.</p>
             </div>
           ) : (
@@ -110,7 +110,7 @@ export const PricingView: React.FC = () => {
                 {t("hosting.comparisonSubtitle", "Detail perbandingan resource dan fitur untuk setiap tingkatan paket")}
               </p>
             </div>
-            <div className="bg-card border border-border rounded-3xl p-6 shadow-xs">
+            <div className="bg-card ring-1 ring-foreground/10 rounded-xl p-6">
               <PlanComparison />
             </div>
           </div>

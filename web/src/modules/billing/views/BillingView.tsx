@@ -40,7 +40,7 @@ export const BillingView: React.FC = () => {
             </h2>
 
             {subscriptions.length === 0 ? (
-              <div className="p-6 bg-card border border-border rounded-2xl text-center text-sm text-muted-foreground">
+              <div className="p-6 bg-card ring-1 ring-foreground/10 rounded-xl text-center text-sm text-muted-foreground">
                 Belum ada langganan aktif.
               </div>
             ) : (

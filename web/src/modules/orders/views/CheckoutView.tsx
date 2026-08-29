@@ -39,12 +39,12 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ orderId, planSlug })
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
         <CheckoutSummary plan={plan} order={order} />
 
-        <div className="bg-card border border-border rounded-3xl p-6 sm:p-8 space-y-6 shadow-xs">
+        <div className="bg-card ring-1 ring-foreground/10 rounded-xl p-6 sm:p-8 space-y-6">
           <h2 className="text-xl font-bold text-foreground">Metode Pembayaran</h2>
 
           {order ? (
             <div className="space-y-4">
-              <div className="p-4 bg-muted/40 rounded-2xl text-xs space-y-2">
+              <div className="p-4 bg-muted rounded-lg text-xs space-y-2">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Nomor Order:</span>
                   <span className="font-mono font-medium">{order.order_number}</span>
@@ -56,9 +56,9 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ orderId, planSlug })
               </div>
 
               {order.status === "paid" ? (
-                <div className="p-6 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-center space-y-3">
-                  <CheckCircle className="w-10 h-10 text-emerald-500 mx-auto" />
-                  <h3 className="font-bold text-emerald-500">Pembayaran Berhasil!</h3>
+                <div className="p-6 bg-primary/10 ring-1 ring-primary/20 rounded-xl text-center space-y-3">
+                  <CheckCircle className="w-10 h-10 text-primary mx-auto" />
+                  <h3 className="font-bold text-primary">Pembayaran Berhasil!</h3>
                   <p className="text-xs text-muted-foreground">
                     Container Docker Anda sedang dipersiapkan dan siap diakses.
                   </p>

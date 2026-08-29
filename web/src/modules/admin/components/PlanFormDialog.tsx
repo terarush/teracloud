@@ -42,7 +42,7 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
-      <div className="bg-card border border-border w-full max-w-lg rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl">
+      <div className="bg-card ring-1 ring-foreground/10 w-full max-w-lg rounded-xl p-6 sm:p-8 space-y-6">
         <h2 className="text-xl font-bold text-foreground">
           {initialPlan ? "Edit Paket Hosting" : "Tambah Paket Hosting Baru"}
         </h2>
