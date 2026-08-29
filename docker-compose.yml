@@ -1,7 +1,7 @@
 services:
   app:
-    container_name: app-ruang-tukar
-    image: ruangtukar-backend:latest
+    container_name: teracloud-backend
+    image: teracloud-backend:latest
     build:
       context: .
       dockerfile: Dockerfile

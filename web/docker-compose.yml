@@ -1,11 +1,10 @@
-version: "3.8"
-
 services:
   web:
+    image: teracloud-app:latest
     build:
       context: .
       target: runtime
-    container_name: react-starter-prod
+    container_name: teracloud-web
     ports:
       - "80:80"
     restart: unless-stopped
