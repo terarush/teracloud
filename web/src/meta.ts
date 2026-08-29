@@ -1,7 +1,10 @@
+import { tl } from "@/lib/i18n"
+
 export const companyMeta = {
   name: "TeraRush",
   logo: "/company/logo.png",
-  logoWhite: "/company/logo.png", 
+  logoWhite: "/company/logo.png",
+  icon: "/favicon.ico",
   title: "TeraRush - Open Source Development Agency",
   description:
     "Empowering developers worldwide through open-source innovation. Build, collaborate, and scale with reliable web solutions.",
@@ -28,3 +31,17 @@ export const companyMeta = {
 }
 
 export type CompanyMetaType = typeof companyMeta
+
+export interface SeoMeta {
+  title: string
+  description: string
+  tagline: string
+}
+
+export function getSeoMeta(): SeoMeta {
+  return {
+    title: tl("seo.title") || companyMeta.title,
+    description: tl("seo.description") || companyMeta.description,
+    tagline: tl("seo.tagline") || companyMeta.tagline,
+  }
+}

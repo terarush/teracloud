@@ -12,7 +12,7 @@ export default function HomePage() {
   }
 
   const handleGetStarted = () => {
-    navigate({ to: "/get-started" })
+    navigate({ to: "/login" })
   }
 
   return (
