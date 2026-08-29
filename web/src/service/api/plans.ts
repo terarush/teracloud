@@ -44,37 +44,37 @@ export interface UpdatePlanRequest extends Partial<CreatePlanRequest> {}
 export const plansApi = {
   // Public
   getPlans: async (): Promise<Plan[]> => {
-    const res = await apiClient.get<{ data: Plan[] }>("/plans")
-    return res.data.data || []
+    const res = await apiClient.get<Plan[]>("/plans")
+    return (res as any)?.data ?? res.data ?? []
   },
 
   getPlanBySlug: async (slug: string): Promise<Plan> => {
-    const res = await apiClient.get<{ data: Plan }>(`/plans/${slug}`)
-    return res.data.data
+    const res = await apiClient.get<Plan>(`/plans/${slug}`)
+    return (res as any)?.data ?? res.data
   },
 
-  // Admin
+  // Admin / CRUD
   adminGetPlans: async (): Promise<Plan[]> => {
-    const res = await apiClient.get<{ data: Plan[] }>("/admin/plans")
-    return res.data.data || []
+    const res = await apiClient.get<Plan[]>("/plans")
+    return (res as any)?.data ?? res.data ?? []
   },
 
   adminCreatePlan: async (data: CreatePlanRequest): Promise<Plan> => {
-    const res = await apiClient.post<{ data: Plan }>("/admin/plans", data)
-    return res.data.data
+    const res = await apiClient.post<Plan>("/plans", data)
+    return (res as any)?.data ?? res.data
   },
 
   adminUpdatePlan: async (id: number, data: UpdatePlanRequest): Promise<Plan> => {
-    const res = await apiClient.put<{ data: Plan }>(`/admin/plans/${id}`, data)
-    return res.data.data
+    const res = await apiClient.put<Plan>(`/plans/${id}`, data)
+    return (res as any)?.data ?? res.data
   },
 
   adminDeletePlan: async (id: number): Promise<void> => {
-    await apiClient.delete(`/admin/plans/${id}`)
+    await apiClient.delete(`/plans/${id}`)
   },
 
   adminTogglePlan: async (id: number): Promise<Plan> => {
-    const res = await apiClient.patch<{ data: Plan }>(`/admin/plans/${id}/toggle`)
-    return res.data.data
+    const res = await apiClient.patch<Plan>(`/plans/${id}/toggle`)
+    return (res as any)?.data ?? res.data
   },
 }

@@ -221,16 +221,34 @@ func (h *PlanHandler) TogglePlan(c *echo.Context) error {
 	return h.r.SuccessResponse(c, response.FromEntity(plan), "Plan toggled successfully")
 }
 
+// GetPlans handles GET /plans (public active plans, admin gets all plans if admin)
+func (h *PlanHandler) GetPlans(c *echo.Context) error {
+	ctx := c.Request().Context()
+	userRole := utils.UserRoleFromCtx(c)
+
+	var plans []*entity.Plan
+	var err error
+	if userRole == middleware.RoleAdmin {
+		plans, err = h.planService.GetAllPlans(ctx)
+	} else {
+		plans, err = h.planService.GetActivePlans(ctx)
+	}
+
+	if err != nil {
+		return h.r.InternalServerErrorResponse(c, err)
+	}
+	return h.r.SuccessResponse(c, response.FromEntities(plans), "Plans retrieved successfully")
+}
+
 // RegisterRoutes registers plan routes
 func (h *PlanHandler) RegisterRoutes(e *echo.Echo, basePath string) {
 	// Public routes
-	pub := e.Group(basePath)
-	pub.GET("/plans", h.GetActivePlans)
-	pub.GET("/plans/:slug", h.GetPlanBySlug)
+	pub := e.Group(basePath+"/plans")
+	pub.GET("", h.GetPlans)
+	pub.GET("/:slug", h.GetPlanBySlug)
 
-	// Admin routes
-	admin := e.Group(basePath+"/admin/plans", middleware.RequireAdmin)
-	admin.GET("", h.GetAllPlans)
+	// Protected admin routes
+	admin := e.Group(basePath+"/plans", middleware.RequireAdmin)
 	admin.POST("", h.CreatePlan)
 	admin.PUT("/:id", h.UpdatePlan)
 	admin.DELETE("/:id", h.DeletePlan)
