@@ -15,6 +15,14 @@ import HomePage from '@/modules/home/index'
 import NotFound from '@/modules/error/not-found'
 import { GlobalsAppLayout } from '@/modules/app/layouts/globalsAppLayout'
 import AppPage from '@/modules/app/index'
+import { PricingPage } from '@/modules/pricing/PricingPage'
+import { DashboardPage } from '@/modules/dashboard/DashboardPage'
+import { ContainerDetailPage } from '@/modules/containers/ContainerDetailPage'
+import { TerminalPage } from '@/modules/containers/TerminalPage'
+import { BillingPage } from '@/modules/billing/BillingPage'
+import { AdminDashboard } from '@/modules/admin/AdminDashboard'
+import { AdminPlans } from '@/modules/admin/AdminPlans'
+import { AdminOrders } from '@/modules/admin/AdminOrders'
 
 import '../styles.css'
 import { Toaster } from '@/components/ui/sonner'
@@ -44,6 +52,12 @@ const homeRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
   component: HomePage,
+})
+
+const pricingRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/pricing',
+  component: PricingPage,
 })
 
 // 2. Guest-Only Auth Routes
@@ -96,7 +110,75 @@ const setUsernameRoute = createRoute({
   },
 })
 
-// 3. Protected App Routes
+// 3. Legacy redirect routes (old paths → new /app/* paths)
+const legacyDashboardRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/dashboard',
+  beforeLoad: () => {
+    throw redirect({ to: '/app/dashboard' as any })
+  },
+})
+
+const legacyContainerDetailRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/dashboard/containers/$id',
+  beforeLoad: ({ params }) => {
+    throw redirect({ to: `/app/dashboard/containers/${params.id}` as any })
+  },
+})
+
+const legacyContainerTerminalRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/dashboard/containers/$id/terminal',
+  beforeLoad: ({ params }) => {
+    throw redirect({ to: `/app/dashboard/containers/${params.id}/terminal` as any })
+  },
+})
+
+const legacyBillingRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/dashboard/billing',
+  beforeLoad: () => {
+    throw redirect({ to: '/app/dashboard/billing' as any })
+  },
+})
+
+const legacyAdminRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/admin',
+  beforeLoad: () => {
+    throw redirect({ to: '/app/admin' as any })
+  },
+})
+
+const legacyAdminPlansRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/admin/plans',
+  beforeLoad: () => {
+    throw redirect({ to: '/app/admin/plans' as any })
+  },
+})
+
+const legacyAdminOrdersRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/admin/orders',
+  beforeLoad: () => {
+    throw redirect({ to: '/app/admin/orders' as any })
+  },
+})
+
+// 4. Terminal — standalone full-screen (NOT inside sidebar layout)
+const appContainerTerminalRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/app/dashboard/containers/$id/terminal',
+  component: () => {
+    const { id } = appContainerTerminalRoute.useParams()
+    return <TerminalPage containerId={Number(id)} />
+  },
+  beforeLoad: authMiddleware.requireAuth,
+})
+
+// 5. Protected App Routes (all inside sidebar layout)
 const appLayoutRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/app',
@@ -110,8 +192,48 @@ const appDashboardRoute = createRoute({
   component: AppPage,
 })
 
+const appUserDashboardRoute = createRoute({
+  getParentRoute: () => appLayoutRoute,
+  path: '/dashboard',
+  component: DashboardPage,
+})
+
+const appContainerDetailRoute = createRoute({
+  getParentRoute: () => appLayoutRoute,
+  path: '/dashboard/containers/$id',
+  component: () => {
+    const { id } = appContainerDetailRoute.useParams()
+    return <ContainerDetailPage containerId={Number(id)} />
+  },
+})
+
+const appBillingRoute = createRoute({
+  getParentRoute: () => appLayoutRoute,
+  path: '/dashboard/billing',
+  component: BillingPage,
+})
+
+const appAdminRoute = createRoute({
+  getParentRoute: () => appLayoutRoute,
+  path: '/admin',
+  component: AdminDashboard,
+})
+
+const appAdminPlansRoute = createRoute({
+  getParentRoute: () => appLayoutRoute,
+  path: '/admin/plans',
+  component: AdminPlans,
+})
+
+const appAdminOrdersRoute = createRoute({
+  getParentRoute: () => appLayoutRoute,
+  path: '/admin/orders',
+  component: AdminOrders,
+})
+
 export const routeTree = rootRoute.addChildren([
   homeRoute,
+  pricingRoute,
   loginRoute,
   registerRoute,
   forgotPasswordRoute,
@@ -119,7 +241,24 @@ export const routeTree = rootRoute.addChildren([
   googleCallbackRoute,
   authSetUsernameRoute,
   setUsernameRoute,
+  // Legacy redirects
+  legacyDashboardRoute,
+  legacyContainerDetailRoute,
+  legacyContainerTerminalRoute,
+  legacyBillingRoute,
+  legacyAdminRoute,
+  legacyAdminPlansRoute,
+  legacyAdminOrdersRoute,
+  // Terminal standalone (full-screen, no sidebar)
+  appContainerTerminalRoute,
+  // Main app layout with sidebar
   appLayoutRoute.addChildren([
     appDashboardRoute,
+    appUserDashboardRoute,
+    appContainerDetailRoute,
+    appBillingRoute,
+    appAdminRoute,
+    appAdminPlansRoute,
+    appAdminOrdersRoute,
   ]),
 ])

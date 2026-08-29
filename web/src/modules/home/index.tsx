@@ -49,9 +49,14 @@ export default function HomePage() {
             Deploy, manage, and run your Docker containers in the cloud instantly and securely.
           </p>
         </div>
-        <Button variant="default" onClick={handleGetStarted} className="cursor-pointer">
-          Get Started
-        </Button>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+          <Button variant="default" onClick={() => navigate({ to: "/pricing" })} className="w-full sm:w-auto cursor-pointer">
+            Lihat Paket Hosting
+          </Button>
+          <Button variant="outline" onClick={() => navigate({ to: "/dashboard" })} className="w-full sm:w-auto cursor-pointer">
+            Masuk Dashboard
+          </Button>
+        </div>
       </div>
     </div>
   )
