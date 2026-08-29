@@ -83,7 +83,7 @@ func (c *Client) CreateAndStartContainer(ctx context.Context, cfg ContainerConfi
 
 	var binds []string
 	if cfg.VolumePath != "" {
-		binds = append(binds, fmt.Sprintf("%s:/home:rw", cfg.VolumePath))
+		binds = append(binds, fmt.Sprintf("%s:/data:rw", cfg.VolumePath))
 	}
 
 	containerConfig := &container.Config{
