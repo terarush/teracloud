@@ -9,6 +9,7 @@ import (
 	"ruang-tukar/internal/pkg/middleware"
 	"ruang-tukar/internal/pkg/utils"
 	containerErrs "ruang-tukar/modules/containers/errs"
+	"ruang-tukar/modules/containers/domain/entity"
 	"ruang-tukar/modules/containers/domain/service"
 	"ruang-tukar/modules/containers/dto/request"
 	"ruang-tukar/modules/containers/dto/response"
@@ -32,20 +33,33 @@ func NewContainerHandler(log *logger.Logger, event *bus.EventBus, containerServi
 	}
 }
 
-// GetUserContainers lists all containers for current user
-func (h *ContainerHandler) GetUserContainers(c *echo.Context) error {
+// GetContainers lists containers (role-aware: user gets own, admin gets all)
+func (h *ContainerHandler) GetContainers(c *echo.Context) error {
 	ctx := c.Request().Context()
 	userID := utils.UserIDFromCtx(c)
+	userRole := utils.UserRoleFromCtx(c)
 	if userID == 0 {
 		return h.r.UnauthorizedResponse(c, utils.NewAppError(utils.CodeUnauthorized, "Unauthorized"))
 	}
 
-	containers, err := h.containerService.GetUserContainers(ctx, userID)
+	var containers []*entity.Container
+	var err error
+	if userRole == middleware.RoleAdmin {
+		containers, err = h.containerService.GetAllContainers(ctx)
+	} else {
+		containers, err = h.containerService.GetUserContainers(ctx, userID)
+	}
+
 	if err != nil {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
 	return h.r.SuccessResponse(c, response.FromEntities(containers), "Containers retrieved successfully")
+}
+
+// GetUserContainers lists all containers for current user
+func (h *ContainerHandler) GetUserContainers(c *echo.Context) error {
+	return h.GetContainers(c)
 }
 
 // GetContainerByID gets container details
@@ -78,6 +92,7 @@ func (h *ContainerHandler) GetContainerByID(c *echo.Context) error {
 func (h *ContainerHandler) StartContainer(c *echo.Context) error {
 	ctx := c.Request().Context()
 	userID := utils.UserIDFromCtx(c)
+	userRole := utils.UserRoleFromCtx(c)
 
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
@@ -88,11 +103,11 @@ func (h *ContainerHandler) StartContainer(c *echo.Context) error {
 	if err != nil {
 		return h.r.NotFoundResponse(c, err)
 	}
-	if container.UserID != userID {
+	if userRole != middleware.RoleAdmin && container.UserID != userID {
 		return h.r.ForbiddenResponse(c, utils.NewAppError(utils.CodeForbidden, "Unauthorized"))
 	}
 
-	if err := h.containerService.StartContainer(ctx, uint(id), userID); err != nil {
+	if err := h.containerService.StartContainer(ctx, uint(id), container.UserID); err != nil {
 		if err == containerErrs.ErrContainerAlreadyRunning || err == containerErrs.ErrContainerSuspended {
 			return h.r.BadRequestResponse(c, err)
 		}
@@ -106,6 +121,7 @@ func (h *ContainerHandler) StartContainer(c *echo.Context) error {
 func (h *ContainerHandler) StopContainer(c *echo.Context) error {
 	ctx := c.Request().Context()
 	userID := utils.UserIDFromCtx(c)
+	userRole := utils.UserRoleFromCtx(c)
 
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
@@ -116,11 +132,11 @@ func (h *ContainerHandler) StopContainer(c *echo.Context) error {
 	if err != nil {
 		return h.r.NotFoundResponse(c, err)
 	}
-	if container.UserID != userID {
+	if userRole != middleware.RoleAdmin && container.UserID != userID {
 		return h.r.ForbiddenResponse(c, utils.NewAppError(utils.CodeForbidden, "Unauthorized"))
 	}
 
-	if err := h.containerService.StopContainer(ctx, uint(id), userID); err != nil {
+	if err := h.containerService.StopContainer(ctx, uint(id), container.UserID); err != nil {
 		if err == containerErrs.ErrContainerNotRunning {
 			return h.r.BadRequestResponse(c, err)
 		}
@@ -134,6 +150,7 @@ func (h *ContainerHandler) StopContainer(c *echo.Context) error {
 func (h *ContainerHandler) RestartContainer(c *echo.Context) error {
 	ctx := c.Request().Context()
 	userID := utils.UserIDFromCtx(c)
+	userRole := utils.UserRoleFromCtx(c)
 
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
@@ -144,11 +161,11 @@ func (h *ContainerHandler) RestartContainer(c *echo.Context) error {
 	if err != nil {
 		return h.r.NotFoundResponse(c, err)
 	}
-	if container.UserID != userID {
+	if userRole != middleware.RoleAdmin && container.UserID != userID {
 		return h.r.ForbiddenResponse(c, utils.NewAppError(utils.CodeForbidden, "Unauthorized"))
 	}
 
-	if err := h.containerService.RestartContainer(ctx, uint(id), userID); err != nil {
+	if err := h.containerService.RestartContainer(ctx, uint(id), container.UserID); err != nil {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
@@ -159,6 +176,7 @@ func (h *ContainerHandler) RestartContainer(c *echo.Context) error {
 func (h *ContainerHandler) RebootContainer(c *echo.Context) error {
 	ctx := c.Request().Context()
 	userID := utils.UserIDFromCtx(c)
+	userRole := utils.UserRoleFromCtx(c)
 
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
@@ -169,11 +187,11 @@ func (h *ContainerHandler) RebootContainer(c *echo.Context) error {
 	if err != nil {
 		return h.r.NotFoundResponse(c, err)
 	}
-	if container.UserID != userID {
+	if userRole != middleware.RoleAdmin && container.UserID != userID {
 		return h.r.ForbiddenResponse(c, utils.NewAppError(utils.CodeForbidden, "Unauthorized"))
 	}
 
-	if err := h.containerService.RebootContainer(ctx, uint(id), userID); err != nil {
+	if err := h.containerService.RebootContainer(ctx, uint(id), container.UserID); err != nil {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
@@ -184,6 +202,7 @@ func (h *ContainerHandler) RebootContainer(c *echo.Context) error {
 func (h *ContainerHandler) ResetContainer(c *echo.Context) error {
 	ctx := c.Request().Context()
 	userID := utils.UserIDFromCtx(c)
+	userRole := utils.UserRoleFromCtx(c)
 
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
@@ -194,7 +213,7 @@ func (h *ContainerHandler) ResetContainer(c *echo.Context) error {
 	if err != nil {
 		return h.r.NotFoundResponse(c, err)
 	}
-	if container.UserID != userID {
+	if userRole != middleware.RoleAdmin && container.UserID != userID {
 		return h.r.ForbiddenResponse(c, utils.NewAppError(utils.CodeForbidden, "Unauthorized"))
 	}
 
@@ -206,7 +225,7 @@ func (h *ContainerHandler) ResetContainer(c *echo.Context) error {
 		req.Mode = "soft"
 	}
 
-	if err := h.containerService.ResetContainer(ctx, uint(id), userID, req.Mode); err != nil {
+	if err := h.containerService.ResetContainer(ctx, uint(id), container.UserID, req.Mode); err != nil {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
@@ -217,6 +236,7 @@ func (h *ContainerHandler) ResetContainer(c *echo.Context) error {
 func (h *ContainerHandler) DeleteContainer(c *echo.Context) error {
 	ctx := c.Request().Context()
 	userID := utils.UserIDFromCtx(c)
+	userRole := utils.UserRoleFromCtx(c)
 
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
@@ -227,11 +247,11 @@ func (h *ContainerHandler) DeleteContainer(c *echo.Context) error {
 	if err != nil {
 		return h.r.NotFoundResponse(c, err)
 	}
-	if container.UserID != userID {
+	if userRole != middleware.RoleAdmin && container.UserID != userID {
 		return h.r.ForbiddenResponse(c, utils.NewAppError(utils.CodeForbidden, "Unauthorized"))
 	}
 
-	if err := h.containerService.DeleteContainer(ctx, uint(id), userID); err != nil {
+	if err := h.containerService.DeleteContainer(ctx, uint(id), container.UserID); err != nil {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
@@ -325,7 +345,7 @@ func (h *ContainerHandler) GetAllContainers(c *echo.Context) error {
 
 func (h *ContainerHandler) RegisterRoutes(e *echo.Echo, basePath string) {
 	group := e.Group(basePath+"/containers", middleware.Auth)
-	group.GET("", h.GetUserContainers)
+	group.GET("", h.GetContainers)
 	group.GET("/:id", h.GetContainerByID)
 	group.GET("/:id/stats", h.GetStats)
 	group.POST("/:id/start", h.StartContainer)
@@ -336,7 +356,7 @@ func (h *ContainerHandler) RegisterRoutes(e *echo.Echo, basePath string) {
 	group.DELETE("/:id", h.DeleteContainer)
 	group.GET("/:id/events", h.GetContainerEvents)
 
-	adminGroup := e.Group(basePath+"/admin/containers", middleware.RequireAdmin)
-	adminGroup.GET("", h.GetAllContainers)
+	// Admin-specific container actions
+	adminGroup := e.Group(basePath+"/containers", middleware.RequireAdmin)
 	adminGroup.POST("/:id/suspend", h.SuspendContainer)
 }

@@ -46,13 +46,13 @@ export interface ContainerStats {
 
 export const containersApi = {
   getUserContainers: async (): Promise<Container[]> => {
-    const res = await apiClient.get<{ data: Container[] }>("/containers")
-    return res.data.data || []
+    const res = await apiClient.get<Container[]>("/containers")
+    return (res as any)?.data ?? res.data ?? []
   },
 
   getContainerById: async (id: number): Promise<Container> => {
-    const res = await apiClient.get<{ data: Container }>(`/containers/${id}`)
-    return res.data.data
+    const res = await apiClient.get<Container>(`/containers/${id}`)
+    return (res as any)?.data ?? res.data
   },
 
   startContainer: async (id: number): Promise<void> => {
@@ -80,12 +80,12 @@ export const containersApi = {
   },
 
   getContainerEvents: async (id: number): Promise<ContainerEvent[]> => {
-    const res = await apiClient.get<{ data: ContainerEvent[] }>(`/containers/${id}/events`)
-    return res.data.data || []
+    const res = await apiClient.get<ContainerEvent[]>(`/containers/${id}/events`)
+    return (res as any)?.data ?? res.data ?? []
   },
 
   getContainerStats: async (id: number): Promise<ContainerStats[]> => {
-    const res = await apiClient.get<{ data: ContainerStats[] }>(`/containers/${id}/stats`)
-    return res.data.data || []
+    const res = await apiClient.get<ContainerStats[]>(`/containers/${id}/stats`)
+    return (res as any)?.data ?? res.data ?? []
   },
 }
