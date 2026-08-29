@@ -64,25 +64,9 @@ func (m *Module) RegisterRoutes(e *echo.Echo, basePath string) {
 // Migrations returns the module's migrations
 func (m *Module) Migrations() error {
 	m.logger.Info("Registering user module migrations")
-	// Run AutoMigrate first — it is additive-only (adds missing tables/columns/
-	// indexes, never drops anything) so data is safe. Dropping the legacy
-	// username index afterwards, and non-fatal: if the drop fails it must not
-	// abort AutoMigrate, otherwise new columns (e.g. `location`) never get added.
-	if err := m.db.AutoMigrate(
+	return m.db.AutoMigrate(
 		&entity.User{},
-		&entity.UserProfileLink{},
-		&entity.UserSocialMedia{},
-		&entity.UserBadge{},
-		&entity.UserCustomSection{},
-	); err != nil {
-		return err
-	}
-	if m.db.Migrator().HasIndex(&entity.User{}, "idx_users_username") {
-		if err := m.db.Migrator().DropIndex(&entity.User{}, "idx_users_username"); err != nil {
-			m.logger.Error("Failed to drop legacy username index: %v", err)
-		}
-	}
-	return nil
+	)
 }
 
 // Logger returns the module's logger

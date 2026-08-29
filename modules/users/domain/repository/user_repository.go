@@ -14,6 +14,5 @@ type UserRepository interface {
 	Create(ctx context.Context, user *entity.User) error
 	Update(ctx context.Context, user *entity.User) error
 	UpdatePasswordByEmail(ctx context.Context, email, hashedPassword string) error
-	DeleteProfileLinksByUserID(ctx context.Context, userID uint) error
 	Delete(ctx context.Context, id uint) error
 }

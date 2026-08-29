@@ -133,6 +133,10 @@ func (h *AuthHandler) Register(c *echo.Context) error {
 			h.log.Warn("Email already in use:", req.Email)
 			return h.r.ErrorResponse(c, http.StatusConflict, authErrs.ErrEmailAlreadyUsed)
 		}
+		if err == service.ErrUsernameTaken {
+			h.log.Warn("Username already taken:", req.Username)
+			return h.r.ErrorResponse(c, http.StatusConflict, authErrs.ErrUsernameTaken)
+		}
 		h.log.Error("Failed to create user:", err)
 		return h.r.ErrorResponse(c, http.StatusInternalServerError, err)
 	}
@@ -148,16 +152,16 @@ func (h *AuthHandler) Register(c *echo.Context) error {
 		return h.r.ErrorResponse(c, http.StatusInternalServerError, err)
 	}
 
-	return h.r.SuccessResponse(c, resp, "User registered successfully")
+	return h.r.SuccessResponse(c, resp, "Registration successful")
 }
 
-// Login handles user login.
+// Login handles user authentication.
 // @Summary Login a user
 // @Description Authenticate user with email and password
 // @Tags auth
 // @Accept json
 // @Produce json
-// @Param request body request.LoginRequest true "User login credentials"
+// @Param request body request.LoginRequest true "User credentials"
 // @Success 200 {object} map[string]any
 // @Failure 400 {object} utils.Response
 // @Failure 401 {object} utils.Response
@@ -183,7 +187,7 @@ func (h *AuthHandler) Login(c *echo.Context) error {
 	if err != nil {
 		if err == service.ErrUserNotFound || err == service.ErrInvalidPassword {
 			h.log.Warn("Invalid email or password for:", req.Email)
-			return h.r.ErrorResponse(c, http.StatusUnauthorized, utils.NewAppError(utils.CodeUnauthorized, "Email atau kata sandi salah"))
+			return h.r.ErrorResponse(c, http.StatusUnauthorized, authErrs.ErrInvalidPassword)
 		}
 		h.log.Error("Failed to process login:", err)
 		return h.r.ErrorResponse(c, http.StatusInternalServerError, err)
@@ -217,12 +221,12 @@ func (h *AuthHandler) GetProfile(c *echo.Context) error {
 	user, err := h.authService.GetProfile(c.Request().Context(), userID)
 	if err != nil {
 		if err == service.ErrUserNotFound {
-			return h.r.ErrorResponse(c, http.StatusNotFound, utils.NewAppError(utils.CodeNotFound, "Pengguna tidak ditemukan"))
+			return h.r.ErrorResponse(c, http.StatusNotFound, authErrs.ErrUserNotFound)
 		}
 		return h.r.ErrorResponse(c, http.StatusInternalServerError, err)
 	}
 
-	return h.r.SuccessResponse(c, response.FromEntity(user), "Profil berhasil diambil")
+	return h.r.SuccessResponse(c, response.FromEntity(user), "Profile retrieved successfully")
 }
 
 // UpdateProfile updates the authenticated user's profile.
@@ -251,18 +255,18 @@ func (h *AuthHandler) UpdateProfile(c *echo.Context) error {
 	user, err := h.authService.UpdateProfile(c.Request().Context(), userID, req)
 	if err != nil {
 		if err == service.ErrEmailAlreadyUsed {
-			return h.r.ErrorResponse(c, http.StatusConflict, utils.NewAppError(utils.CodeConflict, "Email sudah digunakan"))
+			return h.r.ErrorResponse(c, http.StatusConflict, authErrs.ErrEmailAlreadyUsed)
 		}
 		if err == service.ErrUsernameTaken {
-			return h.r.ErrorResponse(c, http.StatusConflict, utils.NewAppError(utils.CodeConflict, "Username sudah digunakan"))
+			return h.r.ErrorResponse(c, http.StatusConflict, authErrs.ErrUsernameTaken)
 		}
 		if err == service.ErrUserNotFound {
-			return h.r.ErrorResponse(c, http.StatusNotFound, utils.NewAppError(utils.CodeNotFound, "Pengguna tidak ditemukan"))
+			return h.r.ErrorResponse(c, http.StatusNotFound, authErrs.ErrUserNotFound)
 		}
 		return h.r.ErrorResponse(c, http.StatusInternalServerError, err)
 	}
 
-	return h.r.SuccessResponse(c, response.FromEntity(user), "Profil berhasil diperbarui")
+	return h.r.SuccessResponse(c, response.FromEntity(user), "Profile updated successfully")
 }
 
 type setUsernameRequest struct {
@@ -291,7 +295,7 @@ func (h *AuthHandler) SetUsername(c *echo.Context) error {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
-	return h.r.SuccessResponse(c, response.FromEntity(user), "Username berhasil diatur")
+	return h.r.SuccessResponse(c, response.FromEntity(user), "Username updated successfully")
 }
 
 // ChangePassword handles password change request.
@@ -320,15 +324,15 @@ func (h *AuthHandler) ChangePassword(c *echo.Context) error {
 	_, err := h.authService.ChangePassword(c.Request().Context(), userID, req.OldPassword, req.NewPassword)
 	if err != nil {
 		if err == service.ErrInvalidOldPassword {
-			return h.r.ErrorResponse(c, http.StatusBadRequest, utils.NewAppError(utils.CodeBadRequest, "Kata sandi lama salah"))
+			return h.r.ErrorResponse(c, http.StatusBadRequest, utils.NewAppError(utils.CodeBadRequest, "Incorrect current password"))
 		}
 		if err == service.ErrUserNotFound {
-			return h.r.ErrorResponse(c, http.StatusNotFound, utils.NewAppError(utils.CodeNotFound, "Pengguna tidak ditemukan"))
+			return h.r.ErrorResponse(c, http.StatusNotFound, authErrs.ErrUserNotFound)
 		}
 		return h.r.ErrorResponse(c, http.StatusInternalServerError, err)
 	}
 
-	return h.r.SuccessResponse(c, nil, "Kata sandi berhasil diubah")
+	return h.r.SuccessResponse(c, nil, "Password changed successfully")
 }
 
 // Logout handles user logout.
@@ -340,7 +344,7 @@ func (h *AuthHandler) ChangePassword(c *echo.Context) error {
 // @Router /auth/logout [post]
 func (h *AuthHandler) Logout(c *echo.Context) error {
 	h.log.Info("Handling logout request")
-	return h.r.SuccessResponse(c, nil, "Logout berhasil")
+	return h.r.SuccessResponse(c, nil, "Logout successful")
 }
 
 // Refresh handles token refresh.
@@ -367,19 +371,19 @@ func (h *AuthHandler) Refresh(c *echo.Context) error {
 	claims, err := h.refreshToken.ParseToken(req.RefreshToken)
 	if err != nil {
 		h.log.Warn("Invalid refresh token:", err)
-		return h.r.ErrorResponse(c, http.StatusUnauthorized, utils.NewAppError(utils.CodeUnauthorized, "Token tidak valid atau kedaluwarsa"))
+		return h.r.ErrorResponse(c, http.StatusUnauthorized, authErrs.ErrTokenInvalid)
 	}
 
 	typ, _ := claims["type"].(string)
 	if typ != "refresh" {
-		return h.r.ErrorResponse(c, http.StatusUnauthorized, utils.NewAppError(utils.CodeUnauthorized, "Tipe token tidak valid"))
+		return h.r.ErrorResponse(c, http.StatusUnauthorized, utils.NewAppError(utils.CodeUnauthorized, "Invalid token type"))
 	}
 
 	userID := uint(claims["user_id"].(float64))
 	user, err := h.authService.GetUserByID(c.Request().Context(), userID)
 	if err != nil {
 		h.log.Error("User not found for refresh:", err)
-		return h.r.ErrorResponse(c, http.StatusUnauthorized, utils.NewAppError(utils.CodeUnauthorized, "Pengguna tidak ditemukan"))
+		return h.r.ErrorResponse(c, http.StatusUnauthorized, authErrs.ErrUserNotFound)
 	}
 
 	resp, err := h.generateAuthResponse(user)
@@ -402,7 +406,7 @@ func (h *AuthHandler) Refresh(c *echo.Context) error {
 func (h *AuthHandler) CheckEmail(c *echo.Context) error {
 	email := c.QueryParam("email")
 	if email == "" {
-		return h.r.ErrorResponse(c, http.StatusBadRequest, utils.NewAppError(utils.CodeBadRequest, "Email wajib diisi"))
+		return h.r.ErrorResponse(c, http.StatusBadRequest, utils.NewAppError(utils.CodeBadRequest, "Email is required"))
 	}
 
 	_, err := h.authService.GetUserByEmail(c.Request().Context(), email)
@@ -422,7 +426,7 @@ func (h *AuthHandler) CheckEmail(c *echo.Context) error {
 func (h *AuthHandler) CheckUsername(c *echo.Context) error {
 	username := c.QueryParam("username")
 	if username == "" {
-		return h.r.ErrorResponse(c, http.StatusBadRequest, utils.NewAppError(utils.CodeBadRequest, "Username wajib diisi"))
+		return h.r.ErrorResponse(c, http.StatusBadRequest, utils.NewAppError(utils.CodeBadRequest, "Username is required"))
 	}
 
 	_, err := h.authService.GetUserByUsername(c.Request().Context(), username)
@@ -457,7 +461,7 @@ func (h *AuthHandler) ForgotPassword(c *echo.Context) error {
 	h.forgotMu.Lock()
 	if last, ok := h.forgotReq[req.Email]; ok && time.Since(last) < 60*time.Second {
 		h.forgotMu.Unlock()
-		return h.r.SuccessResponse(c, nil, "Jika email terdaftar, tautan reset akan dikirim")
+		return h.r.SuccessResponse(c, nil, "If the email is registered, a reset link will be sent")
 	}
 	h.forgotReq[req.Email] = time.Now()
 	h.forgotMu.Unlock()
@@ -468,7 +472,7 @@ func (h *AuthHandler) ForgotPassword(c *echo.Context) error {
 		return h.r.ErrorResponse(c, http.StatusInternalServerError, err)
 	}
 
-	return h.r.SuccessResponse(c, nil, "Jika email terdaftar, tautan reset akan dikirim")
+	return h.r.SuccessResponse(c, nil, "If the email is registered, a reset link will be sent")
 }
 
 // VerifyResetToken checks if a reset token is still valid.
@@ -480,12 +484,12 @@ func (h *AuthHandler) ForgotPassword(c *echo.Context) error {
 func (h *AuthHandler) VerifyResetToken(c *echo.Context) error {
 	token := c.QueryParam("token")
 	if token == "" {
-		return h.r.ErrorResponse(c, http.StatusBadRequest, utils.NewAppError(utils.CodeBadRequest, "Token wajib diisi"))
+		return h.r.ErrorResponse(c, http.StatusBadRequest, utils.NewAppError(utils.CodeBadRequest, "Token is required"))
 	}
 	if err := h.authService.VerifyResetToken(c.Request().Context(), token); err != nil {
-		return h.r.ErrorResponse(c, http.StatusBadRequest, utils.NewAppError(utils.CodeBadRequest, "Token tidak valid atau sudah kedaluwarsa"))
+		return h.r.ErrorResponse(c, http.StatusBadRequest, authErrs.ErrTokenInvalid)
 	}
-	return h.r.SuccessResponse(c, nil, "Token valid")
+	return h.r.SuccessResponse(c, nil, "Token is valid")
 }
 
 // ResetPassword resets the user's password.
@@ -515,13 +519,13 @@ func (h *AuthHandler) ResetPassword(c *echo.Context) error {
 		return h.r.ErrorResponse(c, http.StatusBadRequest, err)
 	}
 
-	return h.r.SuccessResponse(c, nil, "Password berhasil direset")
+	return h.r.SuccessResponse(c, nil, "Password reset successfully")
 }
 
 // GoogleLogin redirects to Google OAuth consent screen.
 func (h *AuthHandler) GoogleLogin(c *echo.Context) error {
 	if oauth.GoogleOAuthConfig == nil {
-		return h.r.ErrorResponse(c, http.StatusServiceUnavailable, utils.NewAppError(utils.CodeUnavailable, "Google OAuth tidak dikonfigurasi"))
+		return h.r.ErrorResponse(c, http.StatusServiceUnavailable, utils.NewAppError(utils.CodeUnavailable, "Google OAuth not configured"))
 	}
 	url := oauth.GoogleOAuthConfig.AuthCodeURL("state", oauth2.AccessTypeOffline)
 	return c.Redirect(http.StatusTemporaryRedirect, url)
@@ -531,17 +535,17 @@ func (h *AuthHandler) GoogleLogin(c *echo.Context) error {
 func (h *AuthHandler) GoogleCallback(c *echo.Context) error {
 	code := c.QueryParam("code")
 	if code == "" {
-		return h.r.ErrorResponse(c, http.StatusBadRequest, utils.NewAppError(utils.CodeBadRequest, "Kode otorisasi tidak ditemukan"))
+		return h.r.ErrorResponse(c, http.StatusBadRequest, utils.NewAppError(utils.CodeBadRequest, "Authorization code not found"))
 	}
 
 	userInfo, err := oauth.GetGoogleUserInfo(c.Request().Context(), code)
 	if err != nil {
 		h.log.Error("Google OAuth error:", err)
-		return h.r.ErrorResponse(c, http.StatusUnauthorized, utils.NewAppError(utils.CodeUnauthorized, "Autentikasi Google gagal"))
+		return h.r.ErrorResponse(c, http.StatusUnauthorized, utils.NewAppError(utils.CodeUnauthorized, "Google authentication failed"))
 	}
 
 	if !userInfo.VerifiedEmail {
-		return h.r.ErrorResponse(c, http.StatusUnauthorized, utils.NewAppError(utils.CodeUnauthorized, "Email Google belum diverifikasi"))
+		return h.r.ErrorResponse(c, http.StatusUnauthorized, utils.NewAppError(utils.CodeUnauthorized, "Google email not verified"))
 	}
 
 	user, err := h.authService.GetUserByEmail(c.Request().Context(), userInfo.Email)
@@ -549,11 +553,8 @@ func (h *AuthHandler) GoogleCallback(c *echo.Context) error {
 		user = entity.NewGoogleUser(userInfo.Name, "", userInfo.Email, userInfo.ID, userInfo.Picture)
 		if err := h.authService.CreateUser(c.Request().Context(), user); err != nil {
 			h.log.Error("Failed to create user from Google:", err)
-			return h.r.ErrorResponse(c, http.StatusInternalServerError, utils.NewAppError(utils.CodeInternal, "Gagal membuat akun"))
+			return h.r.ErrorResponse(c, http.StatusInternalServerError, utils.NewAppError(utils.CodeInternal, "Failed to create user"))
 		}
-	} else if userInfo.Picture != "" {
-		user.Avatar = userInfo.Picture
-		_ = h.authService.UpdateUser(c.Request().Context(), user)
 	}
 
 	resp, err := h.generateAuthResponse(user)
@@ -572,7 +573,7 @@ func (h *AuthHandler) GoogleCallback(c *echo.Context) error {
 func (h *AuthHandler) UploadFile(c *echo.Context) error {
 	file, err := c.FormFile("file")
 	if err != nil {
-		return h.r.ErrorResponse(c, http.StatusBadRequest, utils.NewAppError(utils.CodeBadRequest, "File tidak ditemukan"))
+		return h.r.ErrorResponse(c, http.StatusBadRequest, utils.NewAppError(utils.CodeBadRequest, "File not found"))
 	}
 
 	src, err := file.Open()
@@ -583,7 +584,7 @@ func (h *AuthHandler) UploadFile(c *echo.Context) error {
 
 	uploadDir := "./public/uploads"
 	if err := os.MkdirAll(uploadDir, 0755); err != nil {
-		return h.r.ErrorResponse(c, http.StatusInternalServerError, utils.NewAppError(utils.CodeInternal, "Gagal membuat direktori upload"))
+		return h.r.ErrorResponse(c, http.StatusInternalServerError, utils.NewAppError(utils.CodeInternal, "Failed to create upload directory"))
 	}
 
 	filename := fmt.Sprintf("%d_%s", time.Now().UnixNano(), filepath.Base(file.Filename))
@@ -600,7 +601,7 @@ func (h *AuthHandler) UploadFile(c *echo.Context) error {
 	}
 
 	fileURL := fmt.Sprintf("/public/uploads/%s", filename)
-	return h.r.SuccessResponse(c, map[string]string{"url": fileURL}, "File berhasil diunggah")
+	return h.r.SuccessResponse(c, map[string]string{"url": fileURL}, "File uploaded successfully")
 }
 
 // RegisterRoutes sets up the auth routes.

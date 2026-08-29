@@ -1,5 +1,3 @@
-// internal/modules/user/interfaces/handler/user_handler.go
-
 package handler
 
 import (
@@ -59,7 +57,7 @@ func (h *UserHandler) GetAllUsers(c *echo.Context) error {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
-	return h.r.SuccessResponse(c, response.FromEntities(users), "ok")
+	return h.r.SuccessResponse(c, response.FromEntities(users), "Users retrieved successfully")
 }
 
 // GetUser gets a user by ID
@@ -79,7 +77,7 @@ func (h *UserHandler) GetUser(c *echo.Context) error {
 
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		return h.r.BadRequestResponse(c, utils.NewAppError(utils.CodeBadRequest, "ID pengguna tidak valid"))
+		return h.r.BadRequestResponse(c, utils.NewAppError(utils.CodeBadRequest, "Invalid user ID"))
 	}
 
 	user, err := h.userService.GetUserByID(ctx, uint(id))
@@ -90,7 +88,7 @@ func (h *UserHandler) GetUser(c *echo.Context) error {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
-	return h.r.SuccessResponse(c, response.FromEntity(user), "ok")
+	return h.r.SuccessResponse(c, response.FromEntity(user), "User retrieved successfully")
 }
 
 // CreateUser creates a new user
@@ -130,7 +128,7 @@ func (h *UserHandler) CreateUser(c *echo.Context) error {
 	// event bus publish
 	h.event.Publish(bus.Event{Type: "user.created", Payload: user})
 
-	return h.r.CreatedResponse(c, response.FromEntity(user), "pengguna dibuat")
+	return h.r.CreatedResponse(c, response.FromEntity(user), "User created successfully")
 }
 
 // UpdateUser updates a user
@@ -151,7 +149,7 @@ func (h *UserHandler) UpdateUser(c *echo.Context) error {
 
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		return h.r.BadRequestResponse(c, utils.NewAppError(utils.CodeBadRequest, "ID pengguna tidak valid"))
+		return h.r.BadRequestResponse(c, utils.NewAppError(utils.CodeBadRequest, "Invalid user ID"))
 	}
 
 	req := new(request.UpdateUserRequest)
@@ -176,8 +174,6 @@ func (h *UserHandler) UpdateUser(c *echo.Context) error {
 	user.LastName = req.LastName
 	user.Email = req.Email
 	user.Avatar = req.Avatar
-	user.Banner = req.Banner
-	user.Bio = req.Bio
 	if req.Password != "" {
 		user.Password = req.Password
 	}
@@ -187,7 +183,7 @@ func (h *UserHandler) UpdateUser(c *echo.Context) error {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
-	return h.r.SuccessResponse(c, response.FromEntity(user), "ok")
+	return h.r.SuccessResponse(c, response.FromEntity(user), "User updated successfully")
 }
 
 // DeleteUser deletes a user
@@ -207,7 +203,7 @@ func (h *UserHandler) DeleteUser(c *echo.Context) error {
 
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		return h.r.BadRequestResponse(c, utils.NewAppError(utils.CodeBadRequest, "ID pengguna tidak valid"))
+		return h.r.BadRequestResponse(c, utils.NewAppError(utils.CodeBadRequest, "Invalid user ID"))
 	}
 
 	err = h.userService.DeleteUser(ctx, uint(id))
@@ -241,7 +237,7 @@ func (h *UserHandler) GetUserProfile(c *echo.Context) error {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
-	return h.r.SuccessResponse(c, response.FromEntity(user), "ok")
+	return h.r.SuccessResponse(c, response.FromEntity(user), "Profile retrieved successfully")
 }
 
 // RegisterRoutes registers the user routes

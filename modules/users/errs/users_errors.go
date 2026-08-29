@@ -1,18 +1,27 @@
 package errs
 
-import "errors"
+import (
+	"ruang-tukar/internal/pkg/utils"
+)
+
+const (
+	CodeUserNotFound     = "USER_NOT_FOUND"
+	CodeEmailAlreadyUsed = "USER_EMAIL_ALREADY_USED"
+	CodeUsernameTaken    = "USER_USERNAME_TAKEN"
+)
 
 var (
-	ErrUserNotFound     = errors.New("pengguna tidak ditemukan")
-	ErrEmailAlreadyUsed = errors.New("email sudah terdaftar")
+	ErrUserNotFound     = utils.NewAppError(CodeUserNotFound, "User not found")
+	ErrEmailAlreadyUsed = utils.NewAppError(CodeEmailAlreadyUsed, "Email already registered")
+	ErrUsernameTaken    = utils.NewAppError(CodeUsernameTaken, "Username is already taken")
 )
 
 var FieldLabels = map[string]string{
-	"Name":            "Nama",
-	"FirstName":       "Nama Depan",
-	"LastName":        "Nama Belakang",
+	"Name":            "Name",
+	"FirstName":       "First Name",
+	"LastName":        "Last Name",
 	"Username":        "Username",
 	"Email":           "Email",
-	"Password":        "Kata Sandi",
-	"ConfirmPassword": "Konfirmasi Kata Sandi",
+	"Password":        "Password",
+	"ConfirmPassword": "Confirm Password",
 }
