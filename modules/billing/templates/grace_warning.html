@@ -1,0 +1,16 @@
+<!-- File: modules/billing/templates/grace_warning.html -->
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>Grace Period Berakhir 1 Hari Lagi</title></head>
+<body style="font-family: sans-serif; background-color: #f8fafc; padding: 24px; color: #1e293b;">
+  <div style="max-width: 560px; margin: auto; background: #ffffff; padding: 32px; border-radius: 12px; border: 1px solid #e2e8f0;">
+    <h2 style="color: #dc2626; margin-top: 0;">⚠️ Grace Period Berakhir Besok!</h2>
+    <p>Halo <strong>{{.Name}}</strong>,</p>
+    <p>Masa tenggang (grace period) untuk container <strong>{{.ContainerName}}</strong> akan berakhir dalam 24 jam ke depan.</p>
+    <p>Container akan otomatis dihentikan (suspended) jika belum diperpanjang.</p>
+    <div style="margin: 24px 0;">
+      <a href="{{.BillingURL}}" style="background: #dc2626; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">Perpanjang Segera</a>
+    </div>
+  </div>
+</body>
+</html>

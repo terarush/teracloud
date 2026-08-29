@@ -1,0 +1,16 @@
+<!-- File: modules/billing/templates/expired_notice.html -->
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>Langganan Berakhir</title></head>
+<body style="font-family: sans-serif; background-color: #f8fafc; padding: 24px; color: #1e293b;">
+  <div style="max-width: 560px; margin: auto; background: #ffffff; padding: 32px; border-radius: 12px; border: 1px solid #e2e8f0;">
+    <h2 style="color: #ea580c; margin-top: 0;">⏰ Langganan Anda Telah Berakhir</h2>
+    <p>Halo <strong>{{.Name}}</strong>,</p>
+    <p>Periode langganan container <strong>{{.ContainerName}}</strong> telah berakhir. Anda memasuki <strong>Grace Period selama 3 hari</strong>.</p>
+    <p>Container tetap berjalan, namun akan segera dihentikan (suspended) jika perpanjangan tidak dilakukan sebelum masa grace period habis.</p>
+    <div style="margin: 24px 0;">
+      <a href="{{.BillingURL}}" style="background: #ea580c; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">Perpanjang Sekarang</a>
+    </div>
+  </div>
+</body>
+</html>

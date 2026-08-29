@@ -1,0 +1,15 @@
+<!-- File: modules/billing/templates/reminder_3d.html -->
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>Pengingat Langganan 3 Hari</title></head>
+<body style="font-family: sans-serif; background-color: #f8fafc; padding: 24px; color: #1e293b;">
+  <div style="max-width: 560px; margin: auto; background: #ffffff; padding: 32px; border-radius: 12px; border: 1px solid #e2e8f0;">
+    <h2 style="color: #ea580c; margin-top: 0;">⚠️ Perhatian: Langganan Berakhir dalam 3 Hari</h2>
+    <p>Halo <strong>{{.Name}}</strong>,</p>
+    <p>Langganan paket <strong>{{.PlanName}}</strong> untuk container <strong>{{.ContainerName}}</strong> akan segera berakhir dalam 3 hari.</p>
+    <div style="margin: 24px 0;">
+      <a href="{{.BillingURL}}" style="background: #ea580c; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">Perpanjang Langganan</a>
+    </div>
+  </div>
+</body>
+</html>

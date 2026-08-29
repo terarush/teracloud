@@ -1,0 +1,16 @@
+<!-- File: modules/billing/templates/suspended.html -->
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>Container Dihentikan</title></head>
+<body style="font-family: sans-serif; background-color: #f8fafc; padding: 24px; color: #1e293b;">
+  <div style="max-width: 560px; margin: auto; background: #ffffff; padding: 32px; border-radius: 12px; border: 1px solid #e2e8f0;">
+    <h2 style="color: #991b1b; margin-top: 0;">🛑 Container Telah Dihentikan (Suspended)</h2>
+    <p>Halo <strong>{{.Name}}</strong>,</p>
+    <p>Masa tenggang langganan telah habis. Container <strong>{{.ContainerName}}</strong> Anda telah kami hentikan.</p>
+    <p><strong>Data Anda masih aman tersimpan selama 7 hari.</strong> Anda dapat mengaktifkannya kembali kapan saja dengan memperpanjang langganan.</p>
+    <div style="margin: 24px 0;">
+      <a href="{{.BillingURL}}" style="background: #0284c7; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">Aktifkan Kembali Container</a>
+    </div>
+  </div>
+</body>
+</html>
