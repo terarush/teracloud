@@ -67,19 +67,19 @@ export const getSidebarContentList = (
         {
           titleKey: "hosting.adminConsole",
           title: translate("hosting.adminConsole", "Admin Console"),
-          href: "/app/admin",
+          href: "/app/console",
           icon: ShieldCheck,
         },
         {
           titleKey: "hosting.adminPlans",
           title: translate("hosting.adminPlans", "Hosting Plans"),
-          href: "/app/admin/plans",
+          href: "/app/plans",
           icon: Package,
         },
         {
           titleKey: "hosting.adminOrders",
           title: translate("hosting.adminOrders", "Orders Transaksi"),
-          href: "/app/admin/orders",
+          href: "/app/orders-list",
           icon: ShoppingCart,
         },
       ],

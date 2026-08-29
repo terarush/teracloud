@@ -25,27 +25,36 @@ export interface AuditLog {
 
 export const adminApi = {
   getStats: async (): Promise<AdminStats> => {
-    const res = await apiClient.get<{ data: AdminStats }>("/admin/stats")
-    return res.data.data
+    const res = await apiClient.get<AdminStats>("/stats")
+    return (
+      (res as any)?.data ??
+      res.data ?? {
+        total_revenue: 0,
+        active_containers: 0,
+        total_orders: 0,
+        total_plans: 0,
+        total_users: 0,
+      }
+    )
   },
 
   getAuditLogs: async (): Promise<AuditLog[]> => {
-    const res = await apiClient.get<{ data: AuditLog[] }>("/admin/audit-logs")
-    return res.data.data || []
+    const res = await apiClient.get<AuditLog[]>("/audit-logs")
+    return (res as any)?.data ?? res.data ?? []
   },
 
   getAllContainers: async (): Promise<Container[]> => {
-    const res = await apiClient.get<{ data: Container[] }>("/admin/containers")
-    return res.data.data || []
+    const res = await apiClient.get<Container[]>("/containers")
+    return (res as any)?.data ?? res.data ?? []
   },
 
   getAllOrders: async (): Promise<Order[]> => {
-    const res = await apiClient.get<{ data: Order[] }>("/admin/orders")
-    return res.data.data || []
+    const res = await apiClient.get<Order[]>("/orders")
+    return (res as any)?.data ?? res.data ?? []
   },
 
   getAllSubscriptions: async (): Promise<Subscription[]> => {
-    const res = await apiClient.get<{ data: Subscription[] }>("/admin/subscriptions")
-    return res.data.data || []
+    const res = await apiClient.get<Subscription[]>("/billing/subscriptions")
+    return (res as any)?.data ?? res.data ?? []
   },
 }

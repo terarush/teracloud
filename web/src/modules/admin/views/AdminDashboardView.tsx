@@ -27,7 +27,7 @@ export const AdminDashboardView: React.FC = () => {
       {/* Navigation Quick Access */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         <div
-          onClick={() => navigate({ to: "/app/admin/plans" })}
+          onClick={() => navigate({ to: "/app/plans" })}
           className="p-6 bg-card border border-border rounded-3xl cursor-pointer hover:border-primary/50 transition group shadow-xs"
         >
           <h3 className="font-bold text-lg text-foreground group-hover:text-primary transition flex items-center justify-between">
@@ -40,7 +40,7 @@ export const AdminDashboardView: React.FC = () => {
         </div>
 
         <div
-          onClick={() => navigate({ to: "/app/admin/orders" })}
+          onClick={() => navigate({ to: "/app/orders-list" })}
           className="p-6 bg-card border border-border rounded-3xl cursor-pointer hover:border-primary/50 transition group shadow-xs"
         >
           <h3 className="font-bold text-lg text-foreground group-hover:text-primary transition flex items-center justify-between">

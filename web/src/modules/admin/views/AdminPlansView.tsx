@@ -30,11 +30,11 @@ export const AdminPlansView: React.FC = () => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => navigate({ to: "/app/admin" })}
+            onClick={() => navigate({ to: "/app/console" })}
             className="gap-2 mb-2 cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>{t("common.back", "Kembali ke Admin Console")}</span>
+            <span>{t("common.back", "Kembali ke Console")}</span>
           </Button>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
             {t("hosting.adminPlans", "Manajemen Paket Hosting")}

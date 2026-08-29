@@ -133,7 +133,7 @@ const legacyAdminRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/admin",
   beforeLoad: () => {
-    throw redirect({ to: "/app/admin" as any })
+    throw redirect({ to: "/app/console" as any })
   },
 })
 
@@ -198,21 +198,21 @@ const appCheckoutRoute = createRoute({
   },
 })
 
-const appAdminRoute = createRoute({
+const appConsoleRoute = createRoute({
   getParentRoute: () => appLayoutRoute,
-  path: "/admin",
+  path: "/console",
   component: AdminDashboard,
 })
 
-const appAdminPlansRoute = createRoute({
+const appPlansManageRoute = createRoute({
   getParentRoute: () => appLayoutRoute,
-  path: "/admin/plans",
+  path: "/plans",
   component: AdminPlans,
 })
 
-const appAdminOrdersRoute = createRoute({
+const appOrdersListRoute = createRoute({
   getParentRoute: () => appLayoutRoute,
-  path: "/admin/orders",
+  path: "/orders-list",
   component: AdminOrders,
 })
 
@@ -237,8 +237,8 @@ export const routeTree = rootRoute.addChildren([
     appBillingRoute,
     appOrdersRoute,
     appCheckoutRoute,
-    appAdminRoute,
-    appAdminPlansRoute,
-    appAdminOrdersRoute,
+    appConsoleRoute,
+    appPlansManageRoute,
+    appOrdersListRoute,
   ]),
 ])
