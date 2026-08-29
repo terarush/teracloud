@@ -46,7 +46,7 @@ export const PricingView: React.FC = () => {
     }
   }
 
-  const totalCartItems = cart?.total_items || cart?.items?.length || 0
+  const totalCartItems = cart ? (cart.total_items || cart.items.length || 0) : 0
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">

@@ -38,7 +38,7 @@ export function AppSidebar() {
 
   const activeLocale = currentLocale()
   const isAdmin = user?.role === "admin"
-  const cartItemCount = cart?.total_items || cart?.items?.length || 0
+  const cartItemCount = cart ? (cart.total_items || cart.items.length || 0) : 0
 
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark")
@@ -128,7 +128,7 @@ export function AppSidebar() {
             <SidebarMenuItem>
               <SidebarMenuButton
                 size="lg"
-                tooltip={user ? `${user.first_name} ${user.last_name || ""}` : "User"}
+                tooltip={`${user.first_name} ${user.last_name || ""}`}
                 className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground rounded-lg hover:bg-sidebar-accent/60 text-sidebar-foreground group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-1 cursor-pointer transition-all mb-1"
               >
                 <UserAvatar user={user} className="size-7 group-data-[collapsible=icon]:size-5 shrink-0 ring-1 ring-white/20 transition-all" />

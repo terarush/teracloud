@@ -14,7 +14,7 @@ export const ContainerStats: React.FC<ContainerStatsProps> = ({ stats, memoryLim
   const statsList: ContainerStatsType[] = Array.isArray(stats)
     ? stats
     : stats && typeof stats === "object"
-      ? [stats as ContainerStatsType]
+      ? [stats]
       : []
 
   const chartData = statsList.slice(-20).map((s) => ({

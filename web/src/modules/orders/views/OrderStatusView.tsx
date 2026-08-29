@@ -18,12 +18,7 @@ import {
 import { ordersApi } from "@/service/api/orders"
 
 export const OrderStatusView: React.FC = () => {
-  const search = useSearch({ strict: false }) as {
-    order_id?: string
-    status_code?: string
-    transaction_status?: string
-    mock_token?: string
-  }
+  const search = useSearch({ strict: false })
 
   const navigate = useNavigate()
   const rawOrderId = search.order_id || ""

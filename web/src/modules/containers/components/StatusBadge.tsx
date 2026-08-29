@@ -8,7 +8,7 @@ interface StatusBadgeProps {
 
 export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, className = "" }) => {
   const getBadgeClass = () => {
-    switch (status?.toLowerCase()) {
+    switch (status.toLowerCase()) {
       case "running":
       case "active":
       case "paid":

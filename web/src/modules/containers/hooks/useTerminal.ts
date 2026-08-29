@@ -51,7 +51,8 @@ export function useTerminal({ containerId, terminalContainerRef, isActive = true
   }, [isActive, fitTerminal])
 
   useEffect(() => {
-    if (!terminalContainerRef.current) return
+    const containerEl = terminalContainerRef.current
+    if (!containerEl) return
 
     const isDark = document.documentElement.classList.contains("dark")
 
@@ -80,7 +81,7 @@ export function useTerminal({ containerId, terminalContainerRef, isActive = true
 
     term.loadAddon(fitAddon)
     term.loadAddon(webLinksAddon)
-    term.open(terminalContainerRef.current)
+    term.open(containerEl)
     fitAddon.fit()
 
     xtermRef.current = term
@@ -160,19 +161,14 @@ export function useTerminal({ containerId, terminalContainerRef, isActive = true
 
     window.addEventListener("resize", handleResize)
 
-    let resizeObserver: ResizeObserver | null = null
-    if (terminalContainerRef.current && window.ResizeObserver) {
-      resizeObserver = new ResizeObserver(() => {
-        fitTerminal()
-      })
-      resizeObserver.observe(terminalContainerRef.current)
-    }
+    const resizeObserver = new ResizeObserver(() => {
+      fitTerminal()
+    })
+    resizeObserver.observe(containerEl)
 
     return () => {
       window.removeEventListener("resize", handleResize)
-      if (resizeObserver) {
-        resizeObserver.disconnect()
-      }
+      resizeObserver.disconnect()
       ws.close()
       term.dispose()
     }

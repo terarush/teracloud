@@ -25,7 +25,7 @@ function AppHeader({ pageTitle }: { pageTitle: string }) {
   const { data: cart } = useCartQuery()
   const navigate = useNavigate()
 
-  const cartItemCount = cart?.total_items || cart?.items?.length || 0
+  const cartItemCount = cart ? (cart.total_items || cart.items.length || 0) : 0
 
   const leftOffset = isMobile
     ? '0px'
