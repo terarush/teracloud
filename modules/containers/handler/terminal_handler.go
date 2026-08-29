@@ -98,17 +98,29 @@ func (h *TerminalHandler) HandleTerminal(c *echo.Context) error {
 		return nil
 	}
 
-	// 4. Create Docker Exec
-	execID, err := h.dockerClient.ExecCreate(ctx, containerRecord.DockerContainerID, []string{"/bin/bash"})
-	if err != nil {
-		h.log.Warn("Failed /bin/bash exec create for %s: %v, trying /bin/sh...", containerRecord.DockerContainerID, err)
-		// Fallback to /bin/sh
-		execID, err = h.dockerClient.ExecCreate(ctx, containerRecord.DockerContainerID, []string{"/bin/sh"})
-		if err != nil {
-			h.log.Error("ExecCreate failed for container %s (%s): %v", containerRecord.DockerContainerID, containerRecord.ContainerName, err)
-			_ = conn.WriteJSON(map[string]string{"type": "error", "message": "Failed to create exec session: " + err.Error()})
-			return nil
+	// 4. Create Docker Exec with dynamic shell fallback (/bin/bash -> /bin/sh -> /bin/ash -> /bin/dash)
+	shells := [][]string{
+		{"/bin/sh", "-c", "if [ -x /bin/bash ]; then exec /bin/bash; elif [ -x /bin/ash ]; then exec /bin/ash; elif [ -x /bin/dash ]; then exec /bin/dash; else exec /bin/sh; fi"},
+		{"/bin/bash"},
+		{"/bin/sh"},
+		{"/bin/ash"},
+		{"/bin/dash"},
+		{"sh"},
+	}
+
+	var execID string
+	for _, shCmd := range shells {
+		id, err := h.dockerClient.ExecCreate(ctx, containerRecord.DockerContainerID, shCmd)
+		if err == nil {
+			execID = id
+			break
 		}
+	}
+
+	if execID == "" {
+		h.log.Errorf("ExecCreate failed for container %s (%s): no valid shell executable found", containerRecord.DockerContainerID, containerRecord.ContainerName)
+		_ = conn.WriteJSON(map[string]string{"type": "error", "message": "Failed to create exec session: no supported shell found (/bin/bash, /bin/sh, /bin/ash, /bin/dash)"})
+		return nil
 	}
 
 	// 5. Attach to Exec
