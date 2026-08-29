@@ -343,6 +343,41 @@ func (h *ContainerHandler) GetAllContainers(c *echo.Context) error {
 	return h.r.SuccessResponse(c, response.FromEntities(containers), "Containers retrieved successfully")
 }
 
+func (h *ContainerHandler) AdminForceDeleteContainer(c *echo.Context) error {
+	ctx := c.Request().Context()
+
+	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		return h.r.BadRequestResponse(c, utils.NewAppError(utils.CodeBadRequest, "Invalid container ID"))
+	}
+
+	container, err := h.containerService.GetContainerByID(ctx, uint(id))
+	if err != nil {
+		return h.r.NotFoundResponse(c, err)
+	}
+
+	if err := h.containerService.DeleteContainer(ctx, uint(id), container.UserID); err != nil {
+		return h.r.InternalServerErrorResponse(c, err)
+	}
+
+	return h.r.NoContentResponse(c)
+}
+
+func (h *ContainerHandler) AdminRestartContainer(c *echo.Context) error {
+	ctx := c.Request().Context()
+
+	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		return h.r.BadRequestResponse(c, utils.NewAppError(utils.CodeBadRequest, "Invalid container ID"))
+	}
+
+	if err := h.containerService.RestartContainer(ctx, uint(id), 0); err != nil {
+		return h.r.InternalServerErrorResponse(c, err)
+	}
+
+	return h.r.SuccessResponse(c, nil, "Container restarted")
+}
+
 func (h *ContainerHandler) RegisterRoutes(e *echo.Echo, basePath string) {
 	group := e.Group(basePath+"/containers", middleware.Auth)
 	group.GET("", h.GetContainers)
@@ -358,5 +393,8 @@ func (h *ContainerHandler) RegisterRoutes(e *echo.Echo, basePath string) {
 
 	// Admin-specific container actions
 	adminGroup := e.Group(basePath+"/containers", middleware.RequireAdmin)
+	adminGroup.GET("/all", h.GetAllContainers)
 	adminGroup.POST("/:id/suspend", h.SuspendContainer)
+	adminGroup.DELETE("/:id/force", h.AdminForceDeleteContainer)
+	adminGroup.POST("/:id/admin-restart", h.AdminRestartContainer)
 }
