@@ -20,17 +20,22 @@ export interface Order {
 
 export const ordersApi = {
   createOrder: async (planId: number): Promise<Order> => {
-    const res = await apiClient.post<{ data: Order }>("/orders", { plan_id: planId })
-    return res.data.data
+    const res = await apiClient.post<Order>("/orders", { plan_id: planId })
+    return (res as any)?.data ?? res.data
   },
 
   getUserOrders: async (): Promise<Order[]> => {
-    const res = await apiClient.get<{ data: Order[] }>("/orders")
-    return res.data.data || []
+    const res = await apiClient.get<Order[]>("/orders")
+    return (res as any)?.data ?? res.data ?? []
   },
 
   getOrderById: async (id: number): Promise<Order> => {
-    const res = await apiClient.get<{ data: Order }>(`/orders/${id}`)
-    return res.data.data
+    const res = await apiClient.get<Order>(`/orders/${id}`)
+    return (res as any)?.data ?? res.data
+  },
+
+  getOrderStats: async (): Promise<any> => {
+    const res = await apiClient.get<any>("/orders/stats")
+    return (res as any)?.data ?? res.data ?? {}
   },
 }

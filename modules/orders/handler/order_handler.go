@@ -11,6 +11,7 @@ import (
 	"ruang-tukar/internal/pkg/utils"
 	"ruang-tukar/internal/pkg/validator"
 	orderErrs "ruang-tukar/modules/orders/errs"
+	"ruang-tukar/modules/orders/domain/entity"
 	"ruang-tukar/modules/orders/domain/service"
 	"ruang-tukar/modules/orders/dto/request"
 	"ruang-tukar/modules/orders/dto/response"
@@ -62,20 +63,33 @@ func (h *OrderHandler) CreateOrder(c *echo.Context) error {
 	return h.r.CreatedResponse(c, response.FromEntity(order), "Order created successfully")
 }
 
-// GetUserOrders gets all orders for authenticated user
-func (h *OrderHandler) GetUserOrders(c *echo.Context) error {
+// GetOrders gets orders (role-aware: user gets own, admin gets all)
+func (h *OrderHandler) GetOrders(c *echo.Context) error {
 	ctx := c.Request().Context()
 	userID := utils.UserIDFromCtx(c)
+	userRole := utils.UserRoleFromCtx(c)
 	if userID == 0 {
 		return h.r.UnauthorizedResponse(c, utils.NewAppError(utils.CodeUnauthorized, "Unauthorized"))
 	}
 
-	orders, err := h.orderService.GetOrdersByUserID(ctx, userID)
+	var orders []*entity.Order
+	var err error
+	if userRole == middleware.RoleAdmin {
+		orders, err = h.orderService.GetAllOrders(ctx)
+	} else {
+		orders, err = h.orderService.GetOrdersByUserID(ctx, userID)
+	}
+
 	if err != nil {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
 	return h.r.SuccessResponse(c, response.FromEntities(orders), "Orders retrieved successfully")
+}
+
+// GetUserOrders gets all orders for authenticated user
+func (h *OrderHandler) GetUserOrders(c *echo.Context) error {
+	return h.GetOrders(c)
 }
 
 // GetOrderByID gets order details
@@ -137,9 +151,9 @@ func (h *OrderHandler) GetOrderStats(c *echo.Context) error {
 	}
 
 	stats := map[string]interface{}{
-		"total_revenue": totalRevenue,
-		"total_orders":  len(orders),
-		"paid_orders":   paidCount,
+		"total_revenue":  totalRevenue,
+		"total_orders":   len(orders),
+		"paid_orders":    paidCount,
 		"pending_orders": pendingCount,
 	}
 
@@ -148,14 +162,10 @@ func (h *OrderHandler) GetOrderStats(c *echo.Context) error {
 
 // RegisterRoutes registers order routes
 func (h *OrderHandler) RegisterRoutes(e *echo.Echo, basePath string) {
-	// User routes
-	userGroup := e.Group(basePath+"/orders", middleware.Auth)
-	userGroup.POST("", h.CreateOrder)
-	userGroup.GET("", h.GetUserOrders)
-	userGroup.GET("/:id", h.GetOrderByID)
-
-	// Admin routes
-	adminGroup := e.Group(basePath+"/admin/orders", middleware.RequireAdmin)
-	adminGroup.GET("", h.GetAllOrders)
-	adminGroup.GET("/stats", h.GetOrderStats)
+	// Protected user/admin routes
+	group := e.Group(basePath+"/orders", middleware.Auth)
+	group.POST("", h.CreateOrder)
+	group.GET("", h.GetOrders)
+	group.GET("/stats", h.GetOrderStats, middleware.RequireAdmin)
+	group.GET("/:id", h.GetOrderByID)
 }
