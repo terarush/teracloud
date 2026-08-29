@@ -86,11 +86,6 @@ func (h *PlanHandler) CreatePlan(c *echo.Context) error {
 		return h.r.BadRequestResponse(c, utils.NewAppError(utils.CodeValidation, strings.Join(msgs, ". ")))
 	}
 
-	maxPerUser := req.MaxPerUser
-	if maxPerUser <= 0 {
-		maxPerUser = 3
-	}
-
 	category := req.Category
 	if category == "" {
 		category = "os"
@@ -120,7 +115,6 @@ func (h *PlanHandler) CreatePlan(c *echo.Context) error {
 		Command:             req.Command,
 		Entrypoint:          req.Entrypoint,
 		Icon:                req.Icon,
-		MaxPerUser:          maxPerUser,
 		CreatedAt:           time.Now(),
 		UpdatedAt:           time.Now(),
 	}
@@ -196,7 +190,6 @@ func (h *PlanHandler) UpdatePlan(c *echo.Context) error {
 	plan.Command = req.Command
 	plan.Entrypoint = req.Entrypoint
 	plan.Icon = req.Icon
-	plan.MaxPerUser = req.MaxPerUser
 	plan.SortOrder = req.SortOrder
 	plan.UpdatedAt = time.Now()
 

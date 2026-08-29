@@ -25,7 +25,6 @@ type CreatePlanRequest struct {
 	Command             *string         `json:"command"`
 	Entrypoint          *string         `json:"entrypoint"`
 	Icon                string          `json:"icon"`
-	MaxPerUser          int             `json:"max_per_user"`
 	SortOrder           int             `json:"sort_order"`
 }
 
@@ -52,6 +51,5 @@ type UpdatePlanRequest struct {
 	Command             *string         `json:"command"`
 	Entrypoint          *string         `json:"entrypoint"`
 	Icon                string          `json:"icon"`
-	MaxPerUser          int             `json:"max_per_user"`
 	SortOrder           int             `json:"sort_order"`
 }

@@ -34,7 +34,6 @@ type Plan struct {
 	Command             *string         `json:"command,omitempty" gorm:"type:text"`
 	Entrypoint          *string         `json:"entrypoint,omitempty" gorm:"type:text"`
 	Icon                string          `json:"icon" gorm:"type:varchar(100)"`
-	MaxPerUser          int             `json:"max_per_user" gorm:"default:3"`
 	CreatedAt           time.Time       `json:"created_at"`
 	UpdatedAt           time.Time       `json:"updated_at"`
 	DeletedAt           *time.Time      `json:"deleted_at,omitempty" gorm:"index"`
