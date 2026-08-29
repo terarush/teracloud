@@ -90,15 +90,6 @@ func (s *OrderService) CheckoutCart(ctx context.Context, userID uint, cartItemID
 			return nil, orderErrs.ErrPlanLimitReached
 		}
 
-		// Check plan limits
-		activeCount, err := s.orderRepo.CountActiveByUserIDAndPlanID(ctx, userID, ci.PlanID)
-		if err != nil {
-			return nil, err
-		}
-		if int(activeCount) >= plan.MaxPerUser {
-			return nil, orderErrs.ErrPlanLimitReached
-		}
-
 		duration := ci.DurationMonths
 		if duration <= 0 {
 			duration = 1
@@ -194,15 +185,6 @@ func (s *OrderService) CreateNewPurchaseOrder(ctx context.Context, userID, planI
 		return nil, err
 	}
 	if !plan.IsActive {
-		return nil, orderErrs.ErrPlanLimitReached
-	}
-
-	// Check user plan limit
-	activeCount, err := s.orderRepo.CountActiveByUserIDAndPlanID(ctx, userID, planID)
-	if err != nil {
-		return nil, err
-	}
-	if int(activeCount) >= plan.MaxPerUser {
 		return nil, orderErrs.ErrPlanLimitReached
 	}
 
