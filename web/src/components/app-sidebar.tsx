@@ -46,20 +46,22 @@ export function AppSidebar() {
     navigate({ to: href as any })
   }
 
+  const logoSrc = theme === "dark" && companyMeta.logoWhite ? companyMeta.logoWhite : companyMeta.logo
+
   return (
     <Sidebar collapsible="icon" className="border-r border-border/50 bg-sidebar">
       {/* 1. Header with Logo & Brand */}
-      <SidebarHeader className="h-14 border-b border-border/50 px-4 flex flex-row items-center justify-between">
+      <SidebarHeader className="h-14 border-b border-border/50 p-0 flex flex-row items-center">
         <div
-          className="flex items-center gap-3 cursor-pointer overflow-hidden"
+          className="flex items-center gap-3 cursor-pointer overflow-hidden w-full h-full px-4 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center"
           onClick={() => handleItemClick("/app")}
         >
-          <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-            <span className="font-bold text-primary text-sm">
-              {companyMeta.name.charAt(0)}
-            </span>
-          </div>
-          <div className="flex flex-col truncate">
+          <img
+            src={logoSrc}
+            alt={companyMeta.name}
+            className="size-7 rounded-lg object-contain shrink-0"
+          />
+          <div className="flex flex-col truncate group-data-[collapsible=icon]:hidden">
             <span className="text-sm font-bold tracking-tight text-foreground truncate">
               {companyMeta.name}
             </span>
@@ -71,14 +73,14 @@ export function AppSidebar() {
       </SidebarHeader>
 
       {/* 2. Content & Nav Groups */}
-      <SidebarContent className="px-2 py-4 gap-6">
+      <SidebarContent className="px-2 py-4 gap-6 group-data-[collapsible=icon]:px-1">
         {sidebarContentList.map((group, idx) => {
           if (group.admin && !isAdmin) return null
 
           return (
             <SidebarGroup key={idx} className="p-0">
               {group.groupName && (
-                <SidebarGroupLabel className="px-2 mb-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70">
+                <SidebarGroupLabel className="px-2 mb-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70 group-data-[collapsible=icon]:hidden">
                   {group.groupName}
                 </SidebarGroupLabel>
               )}
@@ -95,14 +97,14 @@ export function AppSidebar() {
                           isActive={isActive}
                           onClick={() => handleItemClick(item.href)}
                           className={cn(
-                            "h-9 px-3 rounded-lg text-sm font-medium transition-colors",
+                            "h-9 px-3 rounded-lg text-sm font-medium transition-colors group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center",
                             isActive
                               ? "bg-primary/10 text-primary hover:bg-primary/15 font-semibold"
                               : "text-muted-foreground hover:bg-muted hover:text-foreground"
                           )}
                         >
                           <Icon className="h-4 w-4 shrink-0" />
-                          <span className="truncate">{item.title}</span>
+                          <span className="truncate group-data-[collapsible=icon]:hidden">{item.title}</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     )
@@ -115,18 +117,19 @@ export function AppSidebar() {
       </SidebarContent>
 
       {/* 3. Footer with Theme Switcher & User Profile */}
-      <SidebarFooter className="border-t border-border/50 p-2 gap-2">
-        <div className="flex items-center justify-between px-2 py-1">
+      <SidebarFooter className="border-t border-border/50 p-2 gap-2 group-data-[collapsible=icon]:p-1">
+        <div className="flex items-center justify-between px-2 py-1 group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:gap-2 group-data-[collapsible=icon]:px-0">
           <button
             onClick={toggleTheme}
-            className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors"
+            className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors group-data-[collapsible=icon]:justify-center"
+            title="Toggle theme"
           >
             {theme === "dark" ? (
-              <Sun className="h-4 w-4 text-amber-500" />
+              <Sun className="h-4 w-4 text-amber-500 shrink-0" />
             ) : (
-              <Moon className="h-4 w-4 text-slate-700" />
+              <Moon className="h-4 w-4 text-slate-700 shrink-0" />
             )}
-            <span className="text-xs">Theme</span>
+            <span className="text-xs group-data-[collapsible=icon]:hidden">Theme</span>
           </button>
 
           <button
@@ -134,18 +137,18 @@ export function AppSidebar() {
             title="Logout"
             className="text-muted-foreground hover:text-destructive transition-colors p-1"
           >
-            <LogOut className="h-4 w-4" />
+            <LogOut className="h-4 w-4 shrink-0" />
           </button>
         </div>
 
-        <div className="flex items-center gap-3 p-2 rounded-lg bg-card/60 border border-border/40">
+        <div className="flex items-center gap-3 p-2 rounded-lg bg-card/60 border border-border/40 group-data-[collapsible=icon]:border-0 group-data-[collapsible=icon]:bg-transparent group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:justify-center">
           <UserAvatar user={user} className="h-8 w-8 shrink-0" />
-          <div className="flex flex-col truncate">
+          <div className="flex flex-col truncate group-data-[collapsible=icon]:hidden">
             <span className="text-xs font-semibold text-foreground truncate">
-              {user ? `${user.first_name} ${user.last_name || ""}` : "User"}
+              {user ? `${user.first_name} ${user.last_name ?? ""}`.trim() : "User"}
             </span>
             <span className="text-[10px] text-muted-foreground truncate">
-              {user?.email || ""}
+              {user?.email ?? ""}
             </span>
           </div>
         </div>
