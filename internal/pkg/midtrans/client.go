@@ -46,6 +46,7 @@ type SnapRequest struct {
 	LastName    string
 	Email       string
 	ItemName    string
+	CallbackURL string
 }
 
 type SnapResponse struct {
@@ -73,6 +74,12 @@ func (c *Client) CreateTransaction(req SnapRequest) (*SnapResponse, error) {
 				Qty:   1,
 			},
 		},
+	}
+
+	if req.CallbackURL != "" {
+		snapReq.Callbacks = &snap.Callbacks{
+			Finish: req.CallbackURL,
+		}
 	}
 
 	resp, err := c.snapClient.CreateTransaction(snapReq)
