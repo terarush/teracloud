@@ -1,11 +1,12 @@
 import { useRouterState, useNavigate } from "@tanstack/react-router"
-import { LogOut, Moon, Sun } from "lucide-react"
-
+import { LogOut, Moon, Sun, Globe, Check } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/contexts/auth-context"
 import { useTheme } from "@/components/theme-provider"
 import { companyMeta } from "@/meta"
 import { sidebarContentList } from "@/globals/content/app-sidebar"
+import { currentLocale, changeLocale, type Locale } from "@/lib/i18n"
+import { useTranslation } from "react-i18next"
 
 import {
   Sidebar,
@@ -21,6 +22,14 @@ import {
   SidebarMenuButton,
 } from "@/components/ui/sidebar"
 import { UserAvatar } from "@/components/user-avatar"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
+} from "@/components/ui/dropdown-menu"
 
 export function AppSidebar() {
   const routerState = useRouterState()
@@ -29,12 +38,10 @@ export function AppSidebar() {
   const { user, logout } = useAuth()
   const { isMobile, setOpenMobile } = useSidebar()
   const { theme, setTheme } = useTheme()
+  const { t } = useTranslation()
 
   const isAdmin = user?.role === "admin"
-
-  const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark")
-  }
+  const activeLang = currentLocale()
 
   const handleLogout = async () => {
     await logout()
@@ -49,7 +56,7 @@ export function AppSidebar() {
   const logoSrc = theme === "dark" && companyMeta.logoWhite ? companyMeta.logoWhite : companyMeta.logo
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-border/50 bg-sidebar">
+    <Sidebar collapsible="icon" className="border-r border-border/50 bg-sidebar select-none">
       {/* 1. Header with Logo & Brand */}
       <SidebarHeader className="h-14 border-b border-border/50 p-0 flex flex-row items-center">
         <div
@@ -59,13 +66,13 @@ export function AppSidebar() {
           <img
             src={logoSrc}
             alt={companyMeta.name}
-            className="size-7 rounded-lg object-contain shrink-0"
+            className="size-7 rounded-lg object-contain shrink-0 ring-1 ring-primary/20"
           />
           <div className="flex flex-col truncate group-data-[collapsible=icon]:hidden">
             <span className="text-sm font-bold tracking-tight text-foreground truncate">
               {companyMeta.name}
             </span>
-            <span className="text-[10px] text-muted-foreground truncate">
+            <span className="text-[10px] text-muted-foreground font-medium truncate">
               Cloud Console
             </span>
           </div>
@@ -80,7 +87,7 @@ export function AppSidebar() {
           return (
             <SidebarGroup key={idx} className="p-0 group-data-[collapsible=icon]:px-0">
               {group.groupName && (
-                <SidebarGroupLabel className="px-2 mb-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70 group-data-[collapsible=icon]:hidden">
+                <SidebarGroupLabel className="px-2 mb-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80 group-data-[collapsible=icon]:hidden">
                   {group.groupName}
                 </SidebarGroupLabel>
               )}
@@ -91,7 +98,10 @@ export function AppSidebar() {
                     const isActive = currentPath === item.href
 
                     return (
-                      <SidebarMenuItem key={item.href} className="group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:justify-center w-full">
+                      <SidebarMenuItem
+                        key={item.href}
+                        className="group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:justify-center w-full"
+                      >
                         <SidebarMenuButton
                           tooltip={item.title}
                           isActive={isActive}
@@ -103,8 +113,8 @@ export function AppSidebar() {
                               : "text-muted-foreground hover:bg-muted hover:text-foreground"
                           )}
                         >
-                          <Icon />
-                          <span>{item.title}</span>
+                          <Icon className="w-4 h-4 shrink-0" />
+                          <span className="truncate">{item.title}</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     )
@@ -116,42 +126,94 @@ export function AppSidebar() {
         })}
       </SidebarContent>
 
-      {/* 3. Footer with Theme Switcher & User Profile */}
-      <SidebarFooter className="border-t border-border/50 p-2 gap-2 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:py-2">
-        <div className="flex items-center justify-between px-2 py-1 group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:gap-2 group-data-[collapsible=icon]:px-0">
-          <button
-            onClick={toggleTheme}
-            className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors group-data-[collapsible=icon]:justify-center cursor-pointer p-1.5 rounded-md hover:bg-muted"
-            title="Toggle theme"
-          >
-            {theme === "dark" ? (
-              <Sun className="h-4 w-4 text-amber-500 shrink-0" />
-            ) : (
-              <Moon className="h-4 w-4 text-slate-700 shrink-0" />
-            )}
-            <span className="text-xs group-data-[collapsible=icon]:hidden">Theme</span>
-          </button>
+      {/* 3. Refined Non-AI-Slop Footer */}
+      <SidebarFooter className="border-t border-border/50 p-2 gap-1.5 group-data-[collapsible=icon]:p-1.5 group-data-[collapsible=icon]:py-2">
+        {/* User Profile Card with Dropdown Settings */}
+        <DropdownMenu>
+          <DropdownMenuTrigger className="w-full flex items-center justify-between p-2 rounded-xl bg-muted/40 hover:bg-muted/80 border border-border/40 transition-colors text-left group-data-[collapsible=icon]:p-1 group-data-[collapsible=icon]:justify-center cursor-pointer outline-hidden">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <UserAvatar user={user} className="h-7 w-7 shrink-0 rounded-lg ring-1 ring-border" />
+              <div className="flex flex-col truncate group-data-[collapsible=icon]:hidden">
+                <span className="text-xs font-semibold text-foreground truncate">
+                  {user ? `${user.first_name} ${user.last_name ?? ""}`.trim() : "User"}
+                </span>
+                <span className="text-[10px] text-muted-foreground truncate">
+                  {user?.email ?? ""}
+                </span>
+              </div>
+            </div>
+          </DropdownMenuTrigger>
 
-          <button
-            onClick={handleLogout}
-            title="Logout"
-            className="text-muted-foreground hover:text-destructive transition-colors p-1.5 rounded-md hover:bg-muted group-data-[collapsible=icon]:justify-center cursor-pointer"
-          >
-            <LogOut className="h-4 w-4 shrink-0" />
-          </button>
-        </div>
+          <DropdownMenuContent align="end" side="top" className="w-56 p-1.5 rounded-xl">
+            <DropdownMenuLabel className="text-xs font-normal text-muted-foreground px-2 py-1.5">
+              Signed in as <strong className="text-foreground">{user?.email}</strong>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
 
-        <div className="flex items-center gap-3 p-2 rounded-lg bg-card/60 border border-border/40 group-data-[collapsible=icon]:border-0 group-data-[collapsible=icon]:bg-transparent group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:w-full">
-          <UserAvatar user={user} className="h-7 w-7 shrink-0 ring-1 ring-primary/20" />
-          <div className="flex flex-col truncate group-data-[collapsible=icon]:hidden">
-            <span className="text-xs font-semibold text-foreground truncate">
-              {user ? `${user.first_name} ${user.last_name ?? ""}`.trim() : "User"}
-            </span>
-            <span className="text-[10px] text-muted-foreground truncate">
-              {user?.email ?? ""}
-            </span>
-          </div>
-        </div>
+            {/* Language Selection */}
+            <DropdownMenuLabel className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider px-2 pt-2">
+              Language / Bahasa
+            </DropdownMenuLabel>
+            <DropdownMenuItem
+              onClick={() => changeLocale("id")}
+              className="flex items-center justify-between text-xs cursor-pointer rounded-lg"
+            >
+              <span className="flex items-center gap-2">
+                <Globe className="w-3.5 h-3.5" />
+                Bahasa Indonesia
+              </span>
+              {activeLang === "id" && <Check className="w-3.5 h-3.5 text-primary" />}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => changeLocale("en")}
+              className="flex items-center justify-between text-xs cursor-pointer rounded-lg"
+            >
+              <span className="flex items-center gap-2">
+                <Globe className="w-3.5 h-3.5" />
+                English (US)
+              </span>
+              {activeLang === "en" && <Check className="w-3.5 h-3.5 text-primary" />}
+            </DropdownMenuItem>
+
+            <DropdownMenuSeparator />
+
+            {/* Theme Selection */}
+            <DropdownMenuLabel className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider px-2 pt-1">
+              Theme Mode
+            </DropdownMenuLabel>
+            <DropdownMenuItem
+              onClick={() => setTheme("light")}
+              className="flex items-center justify-between text-xs cursor-pointer rounded-lg"
+            >
+              <span className="flex items-center gap-2">
+                <Sun className="w-3.5 h-3.5 text-amber-500" />
+                Light
+              </span>
+              {theme === "light" && <Check className="w-3.5 h-3.5 text-primary" />}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => setTheme("dark")}
+              className="flex items-center justify-between text-xs cursor-pointer rounded-lg"
+            >
+              <span className="flex items-center gap-2">
+                <Moon className="w-3.5 h-3.5 text-indigo-500" />
+                Dark
+              </span>
+              {theme === "dark" && <Check className="w-3.5 h-3.5 text-primary" />}
+            </DropdownMenuItem>
+
+            <DropdownMenuSeparator />
+
+            {/* Sign Out */}
+            <DropdownMenuItem
+              onClick={handleLogout}
+              className="text-xs text-rose-500 hover:text-rose-600 hover:bg-rose-500/10 cursor-pointer rounded-lg gap-2"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>{t("nav.signOut", "Keluar")}</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </SidebarFooter>
     </Sidebar>
   )

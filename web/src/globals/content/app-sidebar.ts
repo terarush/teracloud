@@ -26,9 +26,10 @@ export const sidebarContentList: SidebarGroupType[] = [
   {
     groupName: "My Hosting",
     items: [
-      { title: "Dashboard", href: "/app/dashboard", icon: LayoutDashboard },
-      { title: "Containers", href: "/app/dashboard", icon: Server },
-      { title: "Billing", href: "/app/dashboard/billing", icon: CreditCard },
+      { title: "Dashboard", href: "/app", icon: LayoutDashboard },
+      { title: "Containers", href: "/app/containers", icon: Server },
+      { title: "Billing & Invoices", href: "/app/billing", icon: CreditCard },
+      { title: "Orders & Checkout", href: "/app/orders", icon: ShoppingCart },
     ],
   },
   {
@@ -37,7 +38,7 @@ export const sidebarContentList: SidebarGroupType[] = [
     items: [
       { title: "Admin Console", href: "/app/admin", icon: ShieldCheck },
       { title: "Hosting Plans", href: "/app/admin/plans", icon: Package },
-      { title: "Orders", href: "/app/admin/orders", icon: ShoppingCart },
+      { title: "Orders Transaksi", href: "/app/admin/orders", icon: ShoppingCart },
     ],
   },
 ]
