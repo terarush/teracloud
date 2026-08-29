@@ -28,7 +28,6 @@ export interface Plan {
   command?: string
   entrypoint?: string
   icon?: string
-  max_per_user: number
   created_at?: string
   updated_at?: string
 }
@@ -52,7 +51,6 @@ export interface CreatePlanRequest {
   command?: string
   entrypoint?: string
   icon?: string
-  max_per_user?: number
 }
 
 export interface UpdatePlanRequest extends Partial<CreatePlanRequest> {}

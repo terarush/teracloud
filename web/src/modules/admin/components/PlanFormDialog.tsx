@@ -43,7 +43,6 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
     memory_limit: "" as any,
     disk_limit: "" as any,
     price_monthly: "" as any,
-    max_per_user: "" as any,
     is_active: true,
     command: "",
     entrypoint: "",
@@ -62,8 +61,7 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
         memory_limit: initialPlan.memory_limit,
         disk_limit: initialPlan.disk_limit,
         price_monthly: initialPlan.price_monthly,
-        max_per_user: initialPlan.max_per_user ?? 3,
-        is_active: initialPlan.is_active ?? true,
+        is_active: initialPlan.is_active,
         command: initialPlan.command || "",
         entrypoint: initialPlan.entrypoint || "",
         port_config: initialPlan.port_config || [],
@@ -79,7 +77,6 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
         memory_limit: "" as any,
         disk_limit: "" as any,
         price_monthly: "" as any,
-        max_per_user: "" as any,
         is_active: true,
         command: "",
         entrypoint: "",
@@ -290,7 +287,7 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
                         min="1"
                         max="65535"
                         placeholder="e.g. 80"
-                        value={port.container_port ?? ""}
+                        value={port.container_port}
                         onChange={(e) =>
                           handlePortChange(
                             idx,
@@ -377,7 +374,7 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
                   step="0.5"
                   required
                   placeholder="e.g. 1"
-                  value={formData.cpu_limit ?? ""}
+                  value={formData.cpu_limit}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
@@ -395,7 +392,7 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
                   type="number"
                   required
                   placeholder="e.g. 1024"
-                  value={formData.memory_limit ?? ""}
+                  value={formData.memory_limit}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
@@ -413,7 +410,7 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
                   type="number"
                   required
                   placeholder="e.g. 20"
-                  value={formData.disk_limit ?? ""}
+                  value={formData.disk_limit}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
@@ -425,43 +422,23 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="text-xs font-semibold text-muted-foreground block mb-1">
-                  Harga Bulanan (IDR)
-                </label>
-                <input
-                  type="number"
-                  required
-                  placeholder="e.g. 50000"
-                  value={formData.price_monthly ?? ""}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      price_monthly: e.target.value === "" ? ("" as any) : Number(e.target.value),
-                    })
-                  }
-                  className="w-full px-3 py-2 bg-background border border-border rounded-xl text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-primary"
-                />
-              </div>
-              <div>
-                <label className="text-xs font-semibold text-muted-foreground block mb-1">
-                  Maksimal Per User
-                </label>
-                <input
-                  type="number"
-                  required
-                  placeholder="e.g. 3"
-                  value={formData.max_per_user ?? ""}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      max_per_user: e.target.value === "" ? ("" as any) : Number(e.target.value),
-                    })
-                  }
-                  className="w-full px-3 py-2 bg-background border border-border rounded-xl text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-primary"
-                />
-              </div>
+            <div>
+              <label className="text-xs font-semibold text-muted-foreground block mb-1">
+                Harga Bulanan (IDR)
+              </label>
+              <input
+                type="number"
+                required
+                placeholder="e.g. 50000"
+                value={formData.price_monthly}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    price_monthly: e.target.value === "" ? ("" as any) : Number(e.target.value),
+                  })
+                }
+                className="w-full px-3 py-2 bg-background border border-border rounded-xl text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+              />
             </div>
           </div>
         </form>

@@ -83,10 +83,6 @@ export const PlanCard: React.FC<PlanCardProps> = ({
             <Check className="h-4 w-4 text-primary shrink-0" />
             <span>Web Terminal (xterm.js) &amp; SSH Port</span>
           </li>
-          <li className="flex items-center gap-2">
-            <Check className="h-4 w-4 text-primary shrink-0" />
-            <span>Maksimal {plan.max_per_user} container per user</span>
-          </li>
           {features.map((feat, i) => (
             <li key={i} className="flex items-center gap-2">
               <Check className="h-4 w-4 text-primary shrink-0" />
