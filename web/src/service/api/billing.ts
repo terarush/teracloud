@@ -38,17 +38,17 @@ export interface Invoice {
 
 export const billingApi = {
   getSubscriptions: async (): Promise<Subscription[]> => {
-    const res = await apiClient.get<{ data: Subscription[] }>("/billing/subscriptions")
-    return res.data.data || []
+    const res = await apiClient.get<Subscription[]>("/billing/subscriptions")
+    return (res as any)?.data ?? res.data ?? []
   },
 
   getInvoices: async (): Promise<Invoice[]> => {
-    const res = await apiClient.get<{ data: Invoice[] }>("/billing/invoices")
-    return res.data.data || []
+    const res = await apiClient.get<Invoice[]>("/billing/invoices")
+    return (res as any)?.data ?? res.data ?? []
   },
 
   getInvoiceById: async (id: number): Promise<Invoice> => {
-    const res = await apiClient.get<{ data: Invoice }>(`/billing/invoices/${id}`)
-    return res.data.data
+    const res = await apiClient.get<Invoice>(`/billing/invoices/${id}`)
+    return (res as any)?.data ?? res.data
   },
 }

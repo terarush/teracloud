@@ -9,6 +9,7 @@ import (
 	"ruang-tukar/internal/pkg/middleware"
 	"ruang-tukar/internal/pkg/utils"
 	billingErrs "ruang-tukar/modules/billing/errs"
+	"ruang-tukar/modules/billing/domain/entity"
 	"ruang-tukar/modules/billing/domain/service"
 	"ruang-tukar/modules/billing/dto/response"
 
@@ -38,15 +39,23 @@ func NewBillingHandler(
 	}
 }
 
-// GetUserSubscriptions returns subscriptions for user
-func (h *BillingHandler) GetUserSubscriptions(c *echo.Context) error {
+// GetSubscriptions returns subscriptions (role-aware: user gets own, admin gets all)
+func (h *BillingHandler) GetSubscriptions(c *echo.Context) error {
 	ctx := c.Request().Context()
 	userID := utils.UserIDFromCtx(c)
+	userRole := utils.UserRoleFromCtx(c)
 	if userID == 0 {
 		return h.r.UnauthorizedResponse(c, utils.NewAppError(utils.CodeUnauthorized, "Unauthorized"))
 	}
 
-	subs, err := h.subService.GetUserSubscriptions(ctx, userID)
+	var subs []*entity.Subscription
+	var err error
+	if userRole == middleware.RoleAdmin {
+		subs, err = h.subService.GetAllSubscriptions(ctx)
+	} else {
+		subs, err = h.subService.GetUserSubscriptions(ctx, userID)
+	}
+
 	if err != nil {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
@@ -54,20 +63,38 @@ func (h *BillingHandler) GetUserSubscriptions(c *echo.Context) error {
 	return h.r.SuccessResponse(c, response.FromSubscriptionEntities(subs), "Subscriptions retrieved successfully")
 }
 
-// GetUserInvoices returns invoices for user
-func (h *BillingHandler) GetUserInvoices(c *echo.Context) error {
+// GetUserSubscriptions returns subscriptions for user
+func (h *BillingHandler) GetUserSubscriptions(c *echo.Context) error {
+	return h.GetSubscriptions(c)
+}
+
+// GetInvoices returns invoices (role-aware: user gets own, admin gets all)
+func (h *BillingHandler) GetInvoices(c *echo.Context) error {
 	ctx := c.Request().Context()
 	userID := utils.UserIDFromCtx(c)
+	userRole := utils.UserRoleFromCtx(c)
 	if userID == 0 {
 		return h.r.UnauthorizedResponse(c, utils.NewAppError(utils.CodeUnauthorized, "Unauthorized"))
 	}
 
-	invoices, err := h.invoiceService.GetUserInvoices(ctx, userID)
+	var invoices []*entity.Invoice
+	var err error
+	if userRole == middleware.RoleAdmin {
+		invoices, err = h.invoiceService.GetAllInvoices(ctx)
+	} else {
+		invoices, err = h.invoiceService.GetUserInvoices(ctx, userID)
+	}
+
 	if err != nil {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
 	return h.r.SuccessResponse(c, invoices, "Invoices retrieved successfully")
+}
+
+// GetUserInvoices returns invoices for user
+func (h *BillingHandler) GetUserInvoices(c *echo.Context) error {
+	return h.GetInvoices(c)
 }
 
 // GetInvoiceByID returns invoice detail
@@ -100,6 +127,7 @@ func (h *BillingHandler) GetInvoiceByID(c *echo.Context) error {
 func (h *BillingHandler) ToggleAutoRenew(c *echo.Context) error {
 	ctx := c.Request().Context()
 	userID := utils.UserIDFromCtx(c)
+	userRole := utils.UserRoleFromCtx(c)
 
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
@@ -110,12 +138,14 @@ func (h *BillingHandler) ToggleAutoRenew(c *echo.Context) error {
 	if err != nil {
 		return h.r.NotFoundResponse(c, err)
 	}
-	if sub.UserID != userID {
+	if userRole != middleware.RoleAdmin && sub.UserID != userID {
 		return h.r.ForbiddenResponse(c, utils.NewAppError(utils.CodeForbidden, "Unauthorized"))
 	}
 
 	sub.AutoRenew = !sub.AutoRenew
-	_ = h.subService.SetContainerID(ctx, sub.ID, *sub.ContainerID)
+	if sub.ContainerID != nil {
+		_ = h.subService.SetContainerID(ctx, sub.ID, *sub.ContainerID)
+	}
 
 	return h.r.SuccessResponse(c, response.FromSubscriptionEntity(sub), "Auto renew setting updated")
 }
@@ -140,14 +170,42 @@ func (h *BillingHandler) GetAllInvoices(c *echo.Context) error {
 	return h.r.SuccessResponse(c, invoices, "All invoices retrieved successfully")
 }
 
+// GetBillingStats returns billing stats (admin)
+func (h *BillingHandler) GetBillingStats(c *echo.Context) error {
+	ctx := c.Request().Context()
+	subs, err := h.subService.GetAllSubscriptions(ctx)
+	if err != nil {
+		return h.r.InternalServerErrorResponse(c, err)
+	}
+	invoices, err := h.invoiceService.GetAllInvoices(ctx)
+	if err != nil {
+		return h.r.InternalServerErrorResponse(c, err)
+	}
+
+	var totalRevenue int64
+	var paidInvoices int
+	for _, inv := range invoices {
+		if inv.Status == "paid" {
+			totalRevenue += inv.Total
+			paidInvoices++
+		}
+	}
+
+	stats := map[string]interface{}{
+		"total_revenue":       totalRevenue,
+		"total_subscriptions": len(subs),
+		"total_invoices":      len(invoices),
+		"paid_invoices":       paidInvoices,
+	}
+
+	return h.r.SuccessResponse(c, stats, "Billing statistics retrieved successfully")
+}
+
 func (h *BillingHandler) RegisterRoutes(e *echo.Echo, basePath string) {
 	group := e.Group(basePath+"/billing", middleware.Auth)
-	group.GET("/subscriptions", h.GetUserSubscriptions)
+	group.GET("/subscriptions", h.GetSubscriptions)
 	group.PATCH("/subscriptions/:id/auto-renew", h.ToggleAutoRenew)
-	group.GET("/invoices", h.GetUserInvoices)
+	group.GET("/invoices", h.GetInvoices)
 	group.GET("/invoices/:id", h.GetInvoiceByID)
-
-	adminGroup := e.Group(basePath+"/admin/billing", middleware.RequireAdmin)
-	adminGroup.GET("/subscriptions", h.GetAllSubscriptions)
-	adminGroup.GET("/invoices", h.GetAllInvoices)
+	group.GET("/stats", h.GetBillingStats, middleware.RequireAdmin)
 }
