@@ -1,0 +1,63 @@
+// File: modules/plans/dto/response/plan_response.go
+package response
+
+import (
+	"encoding/json"
+	"time"
+
+	"ruang-tukar/modules/plans/domain/entity"
+)
+
+type PlanResponse struct {
+	ID               uint            `json:"id"`
+	Name             string          `json:"name"`
+	Slug             string          `json:"slug"`
+	Description      string          `json:"description"`
+	ShortDescription string          `json:"short_description"`
+	ImageName        string          `json:"image_name"`
+	ImageTag         string          `json:"image_tag"`
+	CPULimit         float64         `json:"cpu_limit"`
+	MemoryLimit      int             `json:"memory_limit"`
+	DiskLimit        int             `json:"disk_limit"`
+	BandwidthLimit   *int            `json:"bandwidth_limit"`
+	PriceMonthly     int64           `json:"price_monthly"`
+	IsActive         bool            `json:"is_active"`
+	SortOrder        int             `json:"sort_order"`
+	Features         json.RawMessage `json:"features"`
+	Icon             string          `json:"icon"`
+	MaxPerUser       int             `json:"max_per_user"`
+	CreatedAt        time.Time       `json:"created_at"`
+	UpdatedAt        time.Time       `json:"updated_at"`
+}
+
+func FromEntity(plan *entity.Plan) *PlanResponse {
+	return &PlanResponse{
+		ID:               plan.ID,
+		Name:             plan.Name,
+		Slug:             plan.Slug,
+		Description:      plan.Description,
+		ShortDescription: plan.ShortDescription,
+		ImageName:        plan.ImageName,
+		ImageTag:         plan.ImageTag,
+		CPULimit:         plan.CPULimit,
+		MemoryLimit:      plan.MemoryLimit,
+		DiskLimit:        plan.DiskLimit,
+		BandwidthLimit:   plan.BandwidthLimit,
+		PriceMonthly:     plan.PriceMonthly,
+		IsActive:         plan.IsActive,
+		SortOrder:        plan.SortOrder,
+		Features:         plan.Features,
+		Icon:             plan.Icon,
+		MaxPerUser:       plan.MaxPerUser,
+		CreatedAt:        plan.CreatedAt,
+		UpdatedAt:        plan.UpdatedAt,
+	}
+}
+
+func FromEntities(plans []*entity.Plan) []*PlanResponse {
+	responses := make([]*PlanResponse, len(plans))
+	for i, plan := range plans {
+		responses[i] = FromEntity(plan)
+	}
+	return responses
+}
