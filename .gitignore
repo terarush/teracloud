@@ -1,0 +1,51 @@
+# Ignore log files
+logs/
+tmp/
+
+# Env files
+.env
+
+# Terraform-specific files
+*.tfstate
+*.tfstate.*
+
+# Crash log files
+crash.log
+
+# Local Terraform directories
+.terraform/
+
+# Ignore plan output files
+*.tfplan
+
+# Ignore backup files created by Terraform
+*.backup
+
+# Lock files
+package-lock.json
+pnpm-lock.yaml
+
+# macOS-specific files
+.DS_Store
+
+# Windows-specific files
+Thumbs.db
+
+# IDE-specific files
+.vscode/
+.idea/
+*.iml
+
+# Claude dotfiles
+.claude/
+
+# impeccable config
+.impeccable/
+
+# Locally built binaries (host migrate runner)
+bin/
+
+# AI/editor noise
+.omo
+.opencode
+.remember

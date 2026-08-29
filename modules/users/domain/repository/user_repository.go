@@ -1,0 +1,19 @@
+package repository
+
+import (
+	"context"
+	"ruang-tukar/modules/users/domain/entity"
+)
+
+// UserRepository defines the user repository interface
+type UserRepository interface {
+	FindAll(ctx context.Context) ([]*entity.User, error)
+	FindByID(ctx context.Context, id uint) (*entity.User, error)
+	FindByEmail(ctx context.Context, email string) (*entity.User, error)
+	FindByUsername(ctx context.Context, username string) (*entity.User, error)
+	Create(ctx context.Context, user *entity.User) error
+	Update(ctx context.Context, user *entity.User) error
+	UpdatePasswordByEmail(ctx context.Context, email, hashedPassword string) error
+	DeleteProfileLinksByUserID(ctx context.Context, userID uint) error
+	Delete(ctx context.Context, id uint) error
+}

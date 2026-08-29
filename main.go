@@ -1,0 +1,73 @@
+package main
+
+import (
+	"log"
+	"os"
+
+	_ "ruang-tukar/docs"
+	"ruang-tukar/internal/app"
+	"ruang-tukar/internal/pkg/config"
+	"ruang-tukar/internal/pkg/docs"
+	"ruang-tukar/internal/pkg/logger"
+	"ruang-tukar/internal/pkg/middleware"
+	"ruang-tukar/modules/auth"
+	user "ruang-tukar/modules/users"
+)
+
+// @title Ping Uptime API
+// @version 1.0
+// @description Modular Go application built with Echo, GORM, and DDD principles.
+// @termsOfService https://github.com/labstack/echo
+
+// @contact.name API Support
+// @contact.url https://github.com/labstack/echo
+// @contact.email support@echo.labstack.com
+
+// @license.name MIT
+// @license.url https://opensource.org/licenses/MIT
+
+// @host localhost:8080
+// @BasePath /api/v1
+
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+
+func main() {
+
+	// Load configuration from .env
+	if err := config.Initialize(); err != nil {
+		log.Fatalf("Error loading config: %v", err)
+		os.Exit(1)
+	}
+
+	// initialize logger
+	logCfg := logger.DefaultConfig()
+
+	// Start the application
+	application, err := app.NewApp(&logCfg)
+	if err != nil {
+		log.Fatalf("Error creating application : %v", err)
+		os.Exit(1)
+	}
+
+	// Initialize Auth middleware
+	jwtSignatureKey := config.GetJWTService()
+	middleware.InitializeAuth(jwtSignatureKey)
+
+	// register modules
+	application.RegisterModule(user.NewModule())
+	application.RegisterModule(auth.NewModule())
+
+	// initialize the application
+	if err := application.Initialize(); err != nil {
+		log.Fatalf("Error initializing application : %v", err)
+		os.Exit(1)
+	}
+
+	// Register API docs routes
+	docs.RegisterRoutes(application.Echo())
+
+	// Start the application
+	application.Start()
+}

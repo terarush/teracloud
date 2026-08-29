@@ -1,0 +1,47 @@
+services:
+  app:
+    container_name: app-ruang-tukar
+    image: ruangtukar-backend:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${PORT:-8080}:${PORT:-8080}"
+    restart: always
+    networks:
+      - infrastructure
+    # depends_on:
+    #   db:
+    #     condition: service_healthy
+    env_file:
+      - .env
+
+#   db:
+#     image: postgres:16-alpine
+#     container_name: db-ruang-tukar
+#     restart: always
+#     env_file:
+#       - .env
+#     environment:
+#       POSTGRES_DB: ${DB_NAME}
+#       POSTGRES_USER: ${DB_USERNAME}
+#       POSTGRES_PASSWORD: ${DB_PASSWORD}
+#       TZ: "Asia/Jakarta"
+#     ports:
+#       - "${DB_PORT}:5432"
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+#     networks:
+#       - infrastructure
+#     healthcheck:
+#       test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_NAME} || exit 1"]
+#       interval: 10s
+#       timeout: 5s
+#       retries: 3
+#
+# volumes:
+#   postgres_data:
+#
+networks:
+  infrastructure:
+    driver: bridge
