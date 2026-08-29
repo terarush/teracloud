@@ -247,10 +247,10 @@ func (h *UserHandler) GetStats(c *echo.Context) error {
 	ctx := c.Request().Context()
 
 	var totalUsers int64
-	_ = database.DB.WithContext(ctx).Table(database.T("users")).Where("deleted_at IS NULL").Count(&totalUsers).Error
+	_ = database.DB.WithContext(ctx).Table(database.T("users")).Count(&totalUsers).Error
 
 	var totalPlans int64
-	_ = database.DB.WithContext(ctx).Table(database.T("plans")).Where("deleted_at IS NULL").Count(&totalPlans).Error
+	_ = database.DB.WithContext(ctx).Table(database.HT("plans")).Where("deleted_at IS NULL").Count(&totalPlans).Error
 
 	var totalOrders int64
 	var totalRevenue int64
@@ -259,14 +259,14 @@ func (h *UserHandler) GetStats(c *echo.Context) error {
 		Revenue int64
 	}
 	var agg orderAgg
-	_ = database.DB.WithContext(ctx).Table(database.T("orders")).
+	_ = database.DB.WithContext(ctx).Table(database.HT("orders")).
 		Select("COUNT(*) as count, COALESCE(SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END), 0) as revenue").
 		Scan(&agg).Error
 	totalOrders = agg.Count
 	totalRevenue = agg.Revenue
 
 	var activeContainers int64
-	_ = database.DB.WithContext(ctx).Table(database.T("containers")).
+	_ = database.DB.WithContext(ctx).Table(database.HT("containers")).
 		Where("status = ? AND deleted_at IS NULL", "running").
 		Count(&activeContainers).Error
 
