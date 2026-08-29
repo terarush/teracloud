@@ -78,14 +78,24 @@ func (m *Module) Initialize(db *gorm.DB, log *logger.Logger, event *bus.EventBus
 	// Event listener: order.paid -> triggers container provisioning
 	m.event.SubscribeFunc("order.paid", func(ev bus.Event) {
 		if order, ok := ev.Payload.(*orderEntity.Order); ok {
-			m.logger.Info("Received order.paid event for order %s, provisioning container...", order.OrderNumber)
+			m.logger.Info("Received order.paid event for order %s, provisioning containers...", order.OrderNumber)
 			go func() {
-				// We pass a dummy subscription ID for now if subscription module isn't connected yet
-				subID := uint(0)
-				if order.SubscriptionID != nil {
-					subID = *order.SubscriptionID
+				ctx := context.Background()
+				if len(order.Items) > 0 {
+					for _, item := range order.Items {
+						subID := uint(0)
+						if item.SubscriptionID != nil {
+							subID = *item.SubscriptionID
+						}
+						_ = m.provisioningService.ProvisionContainer(ctx, order.UserID, subID, item.PlanID)
+					}
+				} else if order.PlanID != nil {
+					subID := uint(0)
+					if order.SubscriptionID != nil {
+						subID = *order.SubscriptionID
+					}
+					_ = m.provisioningService.ProvisionContainer(ctx, order.UserID, subID, *order.PlanID)
 				}
-				_ = m.provisioningService.ProvisionContainer(context.Background(), order.UserID, subID, order.PlanID)
 			}()
 		}
 	})

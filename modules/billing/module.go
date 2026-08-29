@@ -3,6 +3,7 @@ package billing
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"ruang-tukar/internal/pkg/bus"
@@ -64,26 +65,45 @@ func (m *Module) Initialize(db *gorm.DB, log *logger.Logger, event *bus.EventBus
 	m.event.SubscribeFunc("order.paid", func(ev bus.Event) {
 		if order, ok := ev.Payload.(*orderEntity.Order); ok {
 			ctx := context.Background()
-			plan, _ := pService.GetPlanByID(ctx, order.PlanID)
-			planName := "Docker Plan"
-			if plan != nil {
-				planName = plan.Name
-			}
-
-			// 1. Create subscription
-			sub, _ := m.subService.CreateSubscription(ctx, order.UserID, order.PlanID, order.ID)
-
-			// 2. Generate invoice
-			var subID *uint
-			if sub != nil {
-				subID = &sub.ID
-			}
-			_, _ = m.invoiceService.GenerateInvoice(ctx, order.UserID, subID, &order.ID, order.Amount, planName)
-
-			// 3. Send email notification
 			user, _ := uService.GetUserByID(ctx, order.UserID)
+
+			if len(order.Items) > 0 {
+				for _, item := range order.Items {
+					plan, _ := pService.GetPlanByID(ctx, item.PlanID)
+					planName := "Docker Plan"
+					if plan != nil {
+						planName = plan.Name
+					}
+
+					// 1. Create subscription
+					sub, _ := m.subService.CreateSubscription(ctx, order.UserID, item.PlanID, order.ID)
+
+					// 2. Generate invoice
+					var subID *uint
+					if sub != nil {
+						subID = &sub.ID
+						item.SubscriptionID = subID
+					}
+					_, _ = m.invoiceService.GenerateInvoice(ctx, order.UserID, subID, &order.ID, item.Subtotal, planName)
+				}
+			} else if order.PlanID != nil {
+				plan, _ := pService.GetPlanByID(ctx, *order.PlanID)
+				planName := "Docker Plan"
+				if plan != nil {
+					planName = plan.Name
+				}
+
+				sub, _ := m.subService.CreateSubscription(ctx, order.UserID, *order.PlanID, order.ID)
+				var subID *uint
+				if sub != nil {
+					subID = &sub.ID
+				}
+				_, _ = m.invoiceService.GenerateInvoice(ctx, order.UserID, subID, &order.ID, order.Amount, planName)
+			}
+
+			// Send confirmation email
 			if user != nil {
-				_ = m.reminderService.SendPaymentSuccessEmail(user.Email, user.FirstName, planName, order.Amount)
+				_ = m.reminderService.SendPaymentSuccessEmail(user.Email, user.FirstName, fmt.Sprintf("Order #%s", order.OrderNumber), order.Amount)
 			}
 		}
 	})
