@@ -9,9 +9,10 @@ import Cookies from "js-cookie"
 export interface UseTerminalOptions {
   containerId: number
   terminalContainerRef: React.RefObject<HTMLDivElement | null>
+  isActive?: boolean
 }
 
-export function useTerminal({ containerId, terminalContainerRef }: UseTerminalOptions) {
+export function useTerminal({ containerId, terminalContainerRef, isActive = true }: UseTerminalOptions) {
   const xtermRef = useRef<XTerm | null>(null)
   const fitAddonRef = useRef<FitAddon | null>(null)
   const socketRef = useRef<WebSocket | null>(null)
@@ -19,30 +20,59 @@ export function useTerminal({ containerId, terminalContainerRef }: UseTerminalOp
   const [statusText, setStatusText] = useState("Connecting...")
 
   const fitTerminal = useCallback(() => {
-    if (fitAddonRef.current && socketRef.current?.readyState === WebSocket.OPEN && xtermRef.current) {
-      fitAddonRef.current.fit()
-      socketRef.current.send(
-        JSON.stringify({
-          type: "resize",
-          cols: xtermRef.current.cols,
-          rows: xtermRef.current.rows,
-        })
-      )
+    if (fitAddonRef.current && terminalContainerRef.current && xtermRef.current) {
+      try {
+        if (terminalContainerRef.current.clientWidth > 0 && terminalContainerRef.current.clientHeight > 0) {
+          fitAddonRef.current.fit()
+          if (socketRef.current?.readyState === WebSocket.OPEN) {
+            socketRef.current.send(
+              JSON.stringify({
+                type: "resize",
+                cols: xtermRef.current.cols,
+                rows: xtermRef.current.rows,
+              })
+            )
+          }
+        }
+      } catch (e) {
+        // ignore dimension errors while hidden
+      }
     }
-  }, [])
+  }, [terminalContainerRef])
+
+  useEffect(() => {
+    if (isActive) {
+      // Delay slightly so container has rendered its full bounding box
+      const timer = setTimeout(() => {
+        fitTerminal()
+      }, 50)
+      return () => clearTimeout(timer)
+    }
+  }, [isActive, fitTerminal])
 
   useEffect(() => {
     if (!terminalContainerRef.current) return
 
+    const isDark = document.documentElement.classList.contains("dark")
+
     const term = new XTerm({
       cursorBlink: true,
-      fontFamily: 'Menlo, Monaco, "Courier New", monospace',
-      fontSize: 14,
-      theme: {
-        background: "#090d16",
-        foreground: "#f8fafc",
-        cursor: "#38bdf8",
-      },
+      fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+      fontSize: 13,
+      lineHeight: 1.3,
+      theme: isDark
+        ? {
+            background: "#09090b", // zinc-950
+            foreground: "#f4f4f5", // zinc-100
+            cursor: "#38bdf8",
+            selectionBackground: "#27272a",
+          }
+        : {
+            background: "#ffffff",
+            foreground: "#18181b", // zinc-900
+            cursor: "#0284c7",
+            selectionBackground: "#e4e4e7",
+          },
     })
 
     const fitAddon = new FitAddon()
@@ -57,9 +87,18 @@ export function useTerminal({ containerId, terminalContainerRef }: UseTerminalOp
     fitAddonRef.current = fitAddon
 
     const token = Cookies.get("accessToken") || Cookies.get("auth_token") || ""
-    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:"
-    const host = window.location.host
-    const wsUrl = `${protocol}//${host}/api/v1/ws/containers/${containerId}/terminal?token=${token}`
+    
+    // Resolve ws base URL from VITE_API_URL or current host
+    const apiUrl = import.meta.env.VITE_API_URL || ""
+    let wsBase: string
+    if (apiUrl.startsWith("http://") || apiUrl.startsWith("https://")) {
+      wsBase = apiUrl.replace(/^http/, "ws")
+    } else {
+      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:"
+      wsBase = `${protocol}//${window.location.host}`
+    }
+
+    const wsUrl = `${wsBase}/api/v1/ws/containers/${containerId}/terminal?token=${token}`
 
     const ws = new WebSocket(wsUrl)
     ws.binaryType = "arraybuffer"
@@ -82,7 +121,8 @@ export function useTerminal({ containerId, terminalContainerRef }: UseTerminalOp
         try {
           const msg = JSON.parse(event.data)
           if (msg.type === "connected") {
-            term.writeln(`\x1b[32m✔ Connected to ${msg.container_name || "container"}\x1b[0m\r\n`)
+            // Silently connected without printing intrusive banner
+            return
           } else if (msg.type === "error") {
             term.writeln(`\r\n\x1b[31m✖ ${msg.message}\x1b[0m\r\n`)
           }
@@ -120,8 +160,19 @@ export function useTerminal({ containerId, terminalContainerRef }: UseTerminalOp
 
     window.addEventListener("resize", handleResize)
 
+    let resizeObserver: ResizeObserver | null = null
+    if (terminalContainerRef.current && window.ResizeObserver) {
+      resizeObserver = new ResizeObserver(() => {
+        fitTerminal()
+      })
+      resizeObserver.observe(terminalContainerRef.current)
+    }
+
     return () => {
       window.removeEventListener("resize", handleResize)
+      if (resizeObserver) {
+        resizeObserver.disconnect()
+      }
       ws.close()
       term.dispose()
     }

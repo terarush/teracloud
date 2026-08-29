@@ -1,5 +1,13 @@
 import { apiClient } from "@/lib/api-client"
 
+export interface PortConfigItem {
+  container_port: number
+  protocol?: string
+  name?: string
+  description?: string
+  is_primary?: boolean
+}
+
 export interface Plan {
   id: number
   name: string
@@ -15,6 +23,10 @@ export interface Plan {
   price_monthly: number
   is_active: boolean
   features: string[]
+  port_config?: PortConfigItem[]
+  environment_template?: Record<string, any>
+  command?: string
+  entrypoint?: string
   icon?: string
   max_per_user: number
   created_at?: string
@@ -35,6 +47,10 @@ export interface CreatePlanRequest {
   price_monthly: number
   is_active?: boolean
   features?: string[]
+  port_config?: PortConfigItem[]
+  environment_template?: Record<string, any>
+  command?: string
+  entrypoint?: string
   icon?: string
   max_per_user?: number
 }

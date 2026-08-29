@@ -8,6 +8,7 @@ import { Terminal } from "../components/Terminal"
 import { ArrowLeft, Loader2, Terminal as TerminalIcon, BarChart3, ListOrdered, Info } from "lucide-react"
 import { useNavigate } from "@tanstack/react-router"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
 
 interface ContainerDetailViewProps {
   containerId: number
@@ -33,8 +34,8 @@ export const ContainerDetailView: React.FC<ContainerDetailViewProps> = ({ contai
   if (isLoading || !container) {
     return (
       <div className="p-16 flex flex-col items-center justify-center text-muted-foreground">
-        <Loader2 className="w-8 h-8 animate-spin text-primary mb-3" />
-        <p>Memuat detail container...</p>
+        <Loader2 className="size-6 animate-spin text-primary mb-3" />
+        <p className="text-xs">Memuat detail container...</p>
       </div>
     )
   }
@@ -42,16 +43,16 @@ export const ContainerDetailView: React.FC<ContainerDetailViewProps> = ({ contai
   const assigned = container.assigned_ports || {}
 
   return (
-    <div className="p-6 sm:p-8 space-y-6 max-w-7xl mx-auto">
+    <div className="px-6 py-8 max-w-5xl mx-auto space-y-6">
       {/* Top Header Navigation */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <Button
           variant="ghost"
           size="sm"
           onClick={() => navigate({ to: "/app" })}
-          className="gap-2 self-start"
+          className="gap-1 text-xs text-muted-foreground hover:text-foreground cursor-pointer -ml-2 h-7 self-start"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="size-3.5" />
           <span>Kembali ke Dashboard</span>
         </Button>
 
@@ -68,133 +69,105 @@ export const ContainerDetailView: React.FC<ContainerDetailViewProps> = ({ contai
       </div>
 
       {/* Main Info Card */}
-      <div className="bg-card ring-1 ring-foreground/10 p-6 sm:p-8 rounded-xl flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="space-y-2">
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
-              {container.container_name}
-            </h1>
-            <StatusBadge status={container.status} />
+      <Card className="ring-1 ring-foreground/10">
+        <CardContent className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2.5">
+              <h1 className="text-xl font-bold text-foreground tracking-tight">
+                {container.container_name}
+              </h1>
+              <StatusBadge status={container.status} />
+            </div>
+            <p className="text-xs text-muted-foreground font-mono">
+              Image: {container.image_name}:{container.image_tag} &bull; Hostname: {container.hostname || "localhost"}
+            </p>
           </div>
-          <p className="text-sm text-muted-foreground font-mono">
-            Image: {container.image_name}:{container.image_tag} &bull; Hostname: {container.hostname || "localhost"}
-          </p>
-        </div>
-
-        <Button
-          onClick={() =>
-            navigate({
-              to: "/app/containers/$id/terminal",
-              params: { id: String(container.id) },
-            })
-          }
-          className="gap-2 font-semibold self-start md:self-auto"
-        >
-          <TerminalIcon className="w-4 h-4" />
-          <span>Buka Fullscreen Terminal</span>
-        </Button>
-      </div>
+        </CardContent>
+      </Card>
 
       {/* Navigation Tabs */}
-      <div className="flex border-b border-border space-x-6 text-sm font-medium">
-        <button
-          onClick={() => setActiveTab("overview")}
-          className={`pb-3 flex items-center gap-2 border-b-2 transition ${
-            activeTab === "overview"
-              ? "border-primary text-primary font-bold"
-              : "border-transparent text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          <Info className="w-4 h-4" />
-          <span>Overview &amp; Koneksi</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab("stats")}
-          className={`pb-3 flex items-center gap-2 border-b-2 transition ${
-            activeTab === "stats"
-              ? "border-primary text-primary font-bold"
-              : "border-transparent text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          <BarChart3 className="w-4 h-4" />
-          <span>Monitoring Resource</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab("terminal")}
-          className={`pb-3 flex items-center gap-2 border-b-2 transition ${
-            activeTab === "terminal"
-              ? "border-primary text-primary font-bold"
-              : "border-transparent text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          <TerminalIcon className="w-4 h-4" />
-          <span>Web Terminal (xterm.js)</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab("events")}
-          className={`pb-3 flex items-center gap-2 border-b-2 transition ${
-            activeTab === "events"
-              ? "border-primary text-primary font-bold"
-              : "border-transparent text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          <ListOrdered className="w-4 h-4" />
-          <span>Audit Log Event</span>
-        </button>
+      <div className="flex gap-1 border-b border-foreground/10 pb-px">
+        {[
+          { key: "overview", label: "Overview" },
+          { key: "terminal", label: "Terminal" },
+          { key: "stats", label: "Resource" },
+          { key: "events", label: "Audit Log" },
+        ].map((tab) => {
+          const isActive = activeTab === tab.key
+          return (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key as any)}
+              className={`px-3.5 py-2 text-xs font-medium border-b-2 -mb-px transition-colors cursor-pointer ${
+                isActive
+                  ? "border-primary text-foreground font-semibold"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <span>{tab.label}</span>
+            </button>
+          )
+        })}
       </div>
 
-      {/* Tab Panels */}
+      {/* Tab Panels with persistent Terminal session */}
       {activeTab === "overview" && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-card ring-1 ring-foreground/10 p-6 rounded-xl space-y-4">
-            <h2 className="text-lg font-bold text-foreground">Alokasi Hardware</h2>
-            <div className="grid grid-cols-3 gap-3 text-center">
-              <div className="p-4 bg-muted rounded-lg">
-                <div className="text-xs text-muted-foreground">vCPU</div>
-                <div className="text-xl font-bold text-foreground mt-1">{container.cpu_limit} Core</div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Card className="ring-1 ring-foreground/10">
+            <CardContent className="p-5 space-y-3">
+              <h2 className="text-sm font-semibold text-foreground">Alokasi Hardware</h2>
+              <div className="grid grid-cols-3 gap-2.5 text-center">
+                <div className="p-3 bg-muted/50 rounded-lg">
+                  <div className="text-[11px] text-muted-foreground">vCPU</div>
+                  <div className="text-base font-bold text-foreground mt-0.5">{container.cpu_limit} Core</div>
+                </div>
+                <div className="p-3 bg-muted/50 rounded-lg">
+                  <div className="text-[11px] text-muted-foreground">RAM</div>
+                  <div className="text-base font-bold text-foreground mt-0.5">{container.memory_limit} MB</div>
+                </div>
+                <div className="p-3 bg-muted/50 rounded-lg">
+                  <div className="text-[11px] text-muted-foreground">Storage</div>
+                  <div className="text-base font-bold text-foreground mt-0.5">{container.disk_limit} GB</div>
+                </div>
               </div>
-              <div className="p-4 bg-muted rounded-lg">
-                <div className="text-xs text-muted-foreground">RAM</div>
-                <div className="text-xl font-bold text-foreground mt-1">{container.memory_limit} MB</div>
-              </div>
-              <div className="p-4 bg-muted rounded-lg">
-                <div className="text-xs text-muted-foreground">Storage</div>
-                <div className="text-xl font-bold text-foreground mt-1">{container.disk_limit} GB</div>
-              </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
-          <div className="bg-card ring-1 ring-foreground/10 p-6 rounded-xl space-y-4">
-            <h2 className="text-lg font-bold text-foreground">Koneksi &amp; Port Terbuka</h2>
-            <div className="space-y-3 text-sm">
-              <div className="flex justify-between items-center py-2 border-b border-border">
-                <span className="text-muted-foreground">SSH Port (Port 22 Internal):</span>
-                <span className="font-mono font-bold text-primary">Port {assigned.ssh || "Belum dialokasikan"}</span>
+          <Card className="ring-1 ring-foreground/10">
+            <CardContent className="p-5 space-y-3">
+              <h2 className="text-sm font-semibold text-foreground">Koneksi &amp; Port Terbuka</h2>
+              <div className="space-y-2 text-xs">
+                {Object.keys(assigned).length > 0 ? (
+                  Object.entries(assigned).map(([name, port]) => (
+                    <div key={name} className="flex justify-between items-center py-1.5 border-b border-border/50">
+                      <span className="text-muted-foreground capitalize font-medium">{name.replace("_", " ")}:</span>
+                      <span className="font-mono font-semibold text-primary">Port {port}</span>
+                    </div>
+                  ))
+                ) : (
+                  <div className="py-2 text-muted-foreground italic">
+                    Belum ada port yang dialokasikan
+                  </div>
+                )}
+                <div className="flex justify-between items-center py-1.5">
+                  <span className="text-muted-foreground">Waktu Dibuat:</span>
+                  <span className="text-foreground">{new Date(container.created_at).toLocaleString("id-ID")}</span>
+                </div>
               </div>
-              <div className="flex justify-between items-center py-2 border-b border-border">
-                <span className="text-muted-foreground">HTTP Web (Port 80 Internal):</span>
-                <span className="font-mono font-bold text-primary">Port {assigned.http || "Belum dialokasikan"}</span>
-              </div>
-              <div className="flex justify-between items-center py-2">
-                <span className="text-muted-foreground">Waktu Dibuat:</span>
-                <span className="text-foreground">{new Date(container.created_at).toLocaleString("id-ID")}</span>
-              </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
       )}
+
+      {/* Terminal is kept mounted to maintain WebSocket & history state */}
+      <div className={activeTab === "terminal" ? "block" : "hidden"}>
+        <Card className="ring-1 ring-foreground/10 overflow-hidden h-[540px] flex flex-col">
+          <Terminal containerId={container.id} isActive={activeTab === "terminal"} />
+        </Card>
+      </div>
 
       {activeTab === "stats" && (
         <ContainerStats stats={stats} memoryLimitMb={container.memory_limit} />
-      )}
-
-      {activeTab === "terminal" && (
-        <div className="h-[520px] bg-card ring-1 ring-foreground/10 rounded-xl p-2 overflow-hidden">
-          <Terminal containerId={container.id} />
-        </div>
       )}
 
       {activeTab === "events" && <ContainerEventsTable events={events} />}
