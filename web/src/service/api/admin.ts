@@ -44,7 +44,7 @@ export const adminApi = {
   },
 
   getAllContainers: async (): Promise<Container[]> => {
-    const res = await apiClient.get<Container[]>("/containers")
+    const res = await apiClient.get<Container[]>("/containers/all")
     return (res as any)?.data ?? res.data ?? []
   },
 
@@ -56,5 +56,13 @@ export const adminApi = {
   getAllSubscriptions: async (): Promise<Subscription[]> => {
     const res = await apiClient.get<Subscription[]>("/billing/subscriptions")
     return (res as any)?.data ?? res.data ?? []
+  },
+
+  forceDeleteContainer: async (id: number): Promise<void> => {
+    await apiClient.delete(`/containers/${id}/force`)
+  },
+
+  adminRestartContainer: async (id: number): Promise<void> => {
+    await apiClient.post(`/containers/${id}/admin-restart`, {})
   },
 }
