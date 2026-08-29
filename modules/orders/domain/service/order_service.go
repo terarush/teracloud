@@ -7,13 +7,17 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"ruang-tukar/internal/pkg/bus"
+	"ruang-tukar/internal/pkg/config"
 	"ruang-tukar/internal/pkg/midtrans"
-	orderErrs "ruang-tukar/modules/orders/errs"
+	cartEntity "ruang-tukar/modules/cart/domain/entity"
+	cartRepository "ruang-tukar/modules/cart/domain/repository"
 	"ruang-tukar/modules/orders/domain/entity"
 	"ruang-tukar/modules/orders/domain/repository"
+	orderErrs "ruang-tukar/modules/orders/errs"
 	planService "ruang-tukar/modules/plans/domain/service"
 	userService "ruang-tukar/modules/users/domain/service"
 )
@@ -42,8 +46,149 @@ func NewOrderService(
 	}
 }
 
-// CreateNewPurchaseOrder handles initial plan purchase.
-func (s *OrderService) CreateNewPurchaseOrder(ctx context.Context, userID, planID uint) (*entity.Order, error) {
+// CheckoutCart checks out items from the user's cart into a new order.
+func (s *OrderService) CheckoutCart(ctx context.Context, userID uint, cartItemIDs []uint) (*entity.Order, error) {
+	// 1. Fetch user and cart items
+	user, err := s.userService.GetUserByID(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	cartRepo := cartRepository.NewCartRepository()
+	cartItems, err := cartRepo.FindByUserID(ctx, userID)
+	if err != nil || len(cartItems) == 0 {
+		return nil, orderErrs.ErrOrderNotFound
+	}
+
+	// Filter if specific cart IDs passed
+	var selectedItems []*cartEntity.CartItem
+	if len(cartItemIDs) > 0 {
+		idMap := make(map[uint]bool)
+		for _, id := range cartItemIDs {
+			idMap[id] = true
+		}
+		for _, ci := range cartItems {
+			if idMap[ci.ID] {
+				selectedItems = append(selectedItems, ci)
+			}
+		}
+	} else {
+		selectedItems = cartItems
+	}
+
+	if len(selectedItems) == 0 {
+		return nil, orderErrs.ErrOrderNotFound
+	}
+
+	var totalAmount int64 = 0
+	var orderItems []*entity.OrderItem
+	var itemNames []string
+
+	for _, ci := range selectedItems {
+		plan, err := s.planService.GetPlanByID(ctx, ci.PlanID)
+		if err != nil || !plan.IsActive {
+			return nil, orderErrs.ErrPlanLimitReached
+		}
+
+		// Check plan limits
+		activeCount, err := s.orderRepo.CountActiveByUserIDAndPlanID(ctx, userID, ci.PlanID)
+		if err != nil {
+			return nil, err
+		}
+		if int(activeCount) >= plan.MaxPerUser {
+			return nil, orderErrs.ErrPlanLimitReached
+		}
+
+		duration := ci.DurationMonths
+		if duration <= 0 {
+			duration = 1
+		}
+
+		subtotal := plan.PriceMonthly * int64(duration)
+		totalAmount += subtotal
+		itemNames = append(itemNames, fmt.Sprintf("%s (%d mo)", plan.Name, duration))
+
+		orderItems = append(orderItems, &entity.OrderItem{
+			PlanID:             plan.ID,
+			Plan:               plan,
+			CustomName:         ci.CustomName,
+			DurationMonths:     duration,
+			UnitPrice:          plan.PriceMonthly,
+			Subtotal:           subtotal,
+			EnvironmentConfig:  ci.EnvironmentConfig,
+			ProvisioningStatus: "pending",
+			CreatedAt:          time.Now(),
+			UpdatedAt:          time.Now(),
+		})
+	}
+
+	// Generate order codes
+	orderNumber := generateOrderNumber()
+	midtransOrderID := fmt.Sprintf("TERA-%s", orderNumber)
+
+	frontendURL := config.GetString("APP_FRONTEND_URL")
+	if frontendURL == "" {
+		frontendURL = "http://localhost:5173"
+	}
+	callbackURL := fmt.Sprintf("%s/app/orders/finish?order_id=%s", frontendURL, orderNumber)
+
+	combinedItemName := strings.Join(itemNames, ", ")
+	if len(combinedItemName) > 45 {
+		combinedItemName = fmt.Sprintf("%d Container Plans", len(orderItems))
+	}
+
+	snapResp, err := s.midtrans.CreateTransaction(midtrans.SnapRequest{
+		OrderID:     midtransOrderID,
+		GrossAmount: totalAmount,
+		FirstName:   user.FirstName,
+		LastName:    user.LastName,
+		Email:       user.Email,
+		ItemName:    combinedItemName,
+		CallbackURL: callbackURL,
+	})
+
+	var snapToken, snapRedirectURL string
+	if err != nil {
+		snapToken = fmt.Sprintf("snap-token-mock-%s", hex.EncodeToString([]byte(midtransOrderID))[:12])
+		snapRedirectURL = fmt.Sprintf("%s&mock_token=%s", callbackURL, snapToken)
+	} else {
+		snapToken = snapResp.Token
+		snapRedirectURL = snapResp.RedirectURL
+	}
+
+	expiredAt := time.Now().Add(24 * time.Hour)
+	firstPlanID := orderItems[0].PlanID
+	order := &entity.Order{
+		OrderNumber:     orderNumber,
+		UserID:          userID,
+		PlanID:          &firstPlanID,
+		OrderType:       "new_purchase",
+		Amount:          totalAmount,
+		TotalAmount:     totalAmount,
+		Currency:        "IDR",
+		Status:          "awaiting_payment",
+		MidtransOrderID: midtransOrderID,
+		SnapToken:       snapToken,
+		SnapRedirectURL: snapRedirectURL,
+		ExpiredAt:       &expiredAt,
+		CreatedAt:       time.Now(),
+		UpdatedAt:       time.Now(),
+	}
+
+	if err := s.orderRepo.CreateWithItems(ctx, order, orderItems); err != nil {
+		return nil, err
+	}
+
+	// Remove checked-out items from cart
+	for _, ci := range selectedItems {
+		_ = cartRepo.Delete(ctx, ci.ID, userID)
+	}
+
+	return order, nil
+}
+
+// CreateNewPurchaseOrder handles initial plan direct purchase.
+func (s *OrderService) CreateNewPurchaseOrder(ctx context.Context, userID, planID uint, customName string, durationMonths int) (*entity.Order, error) {
 	plan, err := s.planService.GetPlanByID(ctx, planID)
 	if err != nil {
 		return nil, err
@@ -66,24 +211,36 @@ func (s *OrderService) CreateNewPurchaseOrder(ctx context.Context, userID, planI
 		return nil, err
 	}
 
+	if durationMonths <= 0 {
+		durationMonths = 1
+	}
+
+	totalAmount := plan.PriceMonthly * int64(durationMonths)
+
 	// Generate order codes
 	orderNumber := generateOrderNumber()
 	midtransOrderID := fmt.Sprintf("TERA-%s", orderNumber)
 
 	// Call Midtrans Snap
+	frontendURL := config.GetString("APP_FRONTEND_URL")
+	if frontendURL == "" {
+		frontendURL = "http://localhost:5173"
+	}
+	callbackURL := fmt.Sprintf("%s/app/orders/finish?order_id=%s", frontendURL, orderNumber)
+
 	snapResp, err := s.midtrans.CreateTransaction(midtrans.SnapRequest{
 		OrderID:     midtransOrderID,
-		GrossAmount: plan.PriceMonthly,
+		GrossAmount: totalAmount,
 		FirstName:   user.FirstName,
 		LastName:    user.LastName,
 		Email:       user.Email,
-		ItemName:    plan.Name,
+		ItemName:    fmt.Sprintf("%s (%d mo)", plan.Name, durationMonths),
+		CallbackURL: callbackURL,
 	})
 	var snapToken, snapRedirectURL string
 	if err != nil {
-		// Fallback for local sandbox/dev when Midtrans server key is unset or unreachable
 		snapToken = fmt.Sprintf("snap-token-mock-%s", hex.EncodeToString([]byte(midtransOrderID))[:12])
-		snapRedirectURL = fmt.Sprintf("https://app.sandbox.midtrans.com/snap/v2/vtweb/%s", snapToken)
+		snapRedirectURL = fmt.Sprintf("%s&mock_token=%s", callbackURL, snapToken)
 	} else {
 		snapToken = snapResp.Token
 		snapRedirectURL = snapResp.RedirectURL
@@ -93,9 +250,10 @@ func (s *OrderService) CreateNewPurchaseOrder(ctx context.Context, userID, planI
 	order := &entity.Order{
 		OrderNumber:     orderNumber,
 		UserID:          userID,
-		PlanID:          planID,
+		PlanID:          &planID,
 		OrderType:       "new_purchase",
-		Amount:          plan.PriceMonthly,
+		Amount:          totalAmount,
+		TotalAmount:     totalAmount,
 		Currency:        "IDR",
 		Status:          "awaiting_payment",
 		MidtransOrderID: midtransOrderID,
@@ -106,7 +264,19 @@ func (s *OrderService) CreateNewPurchaseOrder(ctx context.Context, userID, planI
 		UpdatedAt:       time.Now(),
 	}
 
-	if err := s.orderRepo.Create(ctx, order); err != nil {
+	orderItem := &entity.OrderItem{
+		PlanID:             plan.ID,
+		Plan:               plan,
+		CustomName:         customName,
+		DurationMonths:     durationMonths,
+		UnitPrice:          plan.PriceMonthly,
+		Subtotal:           totalAmount,
+		ProvisioningStatus: "pending",
+		CreatedAt:          time.Now(),
+		UpdatedAt:          time.Now(),
+	}
+
+	if err := s.orderRepo.CreateWithItems(ctx, order, []*entity.OrderItem{orderItem}); err != nil {
 		return nil, err
 	}
 
@@ -173,6 +343,17 @@ func (s *OrderService) GetOrdersByUserID(ctx context.Context, userID uint) ([]*e
 
 func (s *OrderService) GetOrderByID(ctx context.Context, id uint) (*entity.Order, error) {
 	order, err := s.orderRepo.FindByID(ctx, id)
+	if err != nil {
+		if err == repository.ErrRecordNotFound {
+			return nil, orderErrs.ErrOrderNotFound
+		}
+		return nil, err
+	}
+	return order, nil
+}
+
+func (s *OrderService) GetOrderByOrderNumber(ctx context.Context, orderNumber string) (*entity.Order, error) {
+	order, err := s.orderRepo.FindByOrderNumber(ctx, orderNumber)
 	if err != nil {
 		if err == repository.ErrRecordNotFound {
 			return nil, orderErrs.ErrOrderNotFound

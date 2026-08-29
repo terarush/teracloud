@@ -7,6 +7,8 @@ import (
 
 	"ruang-tukar/internal/pkg/database"
 	"ruang-tukar/modules/orders/domain/entity"
+
+	"gorm.io/gorm"
 )
 
 var ErrRecordNotFound = errors.New("record not found")
@@ -19,7 +21,10 @@ func NewOrderRepositoryImpl() OrderRepository {
 
 func (r *OrderRepositoryImpl) FindByID(ctx context.Context, id uint) (*entity.Order, error) {
 	var order entity.Order
-	result := database.DB.WithContext(ctx).First(&order, id)
+	result := database.DB.WithContext(ctx).
+		Preload("Items").
+		Preload("Items.Plan").
+		First(&order, id)
 	if result.Error != nil {
 		if result.RowsAffected == 0 {
 			return nil, ErrRecordNotFound
@@ -31,7 +36,11 @@ func (r *OrderRepositoryImpl) FindByID(ctx context.Context, id uint) (*entity.Or
 
 func (r *OrderRepositoryImpl) FindByOrderNumber(ctx context.Context, orderNumber string) (*entity.Order, error) {
 	var order entity.Order
-	result := database.DB.WithContext(ctx).Where("order_number = ?", orderNumber).First(&order)
+	result := database.DB.WithContext(ctx).
+		Preload("Items").
+		Preload("Items.Plan").
+		Where("order_number = ?", orderNumber).
+		First(&order)
 	if result.Error != nil {
 		if result.RowsAffected == 0 {
 			return nil, ErrRecordNotFound
@@ -43,7 +52,11 @@ func (r *OrderRepositoryImpl) FindByOrderNumber(ctx context.Context, orderNumber
 
 func (r *OrderRepositoryImpl) FindByMidtransOrderID(ctx context.Context, midtransOrderID string) (*entity.Order, error) {
 	var order entity.Order
-	result := database.DB.WithContext(ctx).Where("midtrans_order_id = ?", midtransOrderID).First(&order)
+	result := database.DB.WithContext(ctx).
+		Preload("Items").
+		Preload("Items.Plan").
+		Where("midtrans_order_id = ?", midtransOrderID).
+		First(&order)
 	if result.Error != nil {
 		if result.RowsAffected == 0 {
 			return nil, ErrRecordNotFound
@@ -56,6 +69,8 @@ func (r *OrderRepositoryImpl) FindByMidtransOrderID(ctx context.Context, midtran
 func (r *OrderRepositoryImpl) FindByUserID(ctx context.Context, userID uint) ([]*entity.Order, error) {
 	var orders []*entity.Order
 	result := database.DB.WithContext(ctx).
+		Preload("Items").
+		Preload("Items.Plan").
 		Where("user_id = ?", userID).
 		Order("created_at DESC").
 		Find(&orders)
@@ -65,6 +80,8 @@ func (r *OrderRepositoryImpl) FindByUserID(ctx context.Context, userID uint) ([]
 func (r *OrderRepositoryImpl) FindAll(ctx context.Context) ([]*entity.Order, error) {
 	var orders []*entity.Order
 	result := database.DB.WithContext(ctx).
+		Preload("Items").
+		Preload("Items.Plan").
 		Order("created_at DESC").
 		Find(&orders)
 	return orders, result.Error
@@ -74,8 +91,37 @@ func (r *OrderRepositoryImpl) Create(ctx context.Context, order *entity.Order) e
 	return database.DB.WithContext(ctx).Create(order).Error
 }
 
+func (r *OrderRepositoryImpl) CreateWithItems(ctx context.Context, order *entity.Order, items []*entity.OrderItem) error {
+	return database.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(order).Error; err != nil {
+			return err
+		}
+		for _, item := range items {
+			item.OrderID = order.ID
+			if err := tx.Create(item).Error; err != nil {
+				return err
+			}
+		}
+		order.Items = items
+		return nil
+	})
+}
+
 func (r *OrderRepositoryImpl) Update(ctx context.Context, order *entity.Order) error {
 	return database.DB.WithContext(ctx).Save(order).Error
+}
+
+func (r *OrderRepositoryImpl) UpdateOrderItem(ctx context.Context, item *entity.OrderItem) error {
+	return database.DB.WithContext(ctx).Save(item).Error
+}
+
+func (r *OrderRepositoryImpl) FindOrderItemsByOrderID(ctx context.Context, orderID uint) ([]*entity.OrderItem, error) {
+	var items []*entity.OrderItem
+	err := database.DB.WithContext(ctx).
+		Preload("Plan").
+		Where("order_id = ?", orderID).
+		Find(&items).Error
+	return items, err
 }
 
 func (r *OrderRepositoryImpl) CountActiveByUserIDAndPlanID(ctx context.Context, userID, planID uint) (int64, error) {
