@@ -1,0 +1,27 @@
+{
+  "nav": {
+    "workspace": "Ruang Kerja",
+    "dashboard": "Dasbor",
+    "products": "Produk",
+    "orders": "Pesanan",
+    "purchases": "Pembelian",
+    "marketing": "Pemasaran",
+    "affiliate": "Afiliasi",
+    "promoCode": "Kode Promo",
+    "ticketsDownloads": "Tiket & Download",
+    "tickets": "Tiket",
+    "downloads": "Download",
+    "finance": "Keuangan",
+    "withdrawals": "Penarikan",
+    "settings": "Pengaturan",
+    "administration": "Administrasi",
+    "users": "Pengguna",
+    "withdrawalRequests": "Permintaan Penarikan",
+    "platformSettings": "Pengaturan Platform",
+    "editProfile": "Edit Profil",
+    "userProfile": "Profil Pengguna",
+    "darkMode": "Mode Gelap",
+    "lightMode": "Mode Terang",
+    "signOut": "Keluar"
+  }
+}

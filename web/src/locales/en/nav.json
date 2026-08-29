@@ -1,0 +1,27 @@
+{
+  "nav": {
+    "workspace": "Workspace",
+    "dashboard": "Dashboard",
+    "products": "Products",
+    "orders": "Orders",
+    "purchases": "Purchases",
+    "marketing": "Marketing",
+    "affiliate": "Affiliate",
+    "promoCode": "Promo Codes",
+    "ticketsDownloads": "Tickets & Downloads",
+    "tickets": "Tickets",
+    "downloads": "Downloads",
+    "finance": "Finance",
+    "withdrawals": "Withdrawals",
+    "settings": "Settings",
+    "administration": "Administration",
+    "users": "Users",
+    "withdrawalRequests": "Withdrawal Requests",
+    "platformSettings": "Platform Settings",
+    "editProfile": "Edit Profile",
+    "userProfile": "User Profile",
+    "darkMode": "Dark Mode",
+    "lightMode": "Light Mode",
+    "signOut": "Sign Out"
+  }
+}

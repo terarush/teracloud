@@ -1,0 +1,23 @@
+{
+  "error": {
+    "BAD_REQUEST": "Permintaan tidak valid. Silakan periksa kembali input Anda.",
+    "VALIDATION_ERROR": "Satu atau lebih data tidak valid.",
+    "UNAUTHORIZED": "Email atau kata sandi salah, atau sesi telah berakhir.",
+    "FORBIDDEN": "Anda tidak memiliki akses ke halaman ini.",
+    "NOT_FOUND": "Halaman atau sumber daya tidak ditemukan.",
+    "CONFLICT": "Data sudah terdaftar atau terjadi konflik data.",
+    "INTERNAL_ERROR": "Terjadi kesalahan pada server. Silakan coba beberapa saat lagi.",
+    "SERVICE_UNAVAILABLE": "Layanan sedang tidak dapat diakses.",
+    "AUTH_USER_NOT_FOUND": "Akun tidak ditemukan.",
+    "AUTH_EMAIL_ALREADY_USED": "Alamat email ini sudah terdaftar.",
+    "AUTH_INVALID_PASSWORD": "Email atau kata sandi salah.",
+    "AUTH_USERNAME_TAKEN": "Username ini sudah digunakan.",
+    "AUTH_TOKEN_EXPIRED": "Tautan atau token sudah kedaluwarsa. Silakan minta tautan baru.",
+    "AUTH_TOKEN_INVALID": "Tautan atau token reset tidak valid.",
+    "AUTH_TOKEN_ALREADY_USED": "Tautan reset ini sudah pernah digunakan.",
+    "AUTH_UNAUTHORIZED": "Anda harus masuk terlebih dahulu untuk mengakses halaman ini.",
+    "USER_NOT_FOUND": "Pengguna tidak ditemukan.",
+    "USER_EMAIL_ALREADY_USED": "Email ini sudah digunakan.",
+    "USER_USERNAME_TAKEN": "Username ini sudah digunakan."
+  }
+}

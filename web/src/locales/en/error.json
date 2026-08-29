@@ -1,0 +1,23 @@
+{
+  "error": {
+    "BAD_REQUEST": "Invalid request. Please check your input.",
+    "VALIDATION_ERROR": "One or more fields are invalid.",
+    "UNAUTHORIZED": "Invalid credentials or session expired.",
+    "FORBIDDEN": "You do not have permission to access this resource.",
+    "NOT_FOUND": "The requested resource was not found.",
+    "CONFLICT": "A conflict occurred with an existing resource.",
+    "INTERNAL_ERROR": "An internal server error occurred. Please try again later.",
+    "SERVICE_UNAVAILABLE": "Service is temporarily unavailable.",
+    "AUTH_USER_NOT_FOUND": "Account not found.",
+    "AUTH_EMAIL_ALREADY_USED": "This email address is already registered.",
+    "AUTH_INVALID_PASSWORD": "Incorrect email or password.",
+    "AUTH_USERNAME_TAKEN": "This username is already taken.",
+    "AUTH_TOKEN_EXPIRED": "The link or token has expired. Please request a new one.",
+    "AUTH_TOKEN_INVALID": "Invalid reset link or token.",
+    "AUTH_TOKEN_ALREADY_USED": "This reset link has already been used.",
+    "AUTH_UNAUTHORIZED": "You must be logged in to access this page.",
+    "USER_NOT_FOUND": "User not found.",
+    "USER_EMAIL_ALREADY_USED": "This email is already in use.",
+    "USER_USERNAME_TAKEN": "This username is already taken."
+  }
+}
