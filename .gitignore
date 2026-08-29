@@ -4,6 +4,7 @@ tmp/
 
 # Env files
 .env
+.env.production
 
 # Terraform-specific files
 *.tfstate
