@@ -71,19 +71,19 @@ func (s *ProvisioningService) ProvisionContainer(ctx context.Context, userID, su
 
 	// 2. Initial container record in DB
 	containerRecord := &entity.Container{
-		UserID:            userID,
-		SubscriptionID:    subscriptionID,
-		PlanID:            planID,
-		ContainerName:     containerName,
-		Hostname:          hostname,
-		ImageName:         plan.ImageName,
-		ImageTag:          plan.ImageTag,
-		Status:            "creating",
-		CPULimit:          plan.CPULimit,
-		MemoryLimit:       plan.MemoryLimit,
-		DiskLimit:         plan.DiskLimit,
-		CreatedAt:         time.Now(),
-		UpdatedAt:         time.Now(),
+		UserID:         userID,
+		SubscriptionID: subscriptionID,
+		PlanID:         planID,
+		ContainerName:  containerName,
+		Hostname:       hostname,
+		ImageName:      plan.ImageName,
+		ImageTag:       plan.ImageTag,
+		Status:         "creating",
+		CPULimit:       plan.CPULimit,
+		MemoryLimit:    plan.MemoryLimit,
+		DiskLimit:      plan.DiskLimit,
+		CreatedAt:      time.Now(),
+		UpdatedAt:      time.Now(),
 	}
 
 	if err := s.containerRepo.Create(ctx, containerRecord); err != nil {
@@ -96,7 +96,8 @@ func (s *ProvisioningService) ProvisionContainer(ctx context.Context, userID, su
 		volumeBase = "/var/lib/teracloud/volumes"
 	}
 	volumePath := fmt.Sprintf("%s/%d/%d/data", volumeBase, userID, containerRecord.ID)
-	_ = os.MkdirAll(volumePath, 0750)
+	_ = os.MkdirAll(volumePath, 0777)
+	_ = os.Chmod(volumePath, 0777)
 	containerRecord.VolumePath = volumePath
 
 	// 4. Allocate ports based on Plan PortConfig
@@ -148,9 +149,9 @@ func (s *ProvisioningService) ProvisionContainer(ctx context.Context, userID, su
 	containerRecord.AssignedPorts = assignedBytes
 
 	// 5. Pull Docker image
-	s.log.Info("Pulling image %s:%s for container %s", plan.ImageName, plan.ImageTag, containerName)
+	s.log.Infof("Pulling image %s:%s for container %s", plan.ImageName, plan.ImageTag, containerName)
 	if err := s.dockerClient.PullImage(ctx, plan.ImageName, plan.ImageTag); err != nil {
-		s.log.Warn("Image pull warning: %v (trying to proceed with local image)", err)
+		s.log.Warnf("Image pull warning: %v (trying to proceed with local image)", err)
 	}
 
 	// 6. Create & Start Docker Container
@@ -175,7 +176,7 @@ func (s *ProvisioningService) ProvisionContainer(ctx context.Context, userID, su
 	dockerID, err := s.dockerClient.CreateAndStartContainer(ctx, dockerCfg)
 
 	if err != nil {
-		s.log.Error("Failed to create docker container %s: %v", containerName, err)
+		s.log.Errorf("Failed to create docker container %s: %v", containerName, err)
 		containerRecord.Status = "error"
 		containerRecord.ErrorMessage = err.Error()
 		_ = s.containerRepo.Update(ctx, containerRecord)
@@ -208,6 +209,6 @@ func (s *ProvisioningService) ProvisionContainer(ctx context.Context, userID, su
 		Payload: containerRecord,
 	})
 
-	s.log.Info("Container %s (ID: %d, Docker: %s) successfully provisioned", containerName, containerRecord.ID, dockerID)
+	s.log.Infof("Container %s (ID: %d, Docker: %s) successfully provisioned", containerName, containerRecord.ID, dockerID)
 	return nil
 }
