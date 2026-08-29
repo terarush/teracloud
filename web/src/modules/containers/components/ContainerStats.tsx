@@ -18,7 +18,11 @@ export const ContainerStats: React.FC<ContainerStatsProps> = ({ stats, memoryLim
     memory: s.memory_usage_mb || 0,
   }))
 
-  const latest = stats[stats.length - 1]
+  const latest = stats.length > 0 ? stats[stats.length - 1] : null
+
+  const cpuText = latest ? `${latest.cpu_usage_percent.toFixed(1)}%` : "0%"
+  const ramText = latest ? `${latest.memory_usage_mb} MB / ${memoryLimitMb} MB` : `0 MB / ${memoryLimitMb} MB`
+  const netText = latest ? `${(latest.network_rx_bytes / (1024 * 1024)).toFixed(2)} MB` : "0.00 MB"
 
   return (
     <div className="space-y-6">
@@ -26,19 +30,19 @@ export const ContainerStats: React.FC<ContainerStatsProps> = ({ stats, memoryLim
         <div className="p-5 bg-card border border-border rounded-2xl">
           <div className="text-xs text-muted-foreground">CPU Usage (Current)</div>
           <div className="text-2xl font-bold text-foreground mt-1">
-            {latest?.cpu_usage_percent?.toFixed(1) || 0}%
+            {cpuText}
           </div>
         </div>
         <div className="p-5 bg-card border border-border rounded-2xl">
           <div className="text-xs text-muted-foreground">RAM Usage (Current)</div>
           <div className="text-2xl font-bold text-foreground mt-1">
-            {latest?.memory_usage_mb || 0} MB / {memoryLimitMb} MB
+            {ramText}
           </div>
         </div>
         <div className="p-5 bg-card border border-border rounded-2xl">
           <div className="text-xs text-muted-foreground">Network I/O (Total)</div>
           <div className="text-2xl font-bold text-foreground mt-1">
-            {((latest?.network_rx_bytes || 0) / (1024 * 1024)).toFixed(2)} MB
+            {netText}
           </div>
         </div>
       </div>
