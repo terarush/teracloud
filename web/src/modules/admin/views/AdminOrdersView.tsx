@@ -4,10 +4,12 @@ import { StatusBadge } from "@/modules/containers/components/StatusBadge"
 import { ArrowLeft, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useNavigate } from "@tanstack/react-router"
+import { useTranslation } from "react-i18next"
 
 export const AdminOrdersView: React.FC = () => {
   const { orders, isLoading } = useAdminData()
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   return (
     <div className="p-6 sm:p-8 space-y-6 max-w-7xl mx-auto">
@@ -17,13 +19,13 @@ export const AdminOrdersView: React.FC = () => {
             variant="ghost"
             size="sm"
             onClick={() => navigate({ to: "/app/admin" })}
-            className="gap-2 mb-2"
+            className="gap-2 mb-2 cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>Kembali ke Admin Console</span>
+            <span>{t("common.back", "Kembali ke Admin Console")}</span>
           </Button>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-            Daftar Transaksi Pesanan (Orders)
+            {t("hosting.adminOrders", "Daftar Transaksi Pesanan (Orders)")}
           </h1>
         </div>
       </div>
@@ -33,12 +35,12 @@ export const AdminOrdersView: React.FC = () => {
           <table className="w-full text-left text-sm">
             <thead className="bg-muted/50 border-b border-border text-muted-foreground text-xs uppercase">
               <tr>
-                <th className="px-6 py-4">Nomor Order</th>
+                <th className="px-6 py-4">{t("hosting.invoiceNumber", "Nomor Order")}</th>
                 <th className="px-6 py-4">User ID</th>
                 <th className="px-6 py-4">Plan ID</th>
-                <th className="px-6 py-4">Total Tagihan</th>
-                <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4">Waktu</th>
+                <th className="px-6 py-4">{t("hosting.total", "Total Tagihan")}</th>
+                <th className="px-6 py-4">{t("hosting.status", "Status")}</th>
+                <th className="px-6 py-4">{t("hosting.date", "Waktu")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -46,7 +48,7 @@ export const AdminOrdersView: React.FC = () => {
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-muted-foreground">
                     <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2 text-primary" />
-                    Memuat daftar transaksi...
+                    {t("common.loading", "Memuat daftar transaksi...")}
                   </td>
                 </tr>
               ) : orders.length === 0 ? (

@@ -12,17 +12,15 @@ import {
 import { AppSidebar } from "@/components/app-sidebar"
 import { useAuth } from "@/contexts/auth-context"
 import { useTheme } from "@/components/theme-provider"
-import { sidebarContentList } from "@/globals/content/app-sidebar"
+import { getSidebarContentList } from "@/globals/content/app-sidebar"
 import { currentLocale, changeLocale } from "@/lib/i18n"
 import { UserAvatar } from "@/components/user-avatar"
-import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator,
   DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu"
 
@@ -64,15 +62,9 @@ function AppHeader({ pageTitle }: { pageTitle: string }) {
       <div className="flex items-center gap-2.5">
         {/* Language Switcher Button */}
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-8 px-2.5 gap-1.5 text-xs font-semibold rounded-lg cursor-pointer shadow-2xs"
-            >
-              <Globe className="h-3.5 w-3.5 text-primary" />
-              <span className="uppercase">{activeLang}</span>
-            </Button>
+          <DropdownMenuTrigger className="h-8 px-2.5 gap-1.5 inline-flex items-center justify-center rounded-lg border border-border bg-background text-xs font-semibold hover:bg-muted hover:text-foreground cursor-pointer shadow-2xs transition-colors outline-hidden">
+            <Globe className="h-3.5 w-3.5 text-primary" />
+            <span className="uppercase">{activeLang}</span>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-44 p-1.5 rounded-xl">
             <DropdownMenuGroup>
@@ -98,11 +90,10 @@ function AppHeader({ pageTitle }: { pageTitle: string }) {
         </DropdownMenu>
 
         {/* Theme Toggle Button */}
-        <Button
-          variant="outline"
-          size="sm"
+        <button
+          type="button"
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-          className="h-8 w-8 p-0 rounded-lg cursor-pointer shadow-2xs"
+          className="h-8 w-8 inline-flex items-center justify-center rounded-lg border border-border bg-background text-foreground hover:bg-muted cursor-pointer shadow-2xs transition-colors"
           title={theme === "dark" ? "Mode Terang" : "Mode Gelap"}
         >
           {theme === "dark" ? (
@@ -110,18 +101,17 @@ function AppHeader({ pageTitle }: { pageTitle: string }) {
           ) : (
             <Moon className="h-4 w-4 text-indigo-500" />
           )}
-        </Button>
+        </button>
 
         {/* Logout Quick Button */}
-        <Button
-          variant="outline"
-          size="sm"
+        <button
+          type="button"
           onClick={handleLogout}
-          className="h-8 w-8 p-0 rounded-lg text-rose-500 hover:text-rose-600 hover:bg-rose-500/10 border-border/80 cursor-pointer shadow-2xs"
+          className="h-8 w-8 inline-flex items-center justify-center rounded-lg border border-border bg-background text-rose-500 hover:text-rose-600 hover:bg-rose-500/10 cursor-pointer shadow-2xs transition-colors"
           title={t("nav.signOut", "Keluar")}
         >
           <LogOut className="h-3.5 w-3.5" />
-        </Button>
+        </button>
 
         <div className="h-4 w-px bg-border/60 mx-1" />
 
@@ -146,15 +136,17 @@ export function GlobalsAppLayout() {
   const route = useRouterState()
   const currentPath = route.location.pathname
   const mainRef = useRef<HTMLElement>(null)
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+
+  const sidebarList = useMemo(() => getSidebarContentList(t), [i18n.language, t])
 
   const pageTitle = useMemo(() => {
-    for (const group of sidebarContentList) {
+    for (const group of sidebarList) {
       const matched = group.items.find((item) => item.href === currentPath)
       if (matched) return matched.title
     }
     return t("hosting.dashboard", "Dashboard")
-  }, [currentPath, t])
+  }, [currentPath, sidebarList, t])
 
   return (
     <SidebarProvider>

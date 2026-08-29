@@ -1,11 +1,12 @@
+import { useMemo } from "react"
 import { useRouterState, useNavigate } from "@tanstack/react-router"
 import { LogOut, Moon, Sun, Globe, Check } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/contexts/auth-context"
 import { useTheme } from "@/components/theme-provider"
 import { companyMeta } from "@/meta"
-import { sidebarContentList } from "@/globals/content/app-sidebar"
-import { currentLocale, changeLocale, type Locale } from "@/lib/i18n"
+import { getSidebarContentList } from "@/globals/content/app-sidebar"
+import { currentLocale, changeLocale } from "@/lib/i18n"
 import { useTranslation } from "react-i18next"
 
 import {
@@ -39,10 +40,12 @@ export function AppSidebar() {
   const { user, logout } = useAuth()
   const { isMobile, setOpenMobile } = useSidebar()
   const { theme, setTheme } = useTheme()
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
 
   const isAdmin = user?.role === "admin"
   const activeLang = currentLocale()
+
+  const sidebarList = useMemo(() => getSidebarContentList(t), [i18n.language, t])
 
   const handleLogout = async () => {
     await logout()
@@ -82,7 +85,7 @@ export function AppSidebar() {
 
       {/* 2. Content & Nav Groups */}
       <SidebarContent className="px-2 py-4 gap-6 group-data-[collapsible=icon]:px-0">
-        {sidebarContentList.map((group, idx) => {
+        {sidebarList.map((group, idx) => {
           if (group.admin && !isAdmin) return null
 
           return (
