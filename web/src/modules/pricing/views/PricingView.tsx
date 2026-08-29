@@ -36,11 +36,9 @@ export const PricingView: React.FC = () => {
           <div className="flex items-center gap-3">
             {/* Language Switcher */}
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="h-9 px-3 gap-1.5 text-xs font-semibold rounded-xl">
-                  <Globe className="h-3.5 w-3.5 text-primary" />
-                  <span className="uppercase">{activeLang}</span>
-                </Button>
+              <DropdownMenuTrigger className="h-9 px-3 gap-1.5 inline-flex items-center justify-center rounded-xl border border-border bg-background text-xs font-semibold hover:bg-muted hover:text-foreground cursor-pointer transition-colors outline-hidden">
+                <Globe className="h-3.5 w-3.5 text-primary" />
+                <span className="uppercase">{activeLang}</span>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-40 rounded-xl">
                 <DropdownMenuItem onClick={() => changeLocale("id")} className="flex justify-between text-xs">
