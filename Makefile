@@ -1,17 +1,46 @@
 .DEFAULT_GOAL := help
 
 GO ?= go
+
+WEB_DIR := web
 DOCKER_COMPOSE := docker compose
 
 .PHONY: help
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
+install: ## Install frontend dependencies
+	cd $(WEB_DIR) && npm install
+
+dev: ## Start frontend dev server (:3333)
+	cd $(WEB_DIR) && npm dev --host --port 3333
+
+build: ## Build frontend for production
+	cd $(WEB_DIR) && npm build
+
+lint: ## Lint frontend
+	cd $(WEB_DIR) && npm lint
+
+format: ## Auto-format + lint fix
+	cd $(WEB_DIR) && npm format
+
+check: ## Prettier check only
+	cd $(WEB_DIR) && npm check
+
+generate-routes: ## Regenerate TanStack Router route tree
+	cd $(WEB_DIR) && npm generate-routes
+
+test: ## Run frontend tests
+	cd $(WEB_DIR) && npm test
+
+typecheck: ## TypeScript type-check (no emit)
+	cd $(WEB_DIR) && npx tsc --noEmit
+
 build-backend: ## Build Go binary
-	go build -o main .
+	$(GO) build -o main .
 
 run-backend: ## Run Go server (needs .env in CWD)
-	go run main.go
+	$(GO) run main.go
 
 test-backend: ## Run all Go tests
 	$(GO) test ./...
@@ -50,7 +79,7 @@ deploy-migrate: $(MIGRATE_BIN) ## Apply pending migrations (CI/deploy: run AFTER
 	$(MIGRATE_CMD) up
 
 swagger: ## Regenerate Swagger docs
-	swag init -d .,./modules/auth,./modules/users -o docs --parseDependency --parseInternal
+	swag init -d .,./modules/auth,./modules/users,./modules/product,./modules/payment,./modules/ticket,./modules/download,./modules/affiliate -o docs --parseDependency --parseInternal
 
 docker-up: ## Start backend container (ruangtukar-backend)
 	$(DOCKER_COMPOSE) build --no-cache && $(DOCKER_COMPOSE) up
@@ -64,5 +93,12 @@ docker-up-d: ## Start backend container in background (ruangtukar-backend)
 docker-logs: ## Follow logs
 	$(DOCKER_COMPOSE) logs -f
 
-deploy: ## Build & run backend+DB (background)
+docker-web-up: ## Start frontend container (ruangtukar-frontend)
+	cd $(WEB_DIR) && $(DOCKER_COMPOSE) build --no-cache && $(DOCKER_COMPOSE) up
+
+docker-web-up-d: ## Start frontend container in background (ruangtukar-frontend)
+	cd $(WEB_DIR) && $(DOCKER_COMPOSE) build --no-cache && $(DOCKER_COMPOSE) up -d
+
+deploy: ## Build & run backend+DB; up -d
 	$(DOCKER_COMPOSE) build --no-cache && $(DOCKER_COMPOSE) up -d
+	cd $(WEB_DIR) && $(DOCKER_COMPOSE) build --no-cache && $(DOCKER_COMPOSE) up -d
