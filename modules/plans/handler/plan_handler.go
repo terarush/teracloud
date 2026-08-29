@@ -91,24 +91,35 @@ func (h *PlanHandler) CreatePlan(c *echo.Context) error {
 		maxPerUser = 3
 	}
 
+	category := req.Category
+	if category == "" {
+		category = "os"
+	}
+
 	plan := &entity.Plan{
-		Name:             req.Name,
-		Description:      req.Description,
-		ShortDescription: req.ShortDescription,
-		ImageName:        req.ImageName,
-		ImageTag:         req.ImageTag,
-		CPULimit:         req.CPULimit,
-		MemoryLimit:      req.MemoryLimit,
-		DiskLimit:        req.DiskLimit,
-		BandwidthLimit:   req.BandwidthLimit,
-		PriceMonthly:     req.PriceMonthly,
-		IsActive:         true,
-		SortOrder:        req.SortOrder,
-		Features:         req.Features,
-		Icon:             req.Icon,
-		MaxPerUser:       maxPerUser,
-		CreatedAt:        time.Now(),
-		UpdatedAt:        time.Now(),
+		Name:                req.Name,
+		Description:         req.Description,
+		ShortDescription:    req.ShortDescription,
+		ImageName:           req.ImageName,
+		ImageTag:            req.ImageTag,
+		ThumbnailURL:        req.ThumbnailURL,
+		Category:            category,
+		Badge:               req.Badge,
+		IsFeatured:          req.IsFeatured,
+		StockLimit:          req.StockLimit,
+		CPULimit:            req.CPULimit,
+		MemoryLimit:         req.MemoryLimit,
+		DiskLimit:           req.DiskLimit,
+		BandwidthLimit:      req.BandwidthLimit,
+		PriceMonthly:        req.PriceMonthly,
+		IsActive:            true,
+		SortOrder:           req.SortOrder,
+		Features:            req.Features,
+		EnvironmentTemplate: req.EnvironmentTemplate,
+		Icon:                req.Icon,
+		MaxPerUser:          maxPerUser,
+		CreatedAt:           time.Now(),
+		UpdatedAt:           time.Now(),
 	}
 
 	if err := h.planService.CreatePlan(ctx, plan); err != nil {
@@ -163,6 +174,13 @@ func (h *PlanHandler) UpdatePlan(c *echo.Context) error {
 	plan.ShortDescription = req.ShortDescription
 	plan.ImageName = req.ImageName
 	plan.ImageTag = req.ImageTag
+	plan.ThumbnailURL = req.ThumbnailURL
+	if req.Category != "" {
+		plan.Category = req.Category
+	}
+	plan.Badge = req.Badge
+	plan.IsFeatured = req.IsFeatured
+	plan.StockLimit = req.StockLimit
 	plan.CPULimit = req.CPULimit
 	plan.MemoryLimit = req.MemoryLimit
 	plan.DiskLimit = req.DiskLimit
@@ -170,6 +188,7 @@ func (h *PlanHandler) UpdatePlan(c *echo.Context) error {
 	plan.PriceMonthly = req.PriceMonthly
 	plan.IsActive = req.IsActive
 	plan.Features = req.Features
+	plan.EnvironmentTemplate = req.EnvironmentTemplate
 	plan.Icon = req.Icon
 	plan.MaxPerUser = req.MaxPerUser
 	plan.SortOrder = req.SortOrder
