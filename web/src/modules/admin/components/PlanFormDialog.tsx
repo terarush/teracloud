@@ -47,6 +47,7 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
     image_tag: "",
     icon: "",
     thumbnail_url: "",
+    badge: "",
     cpu_limit: "" as any,
     memory_limit: "" as any,
     disk_limit: "" as any,
@@ -67,6 +68,7 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
         image_tag: initialPlan.image_tag || "",
         icon: initialPlan.icon || "",
         thumbnail_url: initialPlan.thumbnail_url || "",
+        badge: initialPlan.badge || "",
         cpu_limit: initialPlan.cpu_limit,
         memory_limit: initialPlan.memory_limit,
         disk_limit: initialPlan.disk_limit,
@@ -85,6 +87,7 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
         image_tag: "",
         icon: "",
         thumbnail_url: "",
+        badge: "",
         cpu_limit: "" as any,
         memory_limit: "" as any,
         disk_limit: "" as any,
@@ -202,17 +205,31 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
               </div>
             </div>
 
-            <div>
-              <label className="text-xs font-semibold text-muted-foreground block mb-1">
-                Deskripsi Singkat
-              </label>
-              <input
-                type="text"
-                placeholder="e.g. Cocok untuk microservices atau web server statis"
-                value={formData.short_description || ""}
-                onChange={(e) => setFormData({ ...formData, short_description: e.target.value })}
-                className="w-full px-3 py-2 bg-background border border-border rounded-xl text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-primary"
-              />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground block mb-1">
+                  Deskripsi Singkat
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. Cocok untuk microservices atau web server statis"
+                  value={formData.short_description || ""}
+                  onChange={(e) => setFormData({ ...formData, short_description: e.target.value })}
+                  className="w-full px-3 py-2 bg-background border border-border rounded-xl text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground block mb-1">
+                  Badge Label (Opsional)
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. Populer, Baru, Best Value, Diskon 20%"
+                  value={formData.badge || ""}
+                  onChange={(e) => setFormData({ ...formData, badge: e.target.value })}
+                  className="w-full px-3 py-2 bg-background border border-border rounded-xl text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+              </div>
             </div>
           </div>
 

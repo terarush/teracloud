@@ -106,8 +106,13 @@ export const AdminPlansView: React.FC = () => {
                         <div>
                           <div className="font-semibold text-xs text-foreground flex items-center gap-1.5">
                             <span>{plan.name}</span>
+                            {plan.badge && (
+                              <span className="text-[10px] px-1.5 py-0.2 rounded-md bg-primary/10 text-primary font-semibold">
+                                {plan.badge}
+                              </span>
+                            )}
                             {plan.thumbnail_url && (
-                              <span className="text-[10px] px-1 py-0.2 rounded bg-primary/10 text-primary font-normal">
+                              <span className="text-[10px] px-1 py-0.2 rounded bg-muted text-muted-foreground font-normal">
                                 +Banner
                               </span>
                             )}
