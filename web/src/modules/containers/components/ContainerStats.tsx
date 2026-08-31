@@ -48,7 +48,7 @@ export const ContainerStats: React.FC<ContainerStatsProps> = ({ stats, memoryLim
       incomingList.forEach((s) => {
         const recorded = s.recorded_at || new Date().toISOString()
         // Check if this timestamp is already the most recent point
-        const last = updated[updated.length - 1]
+        const last = updated.at(-1)
         if (last && last.rawRecordedAt === recorded) {
           return
         }

@@ -107,14 +107,16 @@ export const ContainerDetailView: React.FC<ContainerDetailViewProps> = ({ contai
       </Card>
 
       {/* Navigation Tabs */}
-      <div className="flex gap-1 border-b border-foreground/10 pb-px">
+      <div role="tablist" aria-label="Container sections" className="flex gap-1 border-b border-border pb-px overflow-x-auto">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.key
           return (
             <button
               key={tab.key}
+              role="tab"
+              aria-selected={isActive}
               onClick={() => setActiveTab(tab.key as any)}
-              className={`px-3.5 py-2 text-xs font-medium border-b-2 -mb-px transition-colors cursor-pointer ${
+              className={`px-3.5 py-2 text-xs font-medium border-b-2 -mb-px transition-colors cursor-pointer shrink-0 ${
                 isActive
                   ? "border-primary text-foreground font-semibold"
                   : "border-transparent text-muted-foreground hover:text-foreground"
