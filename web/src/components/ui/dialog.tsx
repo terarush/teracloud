@@ -109,9 +109,9 @@ function DialogContent({
         className={cn(
           "fixed flex flex-col w-full bg-popover text-popover-foreground border border-border shadow-2xl backdrop-blur-md outline-none overflow-hidden transition-all duration-200",
           isFullscreen
-            ? "fixed inset-0 top-0 left-0 w-screen h-screen max-w-none max-h-none rounded-none border-0 z-[9999] p-6"
+            ? "fixed inset-0 top-0 left-0 w-screen h-screen max-w-none max-h-none rounded-none border-0 z-[9999] p-0"
             : cn(
-                "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-w-[calc(100%-2rem)] max-h-[88vh] rounded-2xl p-6 z-50",
+                "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-w-[calc(100%-2rem)] max-h-[88vh] rounded-2xl p-0 z-50",
                 "data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
                 sizeClasses[size]
               ),
@@ -119,10 +119,7 @@ function DialogContent({
         )}
         {...props}
       >
-        {/* Scrollable Container Wrapper */}
-        <div className="flex flex-col flex-1 min-h-0 overflow-y-auto -mx-6 -my-6 px-6 py-6">
-          {children}
-        </div>
+        {children}
 
         {/* Action buttons (Fullscreen & Close) */}
         {(showFullscreenButton || showCloseButton) && (
@@ -174,10 +171,22 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="dialog-header"
       className={cn(
-        "flex flex-col gap-1.5 border-b border-border/60 bg-muted/40 px-6 py-4.5 -mx-6 -mt-6 mb-4 shrink-0",
+        "flex flex-col gap-1.5 border-b border-border/60 bg-muted/40 px-6 py-4.5 shrink-0 z-10",
         isFullscreen ? "rounded-none" : "rounded-t-2xl",
         className
       )}
+      {...props}
+    />
+  )
+}
+
+// ─── Body (Scrollable Content Area) ──────────────────────────────────────────
+
+function DialogBody({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="dialog-body"
+      className={cn("flex-1 min-h-0 overflow-y-auto px-6 py-4", className)}
       {...props}
     />
   )
@@ -198,7 +207,7 @@ function DialogFooter({
     <div
       data-slot="dialog-footer"
       className={cn(
-        "flex flex-col-reverse gap-2.5 border-t border-border/60 bg-muted/40 px-6 py-4.5 -mx-6 -mb-6 mt-4 sm:flex-row sm:justify-end shrink-0",
+        "flex flex-col-reverse gap-2.5 border-t border-border/60 bg-muted/40 px-6 py-4 sm:flex-row sm:justify-end shrink-0 z-10",
         isFullscreen ? "rounded-none" : "rounded-b-2xl",
         className
       )}
@@ -250,6 +259,7 @@ export type { DialogSize }
 
 export {
   Dialog,
+  DialogBody,
   DialogClose,
   DialogContent,
   DialogDescription,

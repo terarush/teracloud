@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { useNavigate } from "@tanstack/react-router"
 import type { Plan } from "@/service/api/plans"
 import { useTranslation } from "react-i18next"
+import { getImageUrl } from "@/lib/utils"
 
 export const AdminPlansView: React.FC = () => {
   const {
@@ -90,9 +91,31 @@ export const AdminPlansView: React.FC = () => {
                 plans.map((plan) => (
                   <tr key={plan.id} className="hover:bg-muted/40 transition">
                     <td className="px-4 py-3 font-semibold text-xs text-foreground">
-                      {plan.name}
-                      <div className="text-[11px] text-muted-foreground font-mono font-normal">
-                        {plan.slug}
+                      <div className="flex items-center gap-3">
+                        {plan.icon ? (
+                          <img
+                            src={getImageUrl(plan.icon)}
+                            alt={plan.name}
+                            className="size-8 rounded-lg object-contain border border-border bg-muted/30 p-0.5 shrink-0"
+                          />
+                        ) : (
+                          <div className="size-8 rounded-lg border border-border bg-muted/40 flex items-center justify-center text-xs font-bold text-muted-foreground shrink-0">
+                            {plan.name.charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                        <div>
+                          <div className="font-semibold text-xs text-foreground flex items-center gap-1.5">
+                            <span>{plan.name}</span>
+                            {plan.thumbnail_url && (
+                              <span className="text-[10px] px-1 py-0.2 rounded bg-primary/10 text-primary font-normal">
+                                +Banner
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-[11px] text-muted-foreground font-mono font-normal">
+                            {plan.slug}
+                          </div>
+                        </div>
                       </div>
                     </td>
                     <td className="px-4 py-3 font-mono text-xs text-muted-foreground">

@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import type { Plan, CreatePlanRequest, PortConfigItem } from "@/service/api/plans"
-import { Loader2, Plus, Trash2, Network } from "lucide-react"
+import { Loader2, Plus, Trash2, Network, Upload, Image as ImageIcon, X } from "lucide-react"
+import { useUploadFileMutation } from "@/service/mutation/auth"
+import { toast } from "sonner"
+import { getImageUrl } from "@/lib/utils"
 import {
   Dialog,
+  DialogBody,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog"
-
 import {
   Select,
   SelectContent,
@@ -33,12 +36,17 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
   onSubmit,
   isPending,
 }) => {
+  const uploadMutation = useUploadFileMutation()
+  const [uploadingField, setUploadingField] = useState<"icon" | "thumbnail" | null>(null)
+
   const [formData, setFormData] = useState<CreatePlanRequest>({
     name: "",
     slug: "",
     short_description: "",
     image_name: "",
     image_tag: "",
+    icon: "",
+    thumbnail_url: "",
     cpu_limit: "" as any,
     memory_limit: "" as any,
     disk_limit: "" as any,
@@ -57,6 +65,8 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
         short_description: initialPlan.short_description || "",
         image_name: initialPlan.image_name || "",
         image_tag: initialPlan.image_tag || "",
+        icon: initialPlan.icon || "",
+        thumbnail_url: initialPlan.thumbnail_url || "",
         cpu_limit: initialPlan.cpu_limit,
         memory_limit: initialPlan.memory_limit,
         disk_limit: initialPlan.disk_limit,
@@ -73,6 +83,8 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
         short_description: "",
         image_name: "",
         image_tag: "",
+        icon: "",
+        thumbnail_url: "",
         cpu_limit: "" as any,
         memory_limit: "" as any,
         disk_limit: "" as any,
@@ -84,6 +96,28 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
       })
     }
   }, [initialPlan, isOpen])
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: "icon" | "thumbnail") => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setUploadingField(field)
+    try {
+      const res = await uploadMutation.mutateAsync({ file })
+      const uploadedUrl = typeof res === "string" ? res : (res as any)?.url || (res as any)?.data?.url || ""
+      if (field === "icon") {
+        setFormData((prev) => ({ ...prev, icon: uploadedUrl }))
+      } else {
+        setFormData((prev) => ({ ...prev, thumbnail_url: uploadedUrl }))
+      }
+      toast.success("Gambar berhasil diupload!")
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || err?.message || "Gagal mengupload gambar")
+    } finally {
+      setUploadingField(null)
+      e.target.value = ""
+    }
+  }
 
   const handleAddPort = () => {
     setFormData((prev) => ({
@@ -134,7 +168,8 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
           </DialogTitle>
         </DialogHeader>
 
-        <form id="plan-form" onSubmit={handleSubmit} className="space-y-5 text-sm py-2">
+        <DialogBody>
+          <form id="plan-form" onSubmit={handleSubmit} className="space-y-5 text-sm py-2">
           {/* General Plan Info */}
           <div className="space-y-4">
             <h3 className="text-xs font-bold text-foreground uppercase tracking-wider">
@@ -178,6 +213,114 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
                 onChange={(e) => setFormData({ ...formData, short_description: e.target.value })}
                 className="w-full px-3 py-2 bg-background border border-border rounded-xl text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-primary"
               />
+            </div>
+          </div>
+
+          {/* Media / Images */}
+          <div className="space-y-4 pt-3 border-t border-border/50">
+            <h3 className="text-xs font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
+              <ImageIcon className="size-3.5 text-primary" />
+              <span>Gambar &amp; Icon Paket</span>
+            </h3>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Icon / Logo */}
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-muted-foreground block">
+                  Icon / Logo (SVG, PNG, JPG)
+                </label>
+                <div className="flex items-center gap-3">
+                  {formData.icon ? (
+                    <div className="relative size-14 rounded-xl border border-border bg-muted/30 p-1 flex items-center justify-center shrink-0">
+                      <img
+                        src={getImageUrl(formData.icon)}
+                        alt="Icon Preview"
+                        className="max-h-full max-w-full object-contain rounded-lg"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setFormData((prev) => ({ ...prev, icon: "" }))}
+                        className="absolute -top-1.5 -right-1.5 size-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center text-xs hover:opacity-90 cursor-pointer"
+                        title="Hapus icon"
+                      >
+                        <X className="size-3" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="size-14 rounded-xl border border-dashed border-border bg-muted/20 flex items-center justify-center text-muted-foreground shrink-0">
+                      <ImageIcon className="size-6 opacity-40" />
+                    </div>
+                  )}
+
+                  <div className="flex-1">
+                    <label className="inline-flex items-center gap-2 px-3 py-2 text-xs font-medium rounded-xl border border-border bg-secondary hover:bg-secondary/80 text-foreground cursor-pointer transition">
+                      {uploadingField === "icon" ? (
+                        <Loader2 className="size-3.5 animate-spin" />
+                      ) : (
+                        <Upload className="size-3.5" />
+                      )}
+                      <span>{formData.icon ? "Ganti File Icon" : "Pilih File Icon"}</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => handleFileUpload(e, "icon")}
+                        disabled={uploadingField !== null}
+                      />
+                    </label>
+                    <p className="text-[11px] text-muted-foreground mt-1">Format: SVG, PNG, JPG (Maks 5MB)</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Thumbnail / Banner */}
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-muted-foreground block">
+                  Banner / Thumbnail Cover (Opsional)
+                </label>
+                <div className="flex items-center gap-3">
+                  {formData.thumbnail_url ? (
+                    <div className="relative w-24 h-14 rounded-xl border border-border bg-muted/30 p-1 flex items-center justify-center shrink-0 overflow-hidden">
+                      <img
+                        src={getImageUrl(formData.thumbnail_url)}
+                        alt="Thumbnail Preview"
+                        className="w-full h-full object-cover rounded-lg"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setFormData((prev) => ({ ...prev, thumbnail_url: "" }))}
+                        className="absolute top-1 right-1 size-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center text-xs hover:opacity-90 cursor-pointer"
+                        title="Hapus banner"
+                      >
+                        <X className="size-3" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="w-24 h-14 rounded-xl border border-dashed border-border bg-muted/20 flex items-center justify-center text-muted-foreground shrink-0">
+                      <ImageIcon className="size-6 opacity-40" />
+                    </div>
+                  )}
+
+                  <div className="flex-1">
+                    <label className="inline-flex items-center gap-2 px-3 py-2 text-xs font-medium rounded-xl border border-border bg-secondary hover:bg-secondary/80 text-foreground cursor-pointer transition">
+                      {uploadingField === "thumbnail" ? (
+                        <Loader2 className="size-3.5 animate-spin" />
+                      ) : (
+                        <Upload className="size-3.5" />
+                      )}
+                      <span>{formData.thumbnail_url ? "Ganti File Banner" : "Pilih File Banner"}</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => handleFileUpload(e, "thumbnail")}
+                        disabled={uploadingField !== null}
+                      />
+                    </label>
+                    <p className="text-[11px] text-muted-foreground mt-1">Rekomendasi rasio: 16:9 landscape</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -442,6 +585,7 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
             </div>
           </div>
         </form>
+        </DialogBody>
 
         <DialogFooter>
           <Button type="button" variant="ghost" onClick={onClose} className="cursor-pointer">

@@ -2,6 +2,7 @@ import React from "react"
 import type { Plan } from "@/service/api/plans"
 import { Button } from "@/components/ui/button"
 import { Check, ShoppingCart, ArrowRight } from "lucide-react"
+import { getImageUrl } from "@/lib/utils"
 
 interface PlanCardProps {
   plan: Plan
@@ -28,24 +29,50 @@ export const PlanCard: React.FC<PlanCardProps> = ({
 
   return (
     <div
-      className={`relative flex flex-col justify-between p-8 rounded-xl transition-all duration-200 ${
+      className={`relative flex flex-col justify-between p-6 sm:p-8 rounded-2xl transition-all duration-200 overflow-hidden ${
         isPopular
-          ? "bg-card ring-2 ring-primary z-10"
-          : "bg-card ring-1 ring-foreground/10 hover:ring-primary/40"
+          ? "bg-card ring-2 ring-primary z-10 shadow-lg shadow-primary/5"
+          : "bg-card ring-1 ring-foreground/10 hover:ring-primary/40 hover:shadow-md"
       }`}
     >
       {isPopular && (
-        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-primary px-4 py-1 text-xs font-bold text-primary-foreground uppercase tracking-widest">
+        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-primary px-4 py-1 text-xs font-bold text-primary-foreground uppercase tracking-widest shadow-sm">
           Paling Populer
         </div>
       )}
 
       <div>
-        <div className="flex items-center justify-between gap-2 mb-4">
-          <h3 className="text-2xl font-bold text-foreground">{plan.name}</h3>
-          <span className="text-xs px-2.5 py-1 rounded-lg bg-muted text-muted-foreground font-mono">
-            {plan.slug}
-          </span>
+        {/* Banner/Thumbnail Header if available */}
+        {plan.thumbnail_url && (
+          <div className="w-full h-32 rounded-xl mb-5 overflow-hidden border border-border/50 bg-muted/30 relative">
+            <img
+              src={getImageUrl(plan.thumbnail_url)}
+              alt={plan.name}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        )}
+
+        <div className="flex items-center justify-between gap-3 mb-4">
+          <div className="flex items-center gap-3 min-w-0">
+            {plan.icon ? (
+              <img
+                src={getImageUrl(plan.icon)}
+                alt={plan.name}
+                className="size-10 rounded-xl object-contain p-1 border border-border bg-muted/40 shrink-0"
+              />
+            ) : (
+              <div className="size-10 rounded-xl border border-border bg-muted/40 flex items-center justify-center font-bold text-sm text-muted-foreground shrink-0">
+                {plan.name.charAt(0).toUpperCase()}
+              </div>
+            )}
+            <div className="min-w-0">
+              <h3 className="text-xl sm:text-2xl font-bold text-foreground truncate">{plan.name}</h3>
+              <span className="text-xs px-2 py-0.5 rounded-md bg-muted text-muted-foreground font-mono">
+                {plan.slug}
+              </span>
+            </div>
+          </div>
         </div>
 
         <p className="text-sm text-muted-foreground min-h-[40px] mb-6">
@@ -53,12 +80,12 @@ export const PlanCard: React.FC<PlanCardProps> = ({
         </p>
 
         <div className="mb-6">
-          <span className="text-4xl font-extrabold text-foreground">{formattedPrice}</span>
+          <span className="text-3xl sm:text-4xl font-extrabold text-foreground">{formattedPrice}</span>
           <span className="text-sm text-muted-foreground font-medium"> / bulan</span>
         </div>
 
         {/* Specs Overview */}
-        <div className="grid grid-cols-3 gap-2 py-4 mb-6 rounded-lg bg-muted text-center">
+        <div className="grid grid-cols-3 gap-2 py-3.5 mb-6 rounded-xl bg-muted text-center">
           <div>
             <div className="text-xs text-muted-foreground">vCPU</div>
             <div className="font-bold text-sm text-foreground">{plan.cpu_limit} Core</div>
