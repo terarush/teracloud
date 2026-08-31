@@ -6,9 +6,7 @@ import {
   Clock,
   AlertCircle,
   Server,
-  Terminal,
   ArrowRight,
-  ShieldCheck,
   RotateCcw,
   Layers,
   Cpu,
@@ -16,8 +14,10 @@ import {
 } from "lucide-react"
 
 import { ordersApi } from "@/service/api/orders"
+import { useTranslation } from "react-i18next"
 
 export const OrderStatusView: React.FC = () => {
+  const { t } = useTranslation()
   const search = useSearch({ strict: false })
 
   const navigate = useNavigate()
@@ -66,21 +66,21 @@ export const OrderStatusView: React.FC = () => {
 
         <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
           {isPaid
-            ? "Pembayaran Berhasil Diverifikasi!"
+            ? t("hosting.paymentSuccess", "Pembayaran Berhasil Diverifikasi!")
             : isFailed
-            ? "Pembayaran Gagal atau Kadaluarsa"
-            : "Menunggu Konfirmasi Pembayaran..."}
+            ? t("hosting.paymentFailed", "Pembayaran Gagal atau Kadaluarsa")
+            : t("hosting.paymentWaiting", "Menunggu Konfirmasi Pembayaran...")}
         </h1>
         <p className="text-sm text-muted-foreground max-w-md mx-auto">
           Order ID: <span className="font-mono font-medium text-foreground">{rawOrderId || "N/A"}</span>
-          {order?.paid_at && ` • Dibayar pada ${new Date(order.paid_at).toLocaleString("id-ID")}`}
+          {order?.paid_at && ` • ${new Date(order.paid_at).toLocaleString("id-ID")}`}
         </p>
       </div>
 
       {/* Stepper Progress */}
       <div className="bg-card ring-1 ring-foreground/10 rounded-2xl p-6">
         <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-6 flex items-center gap-2">
-          <Layers className="size-4 text-primary" /> Status Provisioning Container
+          <Layers className="size-4 text-primary" /> {t("hosting.statusProvisioning", "Status Provisioning Container")}
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -91,7 +91,7 @@ export const OrderStatusView: React.FC = () => {
                 {isPaid ? <CheckCircle2 className="size-4" /> : "1"}
               </div>
               <div>
-                <div className="text-xs font-semibold text-foreground">Pembayaran</div>
+                <div className="text-xs font-semibold text-foreground">{t("hosting.stepPayment", "Pembayaran")}</div>
                 <div className="text-[11px] text-muted-foreground">{isPaid ? "Terverifikasi" : "Menunggu Midtrans"}</div>
               </div>
             </div>
@@ -104,7 +104,7 @@ export const OrderStatusView: React.FC = () => {
                 {isPaid ? <CheckCircle2 className="size-4" /> : "2"}
               </div>
               <div>
-                <div className="text-xs font-semibold text-foreground">Alokasi Resource & Port</div>
+                <div className="text-xs font-semibold text-foreground">{t("hosting.stepResource", "Alokasi Resource & Port")}</div>
                 <div className="text-[11px] text-muted-foreground">{isPaid ? "Storage & IP Terpasang" : "Menunggu Pembayaran"}</div>
               </div>
             </div>
@@ -117,7 +117,7 @@ export const OrderStatusView: React.FC = () => {
                 {isPaid ? <CheckCircle2 className="size-4" /> : "3"}
               </div>
               <div>
-                <div className="text-xs font-semibold text-foreground">Container Active</div>
+                <div className="text-xs font-semibold text-foreground">{t("hosting.stepContainer", "Container Active")}</div>
                 <div className="text-[11px] text-muted-foreground">{isPaid ? "Siap Digunakan" : "Menunggu Antrean"}</div>
               </div>
             </div>
@@ -141,7 +141,7 @@ export const OrderStatusView: React.FC = () => {
                       {item.custom_name || item.plan?.name || `Container Plan #${item.plan_id}`}
                     </span>
                     <span className="text-xs px-2.5 py-0.5 rounded-md font-medium bg-primary/10 text-primary">
-                      {item.duration_months} Bulan
+                      {item.duration_months} {t("hosting.monthly", "Bulan")}
                     </span>
                   </div>
 
@@ -177,9 +177,9 @@ export const OrderStatusView: React.FC = () => {
         <button
           type="button"
           onClick={() => refetch()}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer"
         >
-          <RotateCcw className="size-4" /> Refresh Status
+          <RotateCcw className="size-4" /> {t("hosting.refresh", "Refresh Status")}
         </button>
 
         <div className="flex items-center gap-3 w-full sm:w-auto">
@@ -187,7 +187,7 @@ export const OrderStatusView: React.FC = () => {
             to="/app/containers"
             className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
           >
-            <Server className="size-4" /> Buka Dashboard Container <ArrowRight className="size-4" />
+            <Server className="size-4" /> {t("hosting.openContainers", "Buka Dashboard Container")} <ArrowRight className="size-4" />
           </Link>
         </div>
       </div>

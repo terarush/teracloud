@@ -3,6 +3,7 @@ import type { Invoice } from "@/service/api/billing"
 import { StatusBadge } from "@/modules/containers/components/StatusBadge"
 import { Card, CardContent } from "@/components/ui/card"
 import { FileText } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 interface InvoiceTableProps {
   invoices: Invoice[]
@@ -10,12 +11,14 @@ interface InvoiceTableProps {
 }
 
 export const InvoiceTable: React.FC<InvoiceTableProps> = ({ invoices, onSelectInvoice }) => {
+  const { t } = useTranslation()
+
   if (invoices.length === 0) {
     return (
       <Card className="ring-1 ring-foreground/10">
         <CardContent className="py-12 text-center">
           <FileText className="size-8 mx-auto text-muted-foreground/40 mb-2" />
-          <p className="text-sm text-muted-foreground">Belum ada riwayat tagihan invoice.</p>
+          <p className="text-sm text-muted-foreground">{t("hosting.noInvoices", "Belum ada riwayat tagihan invoice.")}</p>
         </CardContent>
       </Card>
     )
@@ -27,11 +30,11 @@ export const InvoiceTable: React.FC<InvoiceTableProps> = ({ invoices, onSelectIn
         <table className="w-full text-left text-sm">
           <thead className="bg-muted/40 border-b border-border/50 text-muted-foreground text-[11px] font-medium uppercase tracking-wider">
             <tr>
-              <th className="px-4 py-3">Nomor Invoice</th>
-              <th className="px-4 py-3">Tanggal</th>
-              <th className="px-4 py-3">Jatuh Tempo</th>
-              <th className="px-4 py-3">Total Tagihan</th>
-              <th className="px-4 py-3">Status</th>
+              <th className="px-4 py-3">{t("hosting.invoiceNumber", "Nomor Invoice")}</th>
+              <th className="px-4 py-3">{t("hosting.date", "Tanggal")}</th>
+              <th className="px-4 py-3">{t("hosting.dueDate", "Jatuh Tempo")}</th>
+              <th className="px-4 py-3">{t("hosting.total", "Total Tagihan")}</th>
+              <th className="px-4 py-3">{t("hosting.status", "Status")}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border/50">
