@@ -94,4 +94,12 @@ export const containersApi = {
     const res = await apiClient.get<ContainerStats[]>(`/containers/${id}/stats`)
     return (res as any)?.data ?? res.data ?? []
   },
+
+  getContainerLogs: async (id: number, tail = 200): Promise<string> => {
+    const res = await apiClient.get<{ logs: string }>(`/containers/${id}/logs`, {
+      params: { tail },
+    })
+    const data = (res as any)?.data ?? res.data
+    return data?.logs ?? ""
+  },
 }

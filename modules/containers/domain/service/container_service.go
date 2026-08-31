@@ -264,6 +264,19 @@ func (s *ContainerService) DeleteContainer(ctx context.Context, id, userID uint)
 	return nil
 }
 
+// GetLogs retrieves stdout/stderr logs from the docker container.
+func (s *ContainerService) GetLogs(ctx context.Context, id uint, tail string) (string, error) {
+	c, err := s.GetContainerByID(ctx, id)
+	if err != nil {
+		return "", err
+	}
+	if c.DockerContainerID == "" {
+		return "", fmt.Errorf("container has no active docker instance")
+	}
+
+	return s.dockerClient.GetContainerLogs(ctx, c.DockerContainerID, tail)
+}
+
 func (s *ContainerService) recordAction(ctx context.Context, c *entity.Container, userID *uint, eventType, description string) {
 	_ = s.eventRepo.Create(ctx, &entity.ContainerEvent{
 		ContainerID: c.ID,
