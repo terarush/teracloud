@@ -1,6 +1,7 @@
 import React from "react"
 import { Play, Square, RotateCw, RefreshCcw, Trash2, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useTranslation } from "react-i18next"
 
 interface ContainerActionsProps {
   containerId: number
@@ -32,6 +33,8 @@ export const ContainerActions: React.FC<ContainerActionsProps> = ({
   isResetting,
   isDeleting,
 }) => {
+  const { t } = useTranslation()
+
   return (
     <div className="flex flex-wrap items-center gap-2">
       {status === "running" ? (
@@ -42,7 +45,7 @@ export const ContainerActions: React.FC<ContainerActionsProps> = ({
           onClick={onStop}
         >
           {isStopping ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Square className="w-4 h-4 mr-1" />}
-          Stop
+          {t("hosting.stop", "Stop")}
         </Button>
       ) : (
         <Button
@@ -52,7 +55,7 @@ export const ContainerActions: React.FC<ContainerActionsProps> = ({
           onClick={onStart}
         >
           {isStarting ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Play className="w-4 h-4 mr-1" />}
-          Start
+          {t("hosting.start", "Start")}
         </Button>
       )}
 
@@ -63,7 +66,7 @@ export const ContainerActions: React.FC<ContainerActionsProps> = ({
         onClick={onRestart}
       >
         {isRestarting ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <RotateCw className="w-4 h-4 mr-1" />}
-        Restart
+        {t("hosting.restart", "Restart")}
       </Button>
 
       <Button
@@ -73,7 +76,7 @@ export const ContainerActions: React.FC<ContainerActionsProps> = ({
         onClick={() => onReset("soft")}
       >
         {isResetting ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <RefreshCcw className="w-4 h-4 mr-1" />}
-        Soft Reset
+        {t("hosting.softReset", "Soft Reset")}
       </Button>
 
       <Button
@@ -83,7 +86,7 @@ export const ContainerActions: React.FC<ContainerActionsProps> = ({
         onClick={onDelete}
       >
         {isDeleting ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Trash2 className="w-4 h-4 mr-1" />}
-        Hapus
+        {t("hosting.delete", "Hapus")}
       </Button>
     </div>
   )

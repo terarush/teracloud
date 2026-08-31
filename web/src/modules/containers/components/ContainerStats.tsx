@@ -11,6 +11,7 @@ import {
 import type { ContainerStats as ContainerStatsType } from "@/service/api/containers"
 import { Card, CardContent } from "@/components/ui/card"
 import { Cpu, HardDrive, Activity, ArrowDownLeft, ArrowUpRight, Gauge } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 interface ContainerStatsProps {
   stats: ContainerStatsType[] | ContainerStatsType | null | undefined
@@ -28,6 +29,7 @@ interface TelemetryPoint {
 }
 
 export const ContainerStats: React.FC<ContainerStatsProps> = ({ stats, memoryLimitMb }) => {
+  const { t } = useTranslation()
   const [history, setHistory] = useState<TelemetryPoint[]>([])
 
   // Normalize stats to array and append new live points into rolling buffer
@@ -94,53 +96,53 @@ export const ContainerStats: React.FC<ContainerStatsProps> = ({ stats, memoryLim
         <Card className="ring-1 ring-foreground/10 shadow-sm">
           <CardContent className="py-4 px-4">
             <div className="flex items-center justify-between text-muted-foreground mb-1.5">
-              <span className="text-xs font-semibold">CPU Usage</span>
+              <span className="text-xs font-semibold">{t("hosting.cpuUsage", "CPU Usage")}</span>
               <Cpu className="size-4 text-primary" />
             </div>
             <div className="flex items-baseline gap-2">
               <p className="text-2xl font-bold tracking-tight text-foreground">{cpuText}</p>
             </div>
-            <p className="text-[11px] text-muted-foreground mt-1">Beban prosesor terkini</p>
+            <p className="text-[11px] text-muted-foreground mt-1">{t("hosting.processorLoad", "Beban prosesor terkini")}</p>
           </CardContent>
         </Card>
 
         <Card className="ring-1 ring-foreground/10 shadow-sm">
           <CardContent className="py-4 px-4">
             <div className="flex items-center justify-between text-muted-foreground mb-1.5">
-              <span className="text-xs font-semibold">RAM Usage</span>
+              <span className="text-xs font-semibold">{t("hosting.ramUsage", "RAM Usage")}</span>
               <HardDrive className="size-4 text-sky-500" />
             </div>
             <div className="flex items-baseline gap-2">
               <p className="text-2xl font-bold tracking-tight text-foreground">{ramPercentText}</p>
               <span className="text-xs text-muted-foreground font-mono">({ramText})</span>
             </div>
-            <p className="text-[11px] text-muted-foreground mt-1">Alokasi memori fisik</p>
+            <p className="text-[11px] text-muted-foreground mt-1">{t("hosting.memoryPhysical", "Alokasi memori fisik")}</p>
           </CardContent>
         </Card>
 
         <Card className="ring-1 ring-foreground/10 shadow-sm">
           <CardContent className="py-4 px-4">
             <div className="flex items-center justify-between text-muted-foreground mb-1.5">
-              <span className="text-xs font-semibold">Network RX (Download)</span>
+              <span className="text-xs font-semibold">{t("hosting.networkRx", "Network RX (Download)")}</span>
               <ArrowDownLeft className="size-4 text-emerald-500" />
             </div>
             <div className="flex items-baseline gap-2">
               <p className="text-2xl font-bold tracking-tight text-foreground">{rxText}</p>
             </div>
-            <p className="text-[11px] text-muted-foreground mt-1">Total paket data masuk</p>
+            <p className="text-[11px] text-muted-foreground mt-1">{t("hosting.totalDataIn", "Total paket data masuk")}</p>
           </CardContent>
         </Card>
 
         <Card className="ring-1 ring-foreground/10 shadow-sm">
           <CardContent className="py-4 px-4">
             <div className="flex items-center justify-between text-muted-foreground mb-1.5">
-              <span className="text-xs font-semibold">Network TX (Upload)</span>
+              <span className="text-xs font-semibold">{t("hosting.networkTx", "Network TX (Upload)")}</span>
               <ArrowUpRight className="size-4 text-amber-500" />
             </div>
             <div className="flex items-baseline gap-2">
               <p className="text-2xl font-bold tracking-tight text-foreground">{txText}</p>
             </div>
-            <p className="text-[11px] text-muted-foreground mt-1">Total paket data keluar</p>
+            <p className="text-[11px] text-muted-foreground mt-1">{t("hosting.totalDataOut", "Total paket data keluar")}</p>
           </CardContent>
         </Card>
       </div>
@@ -153,10 +155,10 @@ export const ContainerStats: React.FC<ContainerStatsProps> = ({ stats, memoryLim
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Gauge className="size-4 text-primary" />
-                <h3 className="text-sm font-semibold text-foreground">Grafik Realtime CPU (%)</h3>
+                <h3 className="text-sm font-semibold text-foreground">{t("hosting.realtimeCpuChart", "Grafik Realtime CPU (%)")}</h3>
               </div>
               <span className="text-xs font-mono font-medium text-muted-foreground">
-                Live: {cpuText}
+                {t("hosting.live", "Live")}: {cpuText}
               </span>
             </div>
 
@@ -180,7 +182,7 @@ export const ContainerStats: React.FC<ContainerStatsProps> = ({ stats, memoryLim
                         borderRadius: "0.75rem",
                         fontSize: "12px",
                       }}
-                      formatter={(val: any) => [`${val}%`, "CPU Usage"]}
+                      formatter={(val: any) => [`${val}%`, t("hosting.cpuUsage", "CPU Usage")]}
                     />
                     <Area
                       type="monotone"
@@ -197,7 +199,7 @@ export const ContainerStats: React.FC<ContainerStatsProps> = ({ stats, memoryLim
               ) : (
                 <div className="h-full flex items-center justify-center text-xs text-muted-foreground">
                   <Activity className="size-4 animate-spin mr-2" />
-                  Mengumpulkan data telemetri CPU...
+                  {t("hosting.collectingCpuTelemetry", "Mengumpulkan data telemetri CPU...")}
                 </div>
               )}
             </div>
@@ -210,10 +212,10 @@ export const ContainerStats: React.FC<ContainerStatsProps> = ({ stats, memoryLim
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <HardDrive className="size-4 text-sky-500" />
-                <h3 className="text-sm font-semibold text-foreground">Grafik Realtime RAM (MB)</h3>
+                <h3 className="text-sm font-semibold text-foreground">{t("hosting.realtimeRamChart", "Grafik Realtime RAM (MB)")}</h3>
               </div>
               <span className="text-xs font-mono font-medium text-muted-foreground">
-                Maks: {memoryLimitMb} MB
+                {t("hosting.maxLimit", "Maks")}: {memoryLimitMb} MB
               </span>
             </div>
 
@@ -242,7 +244,7 @@ export const ContainerStats: React.FC<ContainerStatsProps> = ({ stats, memoryLim
                         borderRadius: "0.75rem",
                         fontSize: "12px",
                       }}
-                      formatter={(val: any) => [`${val} MB`, "RAM Usage"]}
+                      formatter={(val: any) => [`${val} MB`, t("hosting.ramUsage", "RAM Usage")]}
                     />
                     <Area
                       type="monotone"
@@ -259,7 +261,7 @@ export const ContainerStats: React.FC<ContainerStatsProps> = ({ stats, memoryLim
               ) : (
                 <div className="h-full flex items-center justify-center text-xs text-muted-foreground">
                   <Activity className="size-4 animate-spin mr-2" />
-                  Mengumpulkan data telemetri RAM...
+                  {t("hosting.collectingRamTelemetry", "Mengumpulkan data telemetri RAM...")}
                 </div>
               )}
             </div>
