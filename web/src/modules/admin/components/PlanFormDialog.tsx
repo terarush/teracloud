@@ -5,6 +5,7 @@ import { Loader2, Plus, Trash2, Network, Upload, Image as ImageIcon, X } from "l
 import { useUploadFileMutation } from "@/service/mutation/auth"
 import { toast } from "sonner"
 import { getImageUrl } from "@/lib/utils"
+import { useTranslation } from "react-i18next"
 import {
   Dialog,
   DialogBody,
@@ -36,6 +37,7 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
   onSubmit,
   isPending,
 }) => {
+  const { t } = useTranslation()
   const uploadMutation = useUploadFileMutation()
   const [uploadingField, setUploadingField] = useState<"icon" | "thumbnail" | null>(null)
 
@@ -167,7 +169,7 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
       <DialogContent showFullscreenButton={true} showCloseButton={true}>
         <DialogHeader>
           <DialogTitle>
-            {initialPlan ? "Edit Paket Hosting" : "Tambah Paket Hosting Baru"}
+            {initialPlan ? t("hosting.editPlan", "Edit Paket Hosting") : t("hosting.addPlan", "Tambah Paket Hosting Baru")}
           </DialogTitle>
         </DialogHeader>
 
