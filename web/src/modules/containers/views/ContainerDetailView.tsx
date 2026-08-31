@@ -22,6 +22,11 @@ export const ContainerDetailView: React.FC<ContainerDetailViewProps> = ({ contai
     stats,
     isLoading,
     isPending,
+    isStarting,
+    isStopping,
+    isRestarting,
+    isResetting,
+    isDeleting,
     handleStart,
     handleStop,
     handleRestart,
@@ -66,6 +71,11 @@ export const ContainerDetailView: React.FC<ContainerDetailViewProps> = ({ contai
           onReset={handleReset}
           onDelete={handleDelete}
           isPending={isPending}
+          isStarting={isStarting}
+          isStopping={isStopping}
+          isRestarting={isRestarting}
+          isResetting={isResetting}
+          isDeleting={isDeleting}
         />
       </div>
 
