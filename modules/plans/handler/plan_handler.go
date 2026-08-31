@@ -92,11 +92,11 @@ func (h *PlanHandler) CreatePlan(c *echo.Context) error {
 	}
 
 	plan := &entity.Plan{
-		Name:                req.Name,
+		Name:                strings.TrimSpace(req.Name),
 		Description:         req.Description,
 		ShortDescription:    req.ShortDescription,
-		ImageName:           req.ImageName,
-		ImageTag:            req.ImageTag,
+		ImageName:           strings.TrimSpace(req.ImageName),
+		ImageTag:            strings.TrimSpace(req.ImageTag),
 		ThumbnailURL:        req.ThumbnailURL,
 		Category:            category,
 		Badge:               req.Badge,
@@ -166,11 +166,11 @@ func (h *PlanHandler) UpdatePlan(c *echo.Context) error {
 	oldFeatures := make(json.RawMessage, len(plan.Features))
 	copy(oldFeatures, plan.Features)
 
-	plan.Name = req.Name
+	plan.Name = strings.TrimSpace(req.Name)
 	plan.Description = req.Description
 	plan.ShortDescription = req.ShortDescription
-	plan.ImageName = req.ImageName
-	plan.ImageTag = req.ImageTag
+	plan.ImageName = strings.TrimSpace(req.ImageName)
+	plan.ImageTag = strings.TrimSpace(req.ImageTag)
 	plan.ThumbnailURL = req.ThumbnailURL
 	if req.Category != "" {
 		plan.Category = req.Category

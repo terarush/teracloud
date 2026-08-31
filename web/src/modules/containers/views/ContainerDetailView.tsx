@@ -5,7 +5,8 @@ import { ContainerActions } from "../components/ContainerActions"
 import { ContainerStats } from "../components/ContainerStats"
 import { ContainerEventsTable } from "../components/ContainerEventsTable"
 import { Terminal } from "../components/Terminal"
-import { ArrowLeft, Loader2, Terminal as TerminalIcon, BarChart3, ListOrdered, Info, ExternalLink } from "lucide-react"
+import { ContainerLogs } from "../components/ContainerLogs"
+import { ArrowLeft, Loader2, Terminal as TerminalIcon, BarChart3, ListOrdered, Info, ExternalLink, FileText } from "lucide-react"
 import { useNavigate } from "@tanstack/react-router"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -28,7 +29,7 @@ export const ContainerDetailView: React.FC<ContainerDetailViewProps> = ({ contai
     handleDelete,
   } = useContainerDetail(containerId)
 
-  const [activeTab, setActiveTab] = useState<"overview" | "stats" | "terminal" | "events">("overview")
+  const [activeTab, setActiveTab] = useState<"overview" | "terminal" | "logs" | "stats" | "events">("overview")
   const navigate = useNavigate()
 
   if (isLoading || !container) {
@@ -90,6 +91,7 @@ export const ContainerDetailView: React.FC<ContainerDetailViewProps> = ({ contai
         {[
           { key: "overview", label: "Overview" },
           { key: "terminal", label: "Terminal" },
+          { key: "logs", label: "Log Output" },
           { key: "stats", label: "Resource" },
           { key: "events", label: "Audit Log" },
         ].map((tab) => {
@@ -181,6 +183,10 @@ export const ContainerDetailView: React.FC<ContainerDetailViewProps> = ({ contai
           <Terminal containerId={container.id} isActive={activeTab === "terminal"} />
         </Card>
       </div>
+
+      {activeTab === "logs" && (
+        <ContainerLogs containerId={container.id} />
+      )}
 
       {activeTab === "stats" && (
         <ContainerStats stats={stats} memoryLimitMb={container.memory_limit} />

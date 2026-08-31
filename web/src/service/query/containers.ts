@@ -32,3 +32,12 @@ export function useContainerStatsQuery(id: number) {
     refetchInterval: 5000,
   })
 }
+
+export function useContainerLogsQuery(id: number, enabled = true) {
+  return useQuery({
+    queryKey: ["containers", id, "logs"],
+    queryFn: () => containersApi.getContainerLogs(id, 300),
+    enabled: !!id && !isNaN(id) && enabled,
+    refetchInterval: 3000,
+  })
+}

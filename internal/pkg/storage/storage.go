@@ -7,6 +7,8 @@ package storage
 
 import (
 	"context"
+	"fmt"
+	"io"
 	"os"
 	"strings"
 
@@ -80,31 +82,43 @@ func Init(log *logger.Logger) error {
 }
 
 // FolderFromPath derives the object-storage key prefix from a request path,
-// e.g. "/api/v1/auth/upload" → "profile/", "/api/v1/products/upload" →
-// "products/". An extra segment after "upload" becomes a subfolder:
-// "/api/v1/auth/upload/banner" → "profile/banner/". The folder name is
-// auto-detected from the route, so each module's upload endpoint gets its own
-// namespace without hand-declared constants. Falls back to the bucket root
-// for unknown paths.
+// e.g. "/api/v1/plans/upload" → "plans/", "/api/v1/auth/upload" → "auth/".
+// An extra segment after "upload" or query param becomes a subfolder.
 func FolderFromPath(path string) string {
-	segments := strings.Split(path, "/")
+	clean := strings.Trim(path, "/")
+	segments := strings.Split(clean, "/")
+
 	for i, seg := range segments {
-		var folder string
-		switch seg {
-		case "auth":
-			folder = "profile"
-		case "products":
-			folder = "products"
-		default:
+		if seg == "api" || strings.HasPrefix(seg, "v") {
 			continue
 		}
-		// A sub-segment right after "upload" namespaces deeper, e.g. banner.
-		if i+2 < len(segments) && segments[i+1] == "upload" && segments[i+2] != "" {
-			return folder + "/" + segments[i+2] + "/"
+		if seg == "upload" || seg == "uploads" {
+			if i+1 < len(segments) && segments[i+1] != "" {
+				return segments[i+1] + "/"
+			}
+			if i > 0 {
+				return segments[i-1] + "/"
+			}
+		} else {
+			// If module segment comes before upload
+			if i+1 < len(segments) && (segments[i+1] == "upload" || segments[i+1] == "uploads") {
+				if i+2 < len(segments) && segments[i+2] != "" {
+					return seg + "/" + segments[i+2] + "/"
+				}
+				return seg + "/"
+			}
 		}
-		return folder + "/"
 	}
-	return ""
+
+	if len(segments) > 0 {
+		first := segments[0]
+		if first == "api" && len(segments) > 2 {
+			return segments[2] + "/"
+		}
+		return first + "/"
+	}
+
+	return "uploads/"
 }
 
 // BaseURL returns the public base URL files are served from, e.g.
@@ -121,3 +135,22 @@ func BaseURL() string {
 	}
 	return scheme + "://" + endpoint + "/" + Bucket
 }
+
+// UploadObject uploads an io.Reader stream to MinIO object storage.
+// Returns the full public URL of the uploaded object.
+func UploadObject(ctx context.Context, objectName string, reader io.Reader, size int64, contentType string) (string, error) {
+	if Client == nil {
+		return "", minio.ErrorResponse{Code: "StorageDisabled", Message: "Object storage is not configured"}
+	}
+
+	_, err := Client.PutObject(ctx, Bucket, objectName, reader, size, minio.PutObjectOptions{
+		ContentType: contentType,
+	})
+	if err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("%s/%s", BaseURL(), strings.TrimPrefix(objectName, "/")), nil
+}
+
+

@@ -16,6 +16,11 @@ export interface Plan {
   short_description: string
   image_name: string
   image_tag: string
+  thumbnail_url?: string | null
+  category?: string
+  badge?: string | null
+  is_featured?: boolean
+  stock_limit?: number | null
   cpu_limit: number
   memory_limit: number
   disk_limit: number
@@ -39,6 +44,11 @@ export interface CreatePlanRequest {
   short_description?: string
   image_name: string
   image_tag: string
+  thumbnail_url?: string | null
+  category?: string
+  badge?: string | null
+  is_featured?: boolean
+  stock_limit?: number | null
   cpu_limit: number
   memory_limit: number
   disk_limit: number

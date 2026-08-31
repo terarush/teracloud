@@ -67,10 +67,17 @@ func (s *ProvisioningService) ProvisionContainer(ctx context.Context, userID, su
 		return fmt.Errorf("plan not found: %w", err)
 	}
 
-	// 1. Generate unique container name and hostname
+	// 1. Generate unique container name and hostname based on Plan slug (e.g. ubuntu-24-a1b2c3)
 	randomHex := make([]byte, 3)
 	_, _ = rand.Read(randomHex)
-	containerName := fmt.Sprintf("tc-%d-%s", userID, hex.EncodeToString(randomHex))
+	cleanSlug := strings.ToLower(strings.ReplaceAll(plan.Slug, "_", "-"))
+	if cleanSlug == "" {
+		cleanSlug = strings.ToLower(strings.ReplaceAll(plan.ImageName, "_", "-"))
+	}
+	if cleanSlug == "" {
+		cleanSlug = "container"
+	}
+	containerName := fmt.Sprintf("%s-%s", cleanSlug, hex.EncodeToString(randomHex))
 	hostname := containerName
 
 	// 2. Initial container record in DB
@@ -153,16 +160,22 @@ func (s *ProvisioningService) ProvisionContainer(ctx context.Context, userID, su
 	containerRecord.AssignedPorts = assignedBytes
 
 	// 5. Pull Docker image
-	s.log.Infof("Pulling image %s:%s for container %s", plan.ImageName, plan.ImageTag, containerName)
-	if err := s.dockerClient.PullImage(ctx, plan.ImageName, plan.ImageTag); err != nil {
+	imageName := strings.TrimSpace(plan.ImageName)
+	imageTag := strings.TrimSpace(plan.ImageTag)
+	if imageTag == "" {
+		imageTag = "latest"
+	}
+
+	s.log.Infof("Pulling image %s:%s for container %s", imageName, imageTag, containerName)
+	if err := s.dockerClient.PullImage(ctx, imageName, imageTag); err != nil {
 		s.log.Warnf("Image pull warning: %v (trying to proceed with local image)", err)
 	}
 
 	// 6. Create & Start Docker Container
 	dockerCfg := docker.ContainerConfig{
 		Name:          containerName,
-		ImageName:     plan.ImageName,
-		ImageTag:      plan.ImageTag,
+		ImageName:     imageName,
+		ImageTag:      imageTag,
 		Hostname:      hostname,
 		CPULimit:      plan.CPULimit,
 		MemoryLimitMB: plan.MemoryLimit,
@@ -213,16 +226,11 @@ func (s *ProvisioningService) ProvisionContainer(ctx context.Context, userID, su
 		Payload: containerRecord,
 	})
 
-	// 9. Auto-configure Cloudflare Tunnel routes
+	// 9. Auto-configure Cloudflare Tunnel routes (subdomain based on random containerName)
 	if s.cloudflareClient != nil && s.cloudflareClient.IsEnabled() {
 		var routes []cloudflare.TunnelRoute
-		containerHex := ""
-		parts := strings.Split(containerName, "-")
-		if len(parts) > 0 {
-			containerHex = parts[len(parts)-1]
-		}
 
-		for _, pc := range portConfigs {
+		for i, pc := range portConfigs {
 			if pc.ContainerPort <= 0 {
 				continue
 			}
@@ -233,7 +241,11 @@ func (s *ProvisioningService) ProvisionContainer(ctx context.Context, userID, su
 			}
 
 			if hostPort, ok := assignedMap[key]; ok {
-				subdomain := fmt.Sprintf("%s-%s", containerHex, key)
+				// Subdomain uses containerName directly (or containerName-port for secondary ports)
+				subdomain := containerName
+				if i > 0 || (!pc.IsPrimary && len(portConfigs) > 1) {
+					subdomain = fmt.Sprintf("%s-%d", containerName, pc.ContainerPort)
+				}
 				domain := os.Getenv("TUNNEL_DOMAIN")
 				if domain == "" {
 					panic("TUNNEL_DOMAIN is missingg")

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
@@ -166,6 +167,30 @@ func (c *Client) RemoveContainer(ctx context.Context, dockerID string) error {
 	return c.cli.ContainerRemove(ctx, dockerID, container.RemoveOptions{
 		Force: true,
 	})
+}
+
+// GetContainerLogs returns logs from container
+func (c *Client) GetContainerLogs(ctx context.Context, dockerID string, tail string) (string, error) {
+	if tail == "" {
+		tail = "100"
+	}
+	options := container.LogsOptions{
+		ShowStdout: true,
+		ShowStderr: true,
+		Follow:     false,
+		Tail:       tail,
+		Timestamps: true,
+	}
+
+	reader, err := c.cli.ContainerLogs(ctx, dockerID, options)
+	if err != nil {
+		return "", err
+	}
+	defer reader.Close()
+
+	buf := new(strings.Builder)
+	_, _ = io.Copy(buf, reader)
+	return buf.String(), nil
 }
 
 // ExecCreate creates an exec instance inside the container.

@@ -16,6 +16,7 @@ import (
 	"ruang-tukar/internal/pkg/logger"
 	"ruang-tukar/internal/pkg/middleware"
 	"ruang-tukar/internal/pkg/oauth"
+	"ruang-tukar/internal/pkg/storage"
 	"ruang-tukar/internal/pkg/utils"
 	"ruang-tukar/internal/pkg/validator"
 	authErrs "ruang-tukar/modules/auth/errs"
@@ -569,7 +570,7 @@ func (h *AuthHandler) GoogleCallback(c *echo.Context) error {
 	return c.Redirect(http.StatusTemporaryRedirect, redirectURL)
 }
 
-// UploadFile handles file upload and saves it to ./public/uploads
+// UploadFile handles file upload: saves to MinIO/S3 if configured, or falls back to ./public/uploads
 func (h *AuthHandler) UploadFile(c *echo.Context) error {
 	file, err := c.FormFile("file")
 	if err != nil {
@@ -582,14 +583,43 @@ func (h *AuthHandler) UploadFile(c *echo.Context) error {
 	}
 	defer src.Close()
 
-	uploadDir := "./public/uploads"
+	cleanFilename := fmt.Sprintf("%d_%s", time.Now().UnixNano(), filepath.Base(file.Filename))
+
+	// Determine folder prefix from route or query (e.g. "plans/", "profile/", "containers/")
+	folderPrefix := storage.FolderFromPath(c.Path())
+	if customFolder := c.QueryParam("module"); customFolder != "" {
+		folderPrefix = strings.Trim(customFolder, "/") + "/"
+	}
+
+	// 1. If MinIO/S3 object storage is configured, upload directly to MinIO
+	if storage.Client != nil {
+		objectPath := fmt.Sprintf("%s%s", folderPrefix, cleanFilename)
+		contentType := file.Header.Get("Content-Type")
+		if contentType == "" {
+			contentType = "application/octet-stream"
+		}
+
+		fileURL, err := storage.UploadObject(c.Request().Context(), objectPath, src, file.Size, contentType)
+		if err == nil {
+			return h.r.SuccessResponse(c, map[string]string{"url": fileURL}, "File uploaded successfully to object storage")
+		}
+		h.log.Warn("Failed to upload to object storage, falling back to local disk: %v", err)
+		// Reset reader offset if possible or re-open
+		_ = src.Close()
+		src, err = file.Open()
+		if err != nil {
+			return h.r.ErrorResponse(c, http.StatusInternalServerError, err)
+		}
+		defer src.Close()
+	}
+
+	// 2. Fallback to local storage (./public/uploads/{module})
+	uploadDir := filepath.Join("./public/uploads", strings.TrimSuffix(folderPrefix, "/"))
 	if err := os.MkdirAll(uploadDir, 0755); err != nil {
 		return h.r.ErrorResponse(c, http.StatusInternalServerError, utils.NewAppError(utils.CodeInternal, "Failed to create upload directory"))
 	}
 
-	filename := fmt.Sprintf("%d_%s", time.Now().UnixNano(), filepath.Base(file.Filename))
-	dstPath := filepath.Join(uploadDir, filename)
-
+	dstPath := filepath.Join(uploadDir, cleanFilename)
 	dst, err := os.Create(dstPath)
 	if err != nil {
 		return h.r.ErrorResponse(c, http.StatusInternalServerError, err)
@@ -600,7 +630,7 @@ func (h *AuthHandler) UploadFile(c *echo.Context) error {
 		return h.r.ErrorResponse(c, http.StatusInternalServerError, err)
 	}
 
-	fileURL := fmt.Sprintf("/public/uploads/%s", filename)
+	fileURL := fmt.Sprintf("/public/uploads/%s%s", folderPrefix, cleanFilename)
 	return h.r.SuccessResponse(c, map[string]string{"url": fileURL}, "File uploaded successfully")
 }
 

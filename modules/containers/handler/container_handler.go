@@ -316,6 +316,38 @@ func (h *ContainerHandler) GetStats(c *echo.Context) error {
 	return h.r.SuccessResponse(c, stats, "Container stats retrieved successfully")
 }
 
+// GetLogs returns stdout/stderr output from the container.
+func (h *ContainerHandler) GetLogs(c *echo.Context) error {
+	ctx := c.Request().Context()
+	userID := utils.UserIDFromCtx(c)
+	userRole := utils.UserRoleFromCtx(c)
+
+	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		return h.r.BadRequestResponse(c, utils.NewAppError(utils.CodeBadRequest, "Invalid container ID"))
+	}
+
+	container, err := h.containerService.GetContainerByID(ctx, uint(id))
+	if err != nil {
+		return h.r.NotFoundResponse(c, err)
+	}
+	if userRole != middleware.RoleAdmin && container.UserID != userID {
+		return h.r.ForbiddenResponse(c, utils.NewAppError(utils.CodeForbidden, "Unauthorized"))
+	}
+
+	tail := c.QueryParam("tail")
+	if tail == "" {
+		tail = "200"
+	}
+
+	logs, err := h.containerService.GetLogs(ctx, uint(id), tail)
+	if err != nil {
+		return h.r.InternalServerErrorResponse(c, err)
+	}
+
+	return h.r.SuccessResponse(c, map[string]string{"logs": logs}, "Container logs retrieved successfully")
+}
+
 // SuspendContainer force suspends container (admin)
 func (h *ContainerHandler) SuspendContainer(c *echo.Context) error {
 	ctx := c.Request().Context()
@@ -383,6 +415,7 @@ func (h *ContainerHandler) RegisterRoutes(e *echo.Echo, basePath string) {
 	group.GET("", h.GetContainers)
 	group.GET("/:id", h.GetContainerByID)
 	group.GET("/:id/stats", h.GetStats)
+	group.GET("/:id/logs", h.GetLogs)
 	group.POST("/:id/start", h.StartContainer)
 	group.POST("/:id/stop", h.StopContainer)
 	group.POST("/:id/restart", h.RestartContainer)
