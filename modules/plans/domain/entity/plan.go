@@ -33,7 +33,7 @@ type Plan struct {
 	EnvironmentTemplate json.RawMessage `json:"environment_template" gorm:"type:jsonb;default:'{}'"`
 	Command             *string         `json:"command,omitempty" gorm:"type:text"`
 	Entrypoint          *string         `json:"entrypoint,omitempty" gorm:"type:text"`
-	Icon                string          `json:"icon" gorm:"type:varchar(100)"`
+	Icon                string          `json:"icon" gorm:"type:text"`
 	CreatedAt           time.Time       `json:"created_at"`
 	UpdatedAt           time.Time       `json:"updated_at"`
 	DeletedAt           *time.Time      `json:"deleted_at,omitempty" gorm:"index"`

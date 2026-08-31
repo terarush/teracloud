@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"fmt"
 	"io"
 	"net/http"
@@ -583,7 +585,13 @@ func (h *AuthHandler) UploadFile(c *echo.Context) error {
 	}
 	defer src.Close()
 
-	cleanFilename := fmt.Sprintf("%d_%s", time.Now().UnixNano(), filepath.Base(file.Filename))
+	ext := filepath.Ext(file.Filename)
+	if ext == "" {
+		ext = ".jpg"
+	}
+	randomBytes := make([]byte, 12)
+	_, _ = rand.Read(randomBytes)
+	cleanFilename := fmt.Sprintf("%d_%s%s", time.Now().Unix(), hex.EncodeToString(randomBytes), strings.ToLower(ext))
 
 	// Determine folder prefix from route or query (e.g. "plans/", "profile/", "containers/")
 	folderPrefix := storage.FolderFromPath(c.Path())
