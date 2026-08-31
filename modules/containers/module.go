@@ -13,6 +13,7 @@ import (
 	"ruang-tukar/internal/pkg/portmanager"
 	billingRepo "ruang-tukar/modules/billing/domain/repository"
 	billingService "ruang-tukar/modules/billing/domain/service"
+	containerEntity "ruang-tukar/modules/containers/domain/entity"
 	"ruang-tukar/modules/containers/domain/repository"
 	"ruang-tukar/modules/containers/domain/service"
 	"ruang-tukar/modules/containers/handler"
@@ -124,7 +125,10 @@ func (m *Module) RegisterRoutes(e *echo.Echo, basePath string) {
 }
 
 func (m *Module) Migrations() error {
-	return nil
+	if m.db == nil {
+		return nil
+	}
+	return m.db.AutoMigrate(&containerEntity.Container{})
 }
 
 func (m *Module) Logger() *logger.Logger {
