@@ -1,9 +1,10 @@
 import React, { useState } from "react"
 import { useContainerLogsQuery } from "@/service/query/containers"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Loader2, RefreshCw, Terminal, Download, Copy, Check } from "lucide-react"
 import { toast } from "sonner"
+import { useTranslation } from "react-i18next"
 
 interface ContainerLogsProps {
   containerId: number
@@ -11,6 +12,7 @@ interface ContainerLogsProps {
 }
 
 export const ContainerLogs: React.FC<ContainerLogsProps> = ({ containerId, isActive = true }) => {
+  const { t } = useTranslation()
   const { data: logs, isLoading, isFetching, refetch } = useContainerLogsQuery(containerId, isActive)
   const [copied, setCopied] = useState(false)
 
@@ -18,7 +20,7 @@ export const ContainerLogs: React.FC<ContainerLogsProps> = ({ containerId, isAct
     if (!logs) return
     navigator.clipboard.writeText(logs)
     setCopied(true)
-    toast.success("Log berhasil disalin ke clipboard!")
+    toast.success(t("hosting.logCopiedToast", "Log berhasil disalin ke clipboard!"))
     setTimeout(() => setCopied(false), 2000)
   }
 
@@ -40,7 +42,7 @@ export const ContainerLogs: React.FC<ContainerLogsProps> = ({ containerId, isAct
       <div className="flex items-center justify-between px-4 py-2.5 bg-muted/40 border-b border-border/60">
         <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
           <Terminal className="size-4 text-primary" />
-          <span>Container Stdout / Stderr Output</span>
+          <span>{t("hosting.logTitle", "Container Stdout / Stderr Output")}</span>
           {isFetching && <Loader2 className="size-3 animate-spin text-muted-foreground ml-1" />}
         </div>
 
@@ -53,7 +55,7 @@ export const ContainerLogs: React.FC<ContainerLogsProps> = ({ containerId, isAct
             className="h-7 text-xs gap-1 cursor-pointer"
           >
             <RefreshCw className={`size-3 ${isFetching ? "animate-spin" : ""}`} />
-            <span>Refresh</span>
+            <span>{t("hosting.refresh", "Refresh")}</span>
           </Button>
 
           <Button
@@ -64,7 +66,7 @@ export const ContainerLogs: React.FC<ContainerLogsProps> = ({ containerId, isAct
             className="h-7 text-xs gap-1 cursor-pointer"
           >
             {copied ? <Check className="size-3 text-emerald-500" /> : <Copy className="size-3" />}
-            <span>{copied ? "Tersalin" : "Salin"}</span>
+            <span>{copied ? t("hosting.copied", "Tersalin") : t("hosting.copy", "Salin")}</span>
           </Button>
 
           <Button
@@ -75,7 +77,7 @@ export const ContainerLogs: React.FC<ContainerLogsProps> = ({ containerId, isAct
             className="h-7 text-xs gap-1 cursor-pointer"
           >
             <Download className="size-3" />
-            <span>Unduh</span>
+            <span>{t("hosting.download", "Unduh")}</span>
           </Button>
         </div>
       </div>
@@ -84,11 +86,11 @@ export const ContainerLogs: React.FC<ContainerLogsProps> = ({ containerId, isAct
         {isLoading ? (
           <div className="h-full flex flex-col items-center justify-center text-muted-foreground">
             <Loader2 className="size-5 animate-spin mb-2 text-primary" />
-            <span>Mengambil log container...</span>
+            <span>{t("hosting.fetchingLogs", "Mengambil log container...")}</span>
           </div>
         ) : !logs || logs.trim() === "" ? (
           <div className="h-full flex items-center justify-center text-muted-foreground/60 italic">
-            Belum ada output log dari container.
+            {t("hosting.noLogs", "Belum ada output log dari container.")}
           </div>
         ) : (
           logs

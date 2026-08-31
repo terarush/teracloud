@@ -51,16 +51,19 @@ export function HomeView() {
         <FeaturesSection />
         <FAQSection />
 
-        <section className="py-20 sm:py-28">
+        <section className="py-16 sm:py-24">
           <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
-            <div className="relative overflow-hidden rounded-2xl bg-[oklch(0.19_0.018_190)] px-6 py-14 text-white sm:px-12 sm:py-16 lg:flex lg:items-end lg:justify-between lg:px-16">
-              <div className="surface-noise pointer-events-none absolute inset-0 opacity-[0.08]" aria-hidden="true" />
+            <div className="relative overflow-hidden rounded-2xl bg-card border border-border px-6 py-12 sm:px-12 sm:py-16 lg:flex lg:items-end lg:justify-between lg:px-16">
               <div className="relative max-w-2xl">
-                <p className="mb-5 font-mono text-xs text-primary">READY WHEN YOU ARE</p>
-                <h2 className="text-balance text-4xl font-semibold leading-[1.02] tracking-[-0.05em] sm:text-5xl">Image sudah siap? Jalankan di ruangmu sendiri.</h2>
-                <p className="mt-5 max-w-lg text-sm leading-6 text-white/55 sm:text-base">Pilih kapasitas yang sesuai. Upgrade saat trafik bertambah, tanpa memindahkan workflow.</p>
+                <p className="mb-3 text-xs font-semibold tracking-wider text-primary uppercase">Ready When You Are</p>
+                <h2 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl text-foreground">
+                  Image sudah siap? Jalankan di ruangmu sendiri.
+                </h2>
+                <p className="mt-4 max-w-lg text-sm leading-relaxed text-muted-foreground sm:text-base">
+                  Pilih kapasitas yang sesuai. Upgrade saat trafik bertambah, tanpa memindahkan workflow.
+                </p>
               </div>
-              <Button size="lg" className="relative mt-9 h-11 gap-2 px-5 lg:mt-0" onClick={() => navigate({ to: "/pricing" })}>
+              <Button size="lg" className="relative mt-8 h-11 gap-2 px-5 lg:mt-0 font-semibold" onClick={() => navigate({ to: "/pricing" })}>
                 Lihat paket <ArrowRight className="size-4" />
               </Button>
             </div>

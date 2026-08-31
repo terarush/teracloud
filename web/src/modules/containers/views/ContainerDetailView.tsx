@@ -6,22 +6,29 @@ import { ContainerStats } from "../components/ContainerStats"
 import { ContainerEventsTable } from "../components/ContainerEventsTable"
 import { Terminal } from "../components/Terminal"
 import { ContainerLogs } from "../components/ContainerLogs"
-import { ArrowLeft, Loader2, Terminal as TerminalIcon, BarChart3, ListOrdered, Info, ExternalLink, FileText } from "lucide-react"
+import { ArrowLeft, Loader2, ExternalLink } from "lucide-react"
 import { useNavigate } from "@tanstack/react-router"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { useTranslation } from "react-i18next"
 
 interface ContainerDetailViewProps {
   containerId: number
 }
 
 export const ContainerDetailView: React.FC<ContainerDetailViewProps> = ({ containerId }) => {
+  const { t } = useTranslation()
   const {
     container,
     events,
     stats,
     isLoading,
     isPending,
+    isStarting,
+    isStopping,
+    isRestarting,
+    isResetting,
+    isDeleting,
     handleStart,
     handleStop,
     handleRestart,
@@ -36,12 +43,20 @@ export const ContainerDetailView: React.FC<ContainerDetailViewProps> = ({ contai
     return (
       <div className="p-16 flex flex-col items-center justify-center text-muted-foreground">
         <Loader2 className="size-6 animate-spin text-primary mb-3" />
-        <p className="text-xs">Memuat detail container...</p>
+        <p className="text-xs">{t("hosting.loadingContainerDetail", "Memuat detail container...")}</p>
       </div>
     )
   }
 
   const assigned = container.assigned_ports || {}
+
+  const tabs = [
+    { key: "overview", label: t("hosting.tabOverview", "Overview") },
+    { key: "terminal", label: t("hosting.tabTerminal", "Terminal") },
+    { key: "logs", label: t("hosting.tabLogs", "Log Output") },
+    { key: "stats", label: t("hosting.tabStats", "Resource") },
+    { key: "events", label: t("hosting.tabEvents", "Audit Log") },
+  ]
 
   return (
     <div className="px-6 py-8 max-w-5xl mx-auto space-y-6">
@@ -54,7 +69,7 @@ export const ContainerDetailView: React.FC<ContainerDetailViewProps> = ({ contai
           className="gap-1 text-xs text-muted-foreground hover:text-foreground cursor-pointer -ml-2 h-7 self-start"
         >
           <ArrowLeft className="size-3.5" />
-          <span>Kembali ke Dashboard</span>
+          <span>{t("hosting.backToDashboard", "Kembali ke Dashboard")}</span>
         </Button>
 
         <ContainerActions
@@ -66,6 +81,11 @@ export const ContainerDetailView: React.FC<ContainerDetailViewProps> = ({ contai
           onReset={handleReset}
           onDelete={handleDelete}
           isPending={isPending}
+          isStarting={isStarting}
+          isStopping={isStopping}
+          isRestarting={isRestarting}
+          isResetting={isResetting}
+          isDeleting={isDeleting}
         />
       </div>
 
@@ -87,20 +107,16 @@ export const ContainerDetailView: React.FC<ContainerDetailViewProps> = ({ contai
       </Card>
 
       {/* Navigation Tabs */}
-      <div className="flex gap-1 border-b border-foreground/10 pb-px">
-        {[
-          { key: "overview", label: "Overview" },
-          { key: "terminal", label: "Terminal" },
-          { key: "logs", label: "Log Output" },
-          { key: "stats", label: "Resource" },
-          { key: "events", label: "Audit Log" },
-        ].map((tab) => {
+      <div role="tablist" aria-label="Container sections" className="flex gap-1 border-b border-border pb-px overflow-x-auto">
+        {tabs.map((tab) => {
           const isActive = activeTab === tab.key
           return (
             <button
               key={tab.key}
+              role="tab"
+              aria-selected={isActive}
               onClick={() => setActiveTab(tab.key as any)}
-              className={`px-3.5 py-2 text-xs font-medium border-b-2 -mb-px transition-colors cursor-pointer ${
+              className={`px-3.5 py-2 text-xs font-medium border-b-2 -mb-px transition-colors cursor-pointer shrink-0 ${
                 isActive
                   ? "border-primary text-foreground font-semibold"
                   : "border-transparent text-muted-foreground hover:text-foreground"
@@ -118,7 +134,7 @@ export const ContainerDetailView: React.FC<ContainerDetailViewProps> = ({ contai
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Card className="ring-1 ring-foreground/10">
             <CardContent className="p-5 space-y-3">
-              <h2 className="text-sm font-semibold text-foreground">Alokasi Hardware</h2>
+              <h2 className="text-sm font-semibold text-foreground">{t("hosting.hardwareAllocation", "Alokasi Hardware")}</h2>
               <div className="grid grid-cols-3 gap-2.5 text-center">
                 <div className="p-3 bg-muted/50 rounded-lg">
                   <div className="text-[11px] text-muted-foreground">vCPU</div>
@@ -138,7 +154,7 @@ export const ContainerDetailView: React.FC<ContainerDetailViewProps> = ({ contai
 
           <Card className="ring-1 ring-foreground/10">
             <CardContent className="p-5 space-y-3">
-              <h2 className="text-sm font-semibold text-foreground">Akses Domain &amp; Layanan</h2>
+              <h2 className="text-sm font-semibold text-foreground">{t("hosting.accessDomainService", "Akses Domain & Layanan")}</h2>
               <div className="space-y-2 text-xs">
                 {container.tunnel_routes && container.tunnel_routes.length > 0 ? (
                   container.tunnel_routes.map((route, idx) => (
@@ -163,11 +179,11 @@ export const ContainerDetailView: React.FC<ContainerDetailViewProps> = ({ contai
                   ))
                 ) : (
                   <div className="py-2 text-muted-foreground italic">
-                    Belum ada port atau domain yang dialokasikan
+                    {t("hosting.noPortsAllocated", "Belum ada port atau domain yang dialokasikan")}
                   </div>
                 )}
                 <div className="flex justify-between items-center py-1.5">
-                  <span className="text-muted-foreground">Waktu Dibuat:</span>
+                  <span className="text-muted-foreground">{t("hosting.created", "Waktu Dibuat")}:</span>
                   <span className="text-foreground">{new Date(container.created_at).toLocaleString("id-ID")}</span>
                 </div>
               </div>

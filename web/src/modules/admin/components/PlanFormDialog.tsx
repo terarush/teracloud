@@ -5,6 +5,7 @@ import { Loader2, Plus, Trash2, Network, Upload, Image as ImageIcon, X } from "l
 import { useUploadFileMutation } from "@/service/mutation/auth"
 import { toast } from "sonner"
 import { getImageUrl } from "@/lib/utils"
+import { useTranslation } from "react-i18next"
 import {
   Dialog,
   DialogBody,
@@ -36,6 +37,7 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
   onSubmit,
   isPending,
 }) => {
+  const { t } = useTranslation()
   const uploadMutation = useUploadFileMutation()
   const [uploadingField, setUploadingField] = useState<"icon" | "thumbnail" | null>(null)
 
@@ -47,6 +49,7 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
     image_tag: "",
     icon: "",
     thumbnail_url: "",
+    badge: "",
     cpu_limit: "" as any,
     memory_limit: "" as any,
     disk_limit: "" as any,
@@ -67,6 +70,7 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
         image_tag: initialPlan.image_tag || "",
         icon: initialPlan.icon || "",
         thumbnail_url: initialPlan.thumbnail_url || "",
+        badge: initialPlan.badge || "",
         cpu_limit: initialPlan.cpu_limit,
         memory_limit: initialPlan.memory_limit,
         disk_limit: initialPlan.disk_limit,
@@ -85,6 +89,7 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
         image_tag: "",
         icon: "",
         thumbnail_url: "",
+        badge: "",
         cpu_limit: "" as any,
         memory_limit: "" as any,
         disk_limit: "" as any,
@@ -164,7 +169,7 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
       <DialogContent showFullscreenButton={true} showCloseButton={true}>
         <DialogHeader>
           <DialogTitle>
-            {initialPlan ? "Edit Paket Hosting" : "Tambah Paket Hosting Baru"}
+            {initialPlan ? t("hosting.editPlan", "Edit Paket Hosting") : t("hosting.addPlan", "Tambah Paket Hosting Baru")}
           </DialogTitle>
         </DialogHeader>
 
@@ -202,17 +207,31 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
               </div>
             </div>
 
-            <div>
-              <label className="text-xs font-semibold text-muted-foreground block mb-1">
-                Deskripsi Singkat
-              </label>
-              <input
-                type="text"
-                placeholder="e.g. Cocok untuk microservices atau web server statis"
-                value={formData.short_description || ""}
-                onChange={(e) => setFormData({ ...formData, short_description: e.target.value })}
-                className="w-full px-3 py-2 bg-background border border-border rounded-xl text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-primary"
-              />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground block mb-1">
+                  Deskripsi Singkat
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. Cocok untuk microservices atau web server statis"
+                  value={formData.short_description || ""}
+                  onChange={(e) => setFormData({ ...formData, short_description: e.target.value })}
+                  className="w-full px-3 py-2 bg-background border border-border rounded-xl text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground block mb-1">
+                  Badge Label (Opsional)
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. Populer, Baru, Best Value, Diskon 20%"
+                  value={formData.badge || ""}
+                  onChange={(e) => setFormData({ ...formData, badge: e.target.value })}
+                  className="w-full px-3 py-2 bg-background border border-border rounded-xl text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+              </div>
             </div>
           </div>
 

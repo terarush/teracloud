@@ -13,22 +13,19 @@ export const HeroSection: React.FC = () => {
   const navigate = useNavigate()
 
   return (
-    <section className="relative isolate overflow-hidden border-b border-border/70 pb-20 pt-16 sm:pb-28 sm:pt-24">
-      <div className="workbench-grid pointer-events-none absolute inset-0 -z-10 opacity-70" aria-hidden="true" />
-      <div className="pointer-events-none absolute -right-32 top-16 -z-10 h-80 w-80 rounded-full bg-primary/10 blur-3xl" aria-hidden="true" />
-
-      <div className="mx-auto grid max-w-7xl items-center gap-14 px-5 sm:px-8 lg:grid-cols-[1.05fr_.95fr] lg:gap-20 lg:px-10">
+    <section className="relative isolate overflow-hidden border-b border-border/70 pb-16 pt-12 sm:pb-24 sm:pt-16">
+      <div className="mx-auto grid max-w-7xl items-center gap-12 px-5 sm:px-8 lg:grid-cols-[1.05fr_.95fr] lg:gap-16 lg:px-10">
         <div>
-          <div className="mb-7 flex items-center gap-3 text-xs font-medium text-muted-foreground">
-            <span className="h-px w-8 bg-primary" />
+          <div className="mb-6 flex items-center gap-2.5 text-xs font-medium text-muted-foreground">
+            <span className="h-1.5 w-1.5 rounded-full bg-primary" />
             <span>Cloud container, dikelola dari Indonesia</span>
           </div>
 
-          <h1 className="max-w-3xl text-balance text-[clamp(3.35rem,7vw,6.6rem)] font-semibold leading-[0.9] tracking-[-0.07em] text-foreground">
+          <h1 className="max-w-2xl text-balance text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-foreground">
             Deploy Docker tanpa mengurus server.
           </h1>
-          <p className="mt-7 max-w-xl text-pretty text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">
-            Ruang kerja yang tenang untuk menjalankan bot, API, database, dan web service—lengkap dengan storage persisten, terminal browser, dan kontrol resource yang jelas.
+          <p className="mt-5 max-w-xl text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg">
+            Ruang kerja yang tenang untuk menjalankan bot, API, database, dan web service, lengkap dengan storage persisten, terminal browser, dan kontrol resource yang jelas.
           </p>
 
           <div className="mt-9 flex flex-col items-start gap-4 sm:flex-row sm:items-center">

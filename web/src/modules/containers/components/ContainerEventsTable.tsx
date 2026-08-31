@@ -2,18 +2,21 @@ import React from "react"
 import type { ContainerEvent } from "@/service/api/containers"
 import { Card, CardContent } from "@/components/ui/card"
 import { ListOrdered } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 interface ContainerEventsTableProps {
   events: ContainerEvent[]
 }
 
 export const ContainerEventsTable: React.FC<ContainerEventsTableProps> = ({ events }) => {
+  const { t } = useTranslation()
+
   if (events.length === 0) {
     return (
       <Card className="ring-1 ring-foreground/10">
         <CardContent className="py-12 text-center">
           <ListOrdered className="size-8 mx-auto text-muted-foreground/40 mb-2" />
-          <p className="text-sm text-muted-foreground">Belum ada catatan aktivitas untuk container ini.</p>
+          <p className="text-sm text-muted-foreground">{t("hosting.noEvents", "Belum ada catatan aktivitas untuk container ini.")}</p>
         </CardContent>
       </Card>
     )
@@ -25,9 +28,9 @@ export const ContainerEventsTable: React.FC<ContainerEventsTableProps> = ({ even
         <table className="w-full text-left text-sm">
           <thead className="bg-muted/40 border-b border-border/50 text-muted-foreground text-[11px] font-medium uppercase tracking-wider">
             <tr>
-              <th className="px-4 py-3">Tipe Aksi</th>
-              <th className="px-4 py-3">Deskripsi</th>
-              <th className="px-4 py-3">Waktu</th>
+              <th className="px-4 py-3">{t("hosting.actionType", "Tipe Aksi")}</th>
+              <th className="px-4 py-3">{t("hosting.description", "Deskripsi")}</th>
+              <th className="px-4 py-3">{t("hosting.time", "Waktu")}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border/50">

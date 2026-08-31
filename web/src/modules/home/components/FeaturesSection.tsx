@@ -28,17 +28,16 @@ export const FeaturesSection: React.FC = () => {
               <div className="flex flex-col justify-between p-7 sm:p-9">
                 <div className="flex size-10 items-center justify-center rounded-lg bg-secondary text-primary"><Zap className="size-5" /></div>
                 <div className="mt-16">
-                  <p className="font-mono text-xs text-primary">01 / DEPLOY</p>
-                  <h3 className="mt-3 text-2xl font-semibold tracking-tight">Dari image ke container dalam hitungan detik.</h3>
+                  <h3 className="text-2xl font-semibold tracking-tight">Dari image ke container dalam hitungan detik.</h3>
                   <p className="mt-3 max-w-md text-sm leading-6 text-muted-foreground">Provisioning, jaringan, dan volume dipersiapkan otomatis setelah pembayaran terkonfirmasi.</p>
                 </div>
               </div>
-              <div className="m-3 flex min-h-56 flex-col justify-center rounded-xl bg-[oklch(0.19_0.018_190)] p-6 font-mono text-xs text-white/65 sm:m-4">
-                <p className="text-white/35">deployment / terarush-8f31</p>
-                <div className="my-5 h-px bg-white/10" />
-                <p><span className="text-primary">01</span> pull image <span className="float-right text-white/90">done</span></p>
-                <p className="mt-3"><span className="text-primary">02</span> mount volume <span className="float-right text-white/90">done</span></p>
-                <p className="mt-3"><span className="text-primary">03</span> expose port <span className="float-right text-white/90">done</span></p>
+              <div className="m-3 flex min-h-56 flex-col justify-center rounded-xl bg-card border border-border p-6 font-mono text-xs text-muted-foreground sm:m-4">
+                <p className="text-foreground font-semibold">deployment / terarush-8f31</p>
+                <div className="my-5 h-px bg-border" />
+                <p><span className="text-primary">01</span> pull image <span className="float-right text-foreground">done</span></p>
+                <p className="mt-3"><span className="text-primary">02</span> mount volume <span className="float-right text-foreground">done</span></p>
+                <p className="mt-3"><span className="text-primary">03</span> expose port <span className="float-right text-foreground">done</span></p>
                 <p className="mt-3"><span className="text-primary">04</span> health check <span className="float-right text-primary">healthy</span></p>
               </div>
             </article>
@@ -55,15 +54,15 @@ export const FeaturesSection: React.FC = () => {
               </div>
             </article>
 
-            <article className="flex min-h-80 flex-col justify-between rounded-2xl bg-primary p-7 text-primary-foreground sm:p-8">
+            <article className="flex min-h-80 flex-col justify-between rounded-2xl bg-card p-7 border border-border ring-1 ring-foreground/5 sm:p-8">
               <div className="flex items-center justify-between">
-                <Terminal className="size-6" />
-                <span className="font-mono text-[10px] opacity-65">root@container</span>
+                <div className="flex size-10 items-center justify-center rounded-lg bg-secondary text-primary"><Terminal className="size-5" /></div>
+                <span className="font-mono text-[10px] text-muted-foreground">root@container</span>
               </div>
               <div>
-                <p className="mb-5 font-mono text-xs leading-6 opacity-70">$ ssh root@node<br />Last login: today<br /><span className="inline-block h-3 w-1.5 bg-current align-middle" /></p>
-                <h3 className="text-xl font-semibold tracking-tight">Terminal saat kamu membutuhkannya.</h3>
-                <p className="mt-2 text-sm leading-6 opacity-75">Gunakan browser atau SSH client favoritmu dengan akses root penuh.</p>
+                <p className="mb-5 font-mono text-xs leading-6 text-muted-foreground">$ ssh root@node<br />Last login: today<br /><span className="inline-block h-3 w-1.5 bg-primary align-middle" /></p>
+                <h3 className="text-xl font-semibold tracking-tight text-foreground">Terminal saat kamu membutuhkannya.</h3>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">Gunakan browser atau SSH client favoritmu dengan akses root penuh.</p>
               </div>
             </article>
 

@@ -2,6 +2,7 @@ import React from "react"
 import { DollarSign, Server, ShoppingCart, Layers } from "lucide-react"
 import type { AdminStats as AdminStatsType } from "@/service/api/admin"
 import { Card, CardContent } from "@/components/ui/card"
+import { useTranslation } from "react-i18next"
 
 interface AdminStatsProps {
   stats?: AdminStatsType
@@ -16,6 +17,7 @@ export const AdminStats: React.FC<AdminStatsProps> = ({
   containerCount,
   orderCount,
 }) => {
+  const { t } = useTranslation()
   const formattedRevenue = new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
@@ -23,10 +25,10 @@ export const AdminStats: React.FC<AdminStatsProps> = ({
   }).format(stats?.total_revenue || 0)
 
   const items = [
-    { icon: DollarSign, value: formattedRevenue, label: "Total Pendapatan" },
-    { icon: Server, value: stats?.active_containers ?? containerCount, label: "Container Aktif" },
-    { icon: ShoppingCart, value: stats?.total_orders ?? orderCount, label: "Total Transaksi" },
-    { icon: Layers, value: stats?.total_plans ?? planCount, label: "Paket Hosting" },
+    { icon: DollarSign, value: formattedRevenue, label: t("hosting.totalRevenue", "Total Pendapatan") },
+    { icon: Server, value: stats?.active_containers ?? containerCount, label: t("hosting.runningContainers", "Container Aktif") },
+    { icon: ShoppingCart, value: stats?.total_orders ?? orderCount, label: t("hosting.totalOrders", "Total Transaksi") },
+    { icon: Layers, value: stats?.total_plans ?? planCount, label: t("hosting.pricingTitle", "Paket Hosting") },
   ]
 
   return (

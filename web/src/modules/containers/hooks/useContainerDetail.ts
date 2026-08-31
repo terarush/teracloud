@@ -25,17 +25,18 @@ export function useContainerDetail(containerId: number) {
   const resetMutation = useResetContainerMutation()
   const deleteMutation = useDeleteContainerMutation()
 
-  const isPending =
-    startMutation.isPending ||
-    stopMutation.isPending ||
-    restartMutation.isPending ||
-    resetMutation.isPending ||
-    deleteMutation.isPending
+  const isStarting = startMutation.isPending
+  const isStopping = stopMutation.isPending
+  const isRestarting = restartMutation.isPending
+  const isResetting = resetMutation.isPending
+  const isDeleting = deleteMutation.isPending
+
+  const isPending = isStarting || isStopping || isRestarting || isResetting || isDeleting
 
   const handleStart = async () => {
     try {
       await startMutation.mutateAsync(containerId)
-      toast.success("Container berhasil distart")
+      toast.success("Container berhasil dijalankan")
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Gagal memulai container")
     }
@@ -60,9 +61,13 @@ export function useContainerDetail(containerId: number) {
   }
 
   const handleReset = async (mode: "soft" | "hard" = "soft") => {
+    const modeLabel = mode === "hard" ? "Hard Reset (Hapus semua file)" : "Soft Reset (Pertahankan volume)"
+    if (!confirm(`Konfirmasi ${modeLabel}? Tindakan ini akan membuat ulang instance container.`)) {
+      return
+    }
     try {
       await resetMutation.mutateAsync({ id: containerId, mode })
-      toast.success("Container berhasil direset")
+      toast.success("Container berhasil di-reset")
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Gagal me-reset container")
     }
@@ -85,6 +90,11 @@ export function useContainerDetail(containerId: number) {
     stats: stats || [],
     isLoading: isContainerLoading || isEventsLoading,
     isPending,
+    isStarting,
+    isStopping,
+    isRestarting,
+    isResetting,
+    isDeleting,
     handleStart,
     handleStop,
     handleRestart,

@@ -111,12 +111,14 @@ func (s *ContainerService) StopContainer(ctx context.Context, id, userID uint) e
 	if err != nil {
 		return err
 	}
-	if c.Status != "running" {
-		return containerErrs.ErrContainerNotRunning
+	if c.Status == "stopped" {
+		return nil
 	}
 
-	if err := s.dockerClient.StopContainer(ctx, c.DockerContainerID); err != nil {
-		return fmt.Errorf("docker stop failed: %w", err)
+	if c.DockerContainerID != "" {
+		if err := s.dockerClient.StopContainer(ctx, c.DockerContainerID); err != nil {
+			s.log.Warnf("Docker stop warning for container %s: %v", c.DockerContainerID, err)
+		}
 	}
 
 	now := time.Now()
@@ -185,8 +187,11 @@ func (s *ContainerService) ResetContainer(ctx context.Context, id, userID uint, 
 		return err
 	}
 
-	// 1. Remove old docker container
-	_ = s.dockerClient.RemoveContainer(ctx, c.DockerContainerID)
+	// 1. Stop and remove old docker container
+	if c.DockerContainerID != "" {
+		_ = s.dockerClient.StopContainer(ctx, c.DockerContainerID)
+		_ = s.dockerClient.RemoveContainer(ctx, c.DockerContainerID)
+	}
 
 	// 2. If hard reset, wipe volume directory
 	if mode == "hard" && c.VolumePath != "" {

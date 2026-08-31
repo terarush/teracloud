@@ -1,6 +1,7 @@
 import React from "react"
 import { Play, Square, RotateCw, RefreshCcw, Trash2, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useTranslation } from "react-i18next"
 
 interface ContainerActionsProps {
   containerId: number
@@ -11,6 +12,11 @@ interface ContainerActionsProps {
   onReset: (mode: "soft" | "hard") => void
   onDelete: () => void
   isPending: boolean
+  isStarting?: boolean
+  isStopping?: boolean
+  isRestarting?: boolean
+  isResetting?: boolean
+  isDeleting?: boolean
 }
 
 export const ContainerActions: React.FC<ContainerActionsProps> = ({
@@ -21,7 +27,14 @@ export const ContainerActions: React.FC<ContainerActionsProps> = ({
   onReset,
   onDelete,
   isPending,
+  isStarting,
+  isStopping,
+  isRestarting,
+  isResetting,
+  isDeleting,
 }) => {
+  const { t } = useTranslation()
+
   return (
     <div className="flex flex-wrap items-center gap-2">
       {status === "running" ? (
@@ -31,8 +44,8 @@ export const ContainerActions: React.FC<ContainerActionsProps> = ({
           disabled={isPending}
           onClick={onStop}
         >
-          {isPending ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Square className="w-4 h-4 mr-1" />}
-          Stop
+          {isStopping ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Square className="w-4 h-4 mr-1" />}
+          {t("hosting.stop", "Stop")}
         </Button>
       ) : (
         <Button
@@ -41,14 +54,19 @@ export const ContainerActions: React.FC<ContainerActionsProps> = ({
           disabled={isPending}
           onClick={onStart}
         >
-          {isPending ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Play className="w-4 h-4 mr-1" />}
-          Start
+          {isStarting ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Play className="w-4 h-4 mr-1" />}
+          {t("hosting.start", "Start")}
         </Button>
       )}
 
-      <Button variant="secondary" size="sm" disabled={isPending} onClick={onRestart}>
-        <RotateCw className="w-4 h-4 mr-1" />
-        Restart
+      <Button
+        variant="secondary"
+        size="sm"
+        disabled={isPending}
+        onClick={onRestart}
+      >
+        {isRestarting ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <RotateCw className="w-4 h-4 mr-1" />}
+        {t("hosting.restart", "Restart")}
       </Button>
 
       <Button
@@ -57,8 +75,8 @@ export const ContainerActions: React.FC<ContainerActionsProps> = ({
         disabled={isPending}
         onClick={() => onReset("soft")}
       >
-        <RefreshCcw className="w-4 h-4 mr-1" />
-        Soft Reset
+        {isResetting ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <RefreshCcw className="w-4 h-4 mr-1" />}
+        {t("hosting.softReset", "Soft Reset")}
       </Button>
 
       <Button
@@ -67,8 +85,8 @@ export const ContainerActions: React.FC<ContainerActionsProps> = ({
         disabled={isPending}
         onClick={onDelete}
       >
-        <Trash2 className="w-4 h-4 mr-1" />
-        Hapus
+        {isDeleting ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Trash2 className="w-4 h-4 mr-1" />}
+        {t("hosting.delete", "Hapus")}
       </Button>
     </div>
   )

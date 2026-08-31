@@ -35,9 +35,12 @@ export const PlanCard: React.FC<PlanCardProps> = ({
           : "bg-card ring-1 ring-foreground/10 hover:ring-primary/40 hover:shadow-md"
       }`}
     >
-      {isPopular && (
-        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-primary px-4 py-1 text-xs font-bold text-primary-foreground uppercase tracking-widest shadow-sm">
-          Paling Populer
+      {/* Top Banner Badge (Popular or Custom Plan Badge) */}
+      {(plan.badge || isPopular) && (
+        <div className="absolute top-0 right-0 z-20">
+          <div className="rounded-bl-xl rounded-tr-xl bg-primary px-3.5 py-1 text-[11px] font-bold text-primary-foreground uppercase tracking-wider shadow-sm">
+            {plan.badge || "Paling Populer"}
+          </div>
         </div>
       )}
 
@@ -67,10 +70,19 @@ export const PlanCard: React.FC<PlanCardProps> = ({
               </div>
             )}
             <div className="min-w-0">
-              <h3 className="text-xl sm:text-2xl font-bold text-foreground truncate">{plan.name}</h3>
-              <span className="text-xs px-2 py-0.5 rounded-md bg-muted text-muted-foreground font-mono">
-                {plan.slug}
-              </span>
+              <div className="flex items-center gap-2">
+                <h3 className="text-xl sm:text-2xl font-bold text-foreground truncate">{plan.name}</h3>
+              </div>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <span className="text-xs px-2 py-0.5 rounded-md bg-muted text-muted-foreground font-mono">
+                  {plan.slug}
+                </span>
+                {plan.badge && (
+                  <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-primary/10 text-primary font-semibold">
+                    {plan.badge}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         </div>
