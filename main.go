@@ -17,6 +17,7 @@ import (
 	"ruang-tukar/modules/orders"
 	"ruang-tukar/modules/plans"
 	user "ruang-tukar/modules/users"
+	"ruang-tukar/modules/vouchers"
 )
 
 // @title Ping Uptime API
@@ -65,6 +66,7 @@ func main() {
 	application.RegisterModule(auth.NewModule())
 	application.RegisterModule(plans.NewModule())
 	application.RegisterModule(cart.NewModule())
+	application.RegisterModule(vouchers.NewModule())
 	application.RegisterModule(orders.NewModule())
 	application.RegisterModule(containers.NewModule())
 	application.RegisterModule(billing.NewModule())
