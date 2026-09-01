@@ -21,6 +21,7 @@ import { DashboardPage } from "@/modules/dashboard/pages/DashboardPage"
 import { ContainerDetailPage } from "@/modules/containers/pages/ContainerDetailPage"
 import { TerminalPage } from "@/modules/containers/pages/TerminalPage"
 import { BillingPage } from "@/modules/billing/pages/BillingPage"
+import { ProfilePage } from "@/modules/profile/pages/ProfilePage"
 import { CartPage } from "@/modules/cart/pages/CartPage"
 import { CheckoutPage } from "@/modules/orders/pages/CheckoutPage"
 import { OrderStatusPage } from "@/modules/orders/pages/OrderStatusPage"
@@ -187,6 +188,12 @@ const appBillingRoute = createRoute({
   component: BillingPage,
 })
 
+const appProfileRoute = createRoute({
+  getParentRoute: () => appLayoutRoute,
+  path: "/profile",
+  component: ProfilePage,
+})
+
 const appCartRoute = createRoute({
   getParentRoute: () => appLayoutRoute,
   path: "/cart",
@@ -274,6 +281,7 @@ export const routeTree = rootRoute.addChildren([
     appContainersListRoute,
     appContainerDetailRoute,
     appBillingRoute,
+    appProfileRoute,
     appCartRoute,
     appOrdersRoute,
     appCheckoutRoute,
