@@ -13,11 +13,16 @@ interface CheckoutSummaryProps {
 export const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({ plan, order }) => {
   const { t } = useTranslation()
   const amount = order?.amount || plan?.price_monthly || 0
-  const formattedAmount = new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-    maximumFractionDigits: 0,
-  }).format(amount)
+  const fmt = (n: number) =>
+    new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      maximumFractionDigits: 0,
+    }).format(n)
+  const formattedAmount = fmt(amount)
+
+  const discount = order?.discount_amount || 0
+  const subtotal = discount > 0 ? (order?.total_amount || amount) + discount : amount
 
   return (
     <Card className="ring-1 ring-foreground/10">
@@ -63,8 +68,21 @@ export const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({ plan, order })
         <div className="border-t border-border/50 pt-3 space-y-1.5 text-xs">
           <div className="flex justify-between">
             <span className="text-muted-foreground">Subtotal</span>
-            <span className="font-medium text-foreground">{formattedAmount}</span>
+            <span className="font-medium text-foreground">{fmt(subtotal)}</span>
           </div>
+          {discount > 0 && (
+            <div className="flex justify-between">
+              <span className="text-muted-foreground flex items-center gap-1">
+                Diskon
+                {order?.voucher_code && (
+                  <span className="font-mono text-[10px] uppercase text-primary px-1 py-0.5 rounded bg-primary/10">
+                    {order.voucher_code}
+                  </span>
+                )}
+              </span>
+              <span className="font-medium text-emerald-600 dark:text-emerald-400">-{formattedAmount}</span>
+            </div>
+          )}
           <div className="flex justify-between">
             <span className="text-muted-foreground">PPN (11%)</span>
             <span className="font-medium text-foreground">Termasuk</span>

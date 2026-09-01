@@ -24,6 +24,7 @@ export const CartView: React.FC = () => {
   const checkoutMutation = useCheckoutCartMutation()
   const navigate = useNavigate()
   const { t } = useTranslation()
+  const [voucherCode, setVoucherCode] = React.useState("")
 
   const handleUpdateItem = async (
     id: number,
@@ -58,7 +59,9 @@ export const CartView: React.FC = () => {
 
   const handleCheckout = async () => {
     try {
-      const order = await checkoutMutation.mutateAsync()
+      const order = await checkoutMutation.mutateAsync({
+        voucherCode: voucherCode.trim() || undefined,
+      })
       toast.success("Order berhasil dibuat!")
       navigate({
         to: "/orders/checkout/$orderId",
@@ -151,6 +154,8 @@ export const CartView: React.FC = () => {
             <CartSummaryCard
               totalItems={totalItems}
               totalAmount={totalAmount}
+              voucherCode={voucherCode}
+              onVoucherChange={setVoucherCode}
               onCheckout={handleCheckout}
               onClear={handleClearCart}
               isCheckingOut={checkoutMutation.isPending}
