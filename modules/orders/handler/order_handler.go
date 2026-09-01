@@ -57,7 +57,7 @@ func (h *OrderHandler) CreateOrder(c *echo.Context) error {
 		duration = 1
 	}
 
-	order, err := h.orderService.CreateNewPurchaseOrder(ctx, userID, req.PlanID, req.CustomName, duration)
+	order, err := h.orderService.CreateNewPurchaseOrder(ctx, userID, req.PlanID, req.CustomName, duration, req.VoucherCode)
 	if err != nil {
 		if err == orderErrs.ErrPlanLimitReached {
 			return h.r.BadRequestResponse(c, err)
@@ -79,7 +79,7 @@ func (h *OrderHandler) CheckoutCart(c *echo.Context) error {
 	req := new(request.CheckoutCartRequest)
 	_ = c.Bind(req)
 
-	order, err := h.orderService.CheckoutCart(ctx, userID, req.CartItemIDs)
+	order, err := h.orderService.CheckoutCart(ctx, userID, req.CartItemIDs, req.VoucherCode)
 	if err != nil {
 		if err == orderErrs.ErrPlanLimitReached || err == orderErrs.ErrOrderNotFound {
 			return h.r.BadRequestResponse(c, err)

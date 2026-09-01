@@ -8,18 +8,19 @@ import (
 )
 
 type OrderItemResponse struct {
-	ID                 uint       `json:"id"`
-	OrderID            uint       `json:"order_id"`
-	PlanID             uint       `json:"plan_id"`
-	SubscriptionID     *uint      `json:"subscription_id,omitempty"`
-	CustomName         string     `json:"custom_name"`
-	DurationMonths     int        `json:"duration_months"`
-	UnitPrice          int64      `json:"unit_price"`
-	Subtotal           int64      `json:"subtotal"`
-	ProvisioningStatus string     `json:"provisioning_status"`
-	ErrorMessage       *string    `json:"error_message,omitempty"`
-	CreatedAt          time.Time  `json:"created_at"`
-	UpdatedAt          time.Time  `json:"updated_at"`
+	ID                 uint      `json:"id"`
+	OrderID            uint      `json:"order_id"`
+	PlanID             uint      `json:"plan_id"`
+	SubscriptionID     *uint     `json:"subscription_id,omitempty"`
+	CustomName         string    `json:"custom_name"`
+	DurationMonths     int       `json:"duration_months"`
+	UnitPrice          int64     `json:"unit_price"`
+	Subtotal           int64     `json:"subtotal"`
+	DiscountAmount     int64     `json:"discount_amount"`
+	ProvisioningStatus string    `json:"provisioning_status"`
+	ErrorMessage       *string   `json:"error_message,omitempty"`
+	CreatedAt          time.Time `json:"created_at"`
+	UpdatedAt          time.Time `json:"updated_at"`
 }
 
 type OrderResponse struct {
@@ -31,6 +32,8 @@ type OrderResponse struct {
 	OrderType           string               `json:"order_type"`
 	Amount              int64                `json:"amount"`
 	TotalAmount         int64                `json:"total_amount"`
+	DiscountAmount      int64                `json:"discount_amount"`
+	VoucherCode         string               `json:"voucher_code,omitempty"`
 	Currency            string               `json:"currency"`
 	Status              string               `json:"status"`
 	MidtransOrderID     string               `json:"midtrans_order_id"`
@@ -54,6 +57,7 @@ func FromOrderItemEntity(item *entity.OrderItem) *OrderItemResponse {
 		DurationMonths:     item.DurationMonths,
 		UnitPrice:          item.UnitPrice,
 		Subtotal:           item.Subtotal,
+		DiscountAmount:     item.DiscountAmount,
 		ProvisioningStatus: item.ProvisioningStatus,
 		ErrorMessage:       item.ErrorMessage,
 		CreatedAt:          item.CreatedAt,
@@ -84,6 +88,8 @@ func FromEntity(order *entity.Order) *OrderResponse {
 		OrderType:           order.OrderType,
 		Amount:              order.Amount,
 		TotalAmount:         totalAmount,
+		DiscountAmount:      order.DiscountAmount,
+		VoucherCode:         order.VoucherCode,
 		Currency:            order.Currency,
 		Status:              order.Status,
 		MidtransOrderID:     order.MidtransOrderID,
