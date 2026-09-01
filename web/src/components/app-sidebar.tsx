@@ -129,6 +129,7 @@ export function AppSidebar() {
               <SidebarMenuButton
                 size="lg"
                 tooltip={`${user.first_name} ${user.last_name || ""}`}
+                onClick={() => handleItemClick("/app/profile")}
                 className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground rounded-lg hover:bg-sidebar-accent/60 text-sidebar-foreground group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-1 cursor-pointer transition-all mb-1"
               >
                 <UserAvatar user={user} className="size-7 group-data-[collapsible=icon]:size-5 shrink-0 ring-1 ring-white/20 transition-all" />

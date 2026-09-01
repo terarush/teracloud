@@ -114,6 +114,7 @@
     "adminOrders": "Order Transactions List",
     "adminContainers": "All Containers",
     "adminAudit": "Audit Logs",
+    "adminVouchers": "Vouchers",
     "addPlan": "Add New Plan",
     "editPlan": "Edit Hosting Plan",
     "planName": "Plan Name",
