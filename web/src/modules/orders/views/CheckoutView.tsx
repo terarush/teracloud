@@ -2,21 +2,42 @@ import React from "react"
 import { useCheckout } from "../hooks/useCheckout"
 import { CheckoutSummary } from "../components/CheckoutSummary"
 import { MidtransSnap } from "../components/MidtransSnap"
-import { ArrowLeft, Loader2, CheckCircle, ShoppingBag } from "lucide-react"
+import { ArrowLeft, Loader2, CheckCircle, ShoppingBag, Tag, CheckCircle2, XCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
 import { useNavigate } from "@tanstack/react-router"
 import { useTranslation } from "react-i18next"
+import { useVoucherQuote } from "@/service/hooks/useVoucherQuote"
 
 interface CheckoutViewProps {
   orderId?: number
   planSlug?: string
 }
 
+const formatIDR = (n: number) =>
+  new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    maximumFractionDigits: 0,
+  }).format(n)
+
 export const CheckoutView: React.FC<CheckoutViewProps> = ({ orderId, planSlug }) => {
   const { t } = useTranslation()
-  const { order, plan, isLoading, handleCreateOrder, isCreating } = useCheckout(orderId, planSlug)
+  const { order, plan, isLoading, handleCreateOrder, isCreating, refetchOrder } = useCheckout(orderId, planSlug)
+  const { quote, isValidating, validate } = useVoucherQuote()
   const navigate = useNavigate()
+  const [voucherCode, setVoucherCode] = React.useState("")
+
+  // Live voucher validation against the single plan being purchased.
+  const quoteItems = plan
+    ? [{ plan_id: plan.id, unit_price: plan.price_monthly, duration_months: 1, subtotal: plan.price_monthly }]
+    : []
+
+  const handleVoucherChange = (code: string) => {
+    setVoucherCode(code)
+    validate(code, quoteItems)
+  }
 
   if (isLoading) {
     return (
@@ -119,19 +140,65 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ orderId, planSlug })
                   </div>
                 ) : (
                   <MidtransSnap
-                    token={order.snap_token}
+                    snapToken={order.snap_token}
                     redirectUrl={order.snap_redirect_url}
-                    orderNumber={order.order_number}
+                    onSuccess={() => refetchOrder()}
                   />
                 )}
               </div>
             ) : plan ? (
               <div className="space-y-4 text-center py-4">
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Klik tombol di bawah ini untuk membuat tagihan resmi dan membuka pop-up pembayaran Midtrans Snap.
+                  Klik tombol di bawah ini untuk membuat tagihan resmi, lalu pilih metode pembayaran Anda.
                 </p>
+
+                {/* Voucher */}
+                <div className="text-left space-y-1.5">
+                  <label className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+                    <Tag className="size-3.5" />
+                    <span>Kode Voucher</span>
+                  </label>
+                  <Input
+                    value={voucherCode}
+                    onChange={(e) => handleVoucherChange(e.target.value)}
+                    placeholder="Masukkan kode (mis. HEMAT10)"
+                    className="h-9 text-xs uppercase"
+                  />
+                  {isValidating && (
+                    <p className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                      <Loader2 className="size-3 animate-spin" />
+                      <span>Memeriksa voucher...</span>
+                    </p>
+                  )}
+                  {!isValidating && quote && !quote.valid && (
+                    <p className="flex items-center gap-1.5 text-[11px] text-destructive">
+                      <XCircle className="size-3.5" />
+                      <span>{quote.error_message || "Kode voucher tidak valid"}</span>
+                    </p>
+                  )}
+                  {!isValidating && quote && quote.valid && plan && (
+                    <>
+                      <p className="flex items-center gap-1.5 text-[11px] text-primary">
+                        <CheckCircle2 className="size-3.5" />
+                        <span>Voucher berlaku — hemat {formatIDR(quote.total_discount)}</span>
+                      </p>
+                      <div className="flex justify-between text-xs pt-1">
+                        <span className="text-muted-foreground">Diskon Voucher</span>
+                        <span className="font-medium text-primary">- {formatIDR(quote.total_discount)}</span>
+                      </div>
+                      <div className="flex justify-between text-sm font-bold text-foreground pt-1 border-t border-border/50">
+                        <span>Total Pembayaran</span>
+                        <span className="text-primary">{formatIDR(quote.total_after)}</span>
+                      </div>
+                    </>
+                  )}
+                  <p className="text-[11px] text-muted-foreground">
+                    Diskon diterapkan otomatis saat pembayaran untuk paket yang memenuhi syarat.
+                  </p>
+                </div>
+
                 <Button
-                  onClick={() => handleCreateOrder(plan.id)}
+                  onClick={() => handleCreateOrder(plan.id, voucherCode.trim() || undefined)}
                   disabled={isCreating}
                   className="w-full text-xs font-semibold h-9 cursor-pointer"
                 >

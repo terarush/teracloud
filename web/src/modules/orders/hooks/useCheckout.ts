@@ -11,15 +11,11 @@ export function useCheckout(orderId?: number, planSlug?: string) {
   const { data: plans } = usePlansQuery()
   const createOrderMutation = useCreateOrderMutation()
 
-  const handleCreateOrder = async (targetPlanId: number) => {
+  const handleCreateOrder = async (targetPlanId: number, voucherCode?: string) => {
     try {
-      const created = await createOrderMutation.mutateAsync(targetPlanId)
+      const created = await createOrderMutation.mutateAsync({ planId: targetPlanId, voucherCode })
       toast.success("Order berhasil dibuat!")
-      if (created.snap_redirect_url) {
-        window.location.href = created.snap_redirect_url
-      } else {
-        navigate({ to: "/app/orders" })
-      }
+      navigate({ to: "/orders/checkout/$orderId", params: { orderId: String(created.id) } })
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Gagal memproses pesanan")
     }

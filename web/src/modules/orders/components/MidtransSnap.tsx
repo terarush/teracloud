@@ -54,7 +54,7 @@ export const MidtransSnap: React.FC<MidtransSnapProps> = ({
         className="w-full flex items-center justify-center gap-2 font-bold cursor-pointer"
       >
         <CreditCard className="w-5 h-5" />
-        <span>Bayar Sekarang (Midtrans)</span>
+        <span>Bayar Sekarang</span>
       </Button>
 
       {redirectUrl && (

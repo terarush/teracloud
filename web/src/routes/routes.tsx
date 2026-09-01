@@ -216,6 +216,17 @@ const appCheckoutRoute = createRoute({
   },
 })
 
+// Checkout by plan slug — entry point untuk "Beli Langsung" dari pricing,
+// tempat user menginput voucher sebelum order dibuat & sebelum bayar.
+const appCheckoutByPlanRoute = createRoute({
+  getParentRoute: () => appLayoutRoute,
+  path: "/orders/checkout/plan/$slug",
+  component: () => {
+    const { slug } = appCheckoutByPlanRoute.useParams()
+    return <CheckoutPage planSlug={slug} />
+  },
+})
+
 const rootCheckoutRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/orders/checkout/$orderId",
@@ -292,6 +303,7 @@ export const routeTree = rootRoute.addChildren([
     appCartRoute,
     appOrdersRoute,
     appCheckoutRoute,
+    appCheckoutByPlanRoute,
     appOrdersFinishRoute,
     appConsoleRoute,
     appPlansManageRoute,
