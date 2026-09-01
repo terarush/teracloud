@@ -11,6 +11,8 @@ const (
 	CodeVoucherUsageLimit      = "VOUCHER_USAGE_LIMIT"
 	CodeVoucherMinAmount       = "VOUCHER_MIN_AMOUNT"
 	CodeVoucherPlanNotEligible = "VOUCHER_PLAN_NOT_ELIGIBLE"
+	CodeVoucherInvalidID       = "VOUCHER_INVALID_ID"
+	CodeVoucherUnauthorized    = "VOUCHER_UNAUTHORIZED"
 )
 
 var (
@@ -21,6 +23,8 @@ var (
 	ErrVoucherUsageLimit      = utils.NewAppError(CodeVoucherUsageLimit, "Voucher usage limit reached")
 	ErrVoucherMinAmount       = utils.NewAppError(CodeVoucherMinAmount, "Order does not meet the minimum amount for this voucher")
 	ErrVoucherPlanNotEligible = utils.NewAppError(CodeVoucherPlanNotEligible, "Voucher does not apply to the selected plan")
+	ErrVoucherInvalidID       = utils.NewAppError(CodeVoucherInvalidID, "Invalid voucher ID")
+	ErrVoucherUnauthorized    = utils.NewAppError(CodeVoucherUnauthorized, "Unauthorized")
 )
 
 var FieldLabels = map[string]string{

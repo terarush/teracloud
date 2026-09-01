@@ -44,7 +44,7 @@ func (h *WebhookHandler) HandleMidtrans(c *echo.Context) error {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
-	return h.r.SuccessResponse(c, map[string]string{"status": "ok"}, "Webhook processed successfully")
+	return h.r.SuccessResponse(c, map[string]string{"status": "ok"}, "msg.orders.webhook_processed")
 }
 
 func (h *WebhookHandler) RegisterRoutes(e *echo.Echo, basePath string) {

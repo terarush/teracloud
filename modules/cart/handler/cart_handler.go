@@ -39,7 +39,7 @@ func (h *CartHandler) GetCart(c *echo.Context) error {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
-	return h.r.SuccessResponse(c, response.FromEntities(items), "Cart retrieved successfully")
+	return h.r.SuccessResponse(c, response.FromEntities(items), "msg.cart.retrieved")
 }
 
 func (h *CartHandler) AddToCart(c *echo.Context) error {
@@ -63,7 +63,7 @@ func (h *CartHandler) AddToCart(c *echo.Context) error {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
-	return h.r.CreatedResponse(c, response.FromEntity(item), "Item added to cart successfully")
+	return h.r.CreatedResponse(c, response.FromEntity(item), "msg.cart.item_added")
 }
 
 func (h *CartHandler) UpdateCartItem(c *echo.Context) error {
@@ -72,7 +72,7 @@ func (h *CartHandler) UpdateCartItem(c *echo.Context) error {
 
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		return h.r.BadRequestResponse(c, utils.NewAppError(utils.CodeBadRequest, "Invalid cart item ID"))
+		return h.r.BadRequestResponse(c, cartErrs.ErrCartInvalidItemID)
 	}
 
 	req := new(request.UpdateCartItemRequest)
@@ -98,7 +98,7 @@ func (h *CartHandler) UpdateCartItem(c *echo.Context) error {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
-	return h.r.SuccessResponse(c, response.FromEntity(item), "Cart item updated successfully")
+	return h.r.SuccessResponse(c, response.FromEntity(item), "msg.cart.item_updated")
 }
 
 func (h *CartHandler) RemoveFromCart(c *echo.Context) error {
@@ -107,14 +107,14 @@ func (h *CartHandler) RemoveFromCart(c *echo.Context) error {
 
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		return h.r.BadRequestResponse(c, utils.NewAppError(utils.CodeBadRequest, "Invalid cart item ID"))
+		return h.r.BadRequestResponse(c, cartErrs.ErrCartInvalidItemID)
 	}
 
 	if err := h.cartService.RemoveFromCart(ctx, userID, uint(id)); err != nil {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
-	return h.r.SuccessResponse(c, nil, "Item removed from cart successfully")
+	return h.r.SuccessResponse(c, nil, "msg.cart.item_removed")
 }
 
 func (h *CartHandler) ClearCart(c *echo.Context) error {
@@ -125,5 +125,5 @@ func (h *CartHandler) ClearCart(c *echo.Context) error {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
-	return h.r.SuccessResponse(c, nil, "Cart cleared successfully")
+	return h.r.SuccessResponse(c, nil, "msg.cart.cleared")
 }

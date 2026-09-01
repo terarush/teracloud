@@ -8,6 +8,7 @@ const (
 	CodePlanInactive     = "PLAN_INACTIVE"
 	CodePlanSlugExists   = "PLAN_SLUG_EXISTS"
 	CodePlanLimitReached = "PLAN_LIMIT_REACHED"
+	CodePlanInvalidID     = "PLAN_INVALID_ID"
 )
 
 var (
@@ -15,6 +16,7 @@ var (
 	ErrPlanInactive     = utils.NewAppError(CodePlanInactive, "Plan is not active")
 	ErrPlanSlugExists   = utils.NewAppError(CodePlanSlugExists, "Plan with this name already exists")
 	ErrPlanLimitReached = utils.NewAppError(CodePlanLimitReached, "Maximum containers for this plan reached")
+	ErrPlanInvalidID     = utils.NewAppError(CodePlanInvalidID, "Invalid plan ID")
 )
 
 var FieldLabels = map[string]string{

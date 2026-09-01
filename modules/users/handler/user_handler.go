@@ -59,7 +59,7 @@ func (h *UserHandler) GetAllUsers(c *echo.Context) error {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
-	return h.r.SuccessResponse(c, response.FromEntities(users), "Users retrieved successfully")
+	return h.r.SuccessResponse(c, response.FromEntities(users), "msg.users.list_retrieved")
 }
 
 // GetUser gets a user by ID
@@ -79,7 +79,7 @@ func (h *UserHandler) GetUser(c *echo.Context) error {
 
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		return h.r.BadRequestResponse(c, utils.NewAppError(utils.CodeBadRequest, "Invalid user ID"))
+		return h.r.BadRequestResponse(c, userErrs.ErrUserInvalidID)
 	}
 
 	user, err := h.userService.GetUserByID(ctx, uint(id))
@@ -90,7 +90,7 @@ func (h *UserHandler) GetUser(c *echo.Context) error {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
-	return h.r.SuccessResponse(c, response.FromEntity(user), "User retrieved successfully")
+	return h.r.SuccessResponse(c, response.FromEntity(user), "msg.users.retrieved")
 }
 
 // CreateUser creates a new user
@@ -130,7 +130,7 @@ func (h *UserHandler) CreateUser(c *echo.Context) error {
 	// event bus publish
 	h.event.Publish(bus.Event{Type: "user.created", Payload: user})
 
-	return h.r.CreatedResponse(c, response.FromEntity(user), "User created successfully")
+	return h.r.CreatedResponse(c, response.FromEntity(user), "msg.users.created")
 }
 
 // UpdateUser updates a user
@@ -151,7 +151,7 @@ func (h *UserHandler) UpdateUser(c *echo.Context) error {
 
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		return h.r.BadRequestResponse(c, utils.NewAppError(utils.CodeBadRequest, "Invalid user ID"))
+		return h.r.BadRequestResponse(c, userErrs.ErrUserInvalidID)
 	}
 
 	req := new(request.UpdateUserRequest)
@@ -185,7 +185,7 @@ func (h *UserHandler) UpdateUser(c *echo.Context) error {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
-	return h.r.SuccessResponse(c, response.FromEntity(user), "User updated successfully")
+	return h.r.SuccessResponse(c, response.FromEntity(user), "msg.users.updated")
 }
 
 // DeleteUser deletes a user
@@ -205,7 +205,7 @@ func (h *UserHandler) DeleteUser(c *echo.Context) error {
 
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		return h.r.BadRequestResponse(c, utils.NewAppError(utils.CodeBadRequest, "Invalid user ID"))
+		return h.r.BadRequestResponse(c, userErrs.ErrUserInvalidID)
 	}
 
 	err = h.userService.DeleteUser(ctx, uint(id))
@@ -239,7 +239,7 @@ func (h *UserHandler) GetUserProfile(c *echo.Context) error {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
-	return h.r.SuccessResponse(c, response.FromEntity(user), "Profile retrieved successfully")
+	return h.r.SuccessResponse(c, response.FromEntity(user), "msg.users.profile_retrieved")
 }
 
 // GetStats returns global platform statistics (admin)
@@ -278,7 +278,7 @@ func (h *UserHandler) GetStats(c *echo.Context) error {
 		"total_users":       totalUsers,
 	}
 
-	return h.r.SuccessResponse(c, stats, "Platform statistics retrieved successfully")
+	return h.r.SuccessResponse(c, stats, "msg.users.stats_retrieved")
 }
 
 // GetAuditLogs returns audit logs (admin)
@@ -294,7 +294,7 @@ func (h *UserHandler) GetAuditLogs(c *echo.Context) error {
 		return h.r.InternalServerErrorResponse(c, result.Error)
 	}
 
-	return h.r.SuccessResponse(c, logs, "Audit logs retrieved successfully")
+	return h.r.SuccessResponse(c, logs, "msg.users.logs_retrieved")
 }
 
 // RegisterRoutes registers the user routes

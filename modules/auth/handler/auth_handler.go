@@ -155,7 +155,7 @@ func (h *AuthHandler) Register(c *echo.Context) error {
 		return h.r.ErrorResponse(c, http.StatusInternalServerError, err)
 	}
 
-	return h.r.SuccessResponse(c, resp, "Registration successful")
+	return h.r.SuccessResponse(c, resp, "msg.auth.registration_success")
 }
 
 // Login handles user authentication.
@@ -204,7 +204,7 @@ func (h *AuthHandler) Login(c *echo.Context) error {
 		return h.r.ErrorResponse(c, http.StatusInternalServerError, err)
 	}
 
-	return h.r.SuccessResponse(c, resp, "Login successful")
+	return h.r.SuccessResponse(c, resp, "msg.auth.login_success")
 }
 
 // GetProfile retrieves the authenticated user's profile.
@@ -229,7 +229,7 @@ func (h *AuthHandler) GetProfile(c *echo.Context) error {
 		return h.r.ErrorResponse(c, http.StatusInternalServerError, err)
 	}
 
-	return h.r.SuccessResponse(c, response.FromEntity(user), "Profile retrieved successfully")
+	return h.r.SuccessResponse(c, response.FromEntity(user), "msg.auth.profile_retrieved")
 }
 
 // UpdateProfile updates the authenticated user's profile.
@@ -269,7 +269,7 @@ func (h *AuthHandler) UpdateProfile(c *echo.Context) error {
 		return h.r.ErrorResponse(c, http.StatusInternalServerError, err)
 	}
 
-	return h.r.SuccessResponse(c, response.FromEntity(user), "Profile updated successfully")
+	return h.r.SuccessResponse(c, response.FromEntity(user), "msg.auth.profile_updated")
 }
 
 type setUsernameRequest struct {
@@ -298,7 +298,7 @@ func (h *AuthHandler) SetUsername(c *echo.Context) error {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
-	return h.r.SuccessResponse(c, response.FromEntity(user), "Username updated successfully")
+	return h.r.SuccessResponse(c, response.FromEntity(user), "msg.auth.username_updated")
 }
 
 // ChangePassword handles password change request.
@@ -327,7 +327,7 @@ func (h *AuthHandler) ChangePassword(c *echo.Context) error {
 	_, err := h.authService.ChangePassword(c.Request().Context(), userID, req.OldPassword, req.NewPassword)
 	if err != nil {
 		if err == service.ErrInvalidOldPassword {
-			return h.r.ErrorResponse(c, http.StatusBadRequest, utils.NewAppError(utils.CodeBadRequest, "Incorrect current password"))
+			return h.r.ErrorResponse(c, http.StatusBadRequest, authErrs.ErrInvalidOldPass)
 		}
 		if err == service.ErrUserNotFound {
 			return h.r.ErrorResponse(c, http.StatusNotFound, authErrs.ErrUserNotFound)
@@ -335,7 +335,7 @@ func (h *AuthHandler) ChangePassword(c *echo.Context) error {
 		return h.r.ErrorResponse(c, http.StatusInternalServerError, err)
 	}
 
-	return h.r.SuccessResponse(c, nil, "Password changed successfully")
+	return h.r.SuccessResponse(c, nil, "msg.auth.password_changed")
 }
 
 // Logout handles user logout.
@@ -347,7 +347,7 @@ func (h *AuthHandler) ChangePassword(c *echo.Context) error {
 // @Router /auth/logout [post]
 func (h *AuthHandler) Logout(c *echo.Context) error {
 	h.log.Info("Handling logout request")
-	return h.r.SuccessResponse(c, nil, "Logout successful")
+	return h.r.SuccessResponse(c, nil, "msg.auth.logout_success")
 }
 
 // Refresh handles token refresh.
@@ -379,7 +379,7 @@ func (h *AuthHandler) Refresh(c *echo.Context) error {
 
 	typ, _ := claims["type"].(string)
 	if typ != "refresh" {
-		return h.r.ErrorResponse(c, http.StatusUnauthorized, utils.NewAppError(utils.CodeUnauthorized, "Invalid token type"))
+		return h.r.ErrorResponse(c, http.StatusUnauthorized, authErrs.ErrInvalidTokenType)
 	}
 
 	userID := uint(claims["user_id"].(float64))
@@ -395,7 +395,7 @@ func (h *AuthHandler) Refresh(c *echo.Context) error {
 		return h.r.ErrorResponse(c, http.StatusInternalServerError, err)
 	}
 
-	return h.r.SuccessResponse(c, resp, "Token refreshed successfully")
+	return h.r.SuccessResponse(c, resp, "msg.auth.token_refreshed")
 }
 
 // CheckEmail checks if email is already registered.
@@ -409,13 +409,13 @@ func (h *AuthHandler) Refresh(c *echo.Context) error {
 func (h *AuthHandler) CheckEmail(c *echo.Context) error {
 	email := c.QueryParam("email")
 	if email == "" {
-		return h.r.ErrorResponse(c, http.StatusBadRequest, utils.NewAppError(utils.CodeBadRequest, "Email is required"))
+		return h.r.ErrorResponse(c, http.StatusBadRequest, authErrs.ErrEmailRequired)
 	}
 
 	_, err := h.authService.GetUserByEmail(c.Request().Context(), email)
 	available := err != nil
 
-	return h.r.SuccessResponse(c, map[string]bool{"available": available}, "ok")
+	return h.r.SuccessResponse(c, map[string]bool{"available": available}, "msg.auth.check_done")
 }
 
 // CheckUsername checks if username is already registered.
@@ -429,13 +429,13 @@ func (h *AuthHandler) CheckEmail(c *echo.Context) error {
 func (h *AuthHandler) CheckUsername(c *echo.Context) error {
 	username := c.QueryParam("username")
 	if username == "" {
-		return h.r.ErrorResponse(c, http.StatusBadRequest, utils.NewAppError(utils.CodeBadRequest, "Username is required"))
+		return h.r.ErrorResponse(c, http.StatusBadRequest, authErrs.ErrUsernameRequired)
 	}
 
 	_, err := h.authService.GetUserByUsername(c.Request().Context(), username)
 	available := err != nil
 
-	return h.r.SuccessResponse(c, map[string]bool{"available": available}, "ok")
+	return h.r.SuccessResponse(c, map[string]bool{"available": available}, "msg.auth.check_done")
 }
 
 // ForgotPassword sends a password reset email.
@@ -464,7 +464,7 @@ func (h *AuthHandler) ForgotPassword(c *echo.Context) error {
 	h.forgotMu.Lock()
 	if last, ok := h.forgotReq[req.Email]; ok && time.Since(last) < 60*time.Second {
 		h.forgotMu.Unlock()
-		return h.r.SuccessResponse(c, nil, "If the email is registered, a reset link will be sent")
+		return h.r.SuccessResponse(c, nil, "msg.auth.reset_link_sent")
 	}
 	h.forgotReq[req.Email] = time.Now()
 	h.forgotMu.Unlock()
@@ -475,7 +475,7 @@ func (h *AuthHandler) ForgotPassword(c *echo.Context) error {
 		return h.r.ErrorResponse(c, http.StatusInternalServerError, err)
 	}
 
-	return h.r.SuccessResponse(c, nil, "If the email is registered, a reset link will be sent")
+	return h.r.SuccessResponse(c, nil, "msg.auth.reset_link_sent")
 }
 
 // VerifyResetToken checks if a reset token is still valid.
@@ -487,12 +487,12 @@ func (h *AuthHandler) ForgotPassword(c *echo.Context) error {
 func (h *AuthHandler) VerifyResetToken(c *echo.Context) error {
 	token := c.QueryParam("token")
 	if token == "" {
-		return h.r.ErrorResponse(c, http.StatusBadRequest, utils.NewAppError(utils.CodeBadRequest, "Token is required"))
+		return h.r.ErrorResponse(c, http.StatusBadRequest, authErrs.ErrTokenRequired)
 	}
 	if err := h.authService.VerifyResetToken(c.Request().Context(), token); err != nil {
 		return h.r.ErrorResponse(c, http.StatusBadRequest, authErrs.ErrTokenInvalid)
 	}
-	return h.r.SuccessResponse(c, nil, "Token is valid")
+	return h.r.SuccessResponse(c, nil, "msg.auth.token_valid")
 }
 
 // ResetPassword resets the user's password.
@@ -522,13 +522,13 @@ func (h *AuthHandler) ResetPassword(c *echo.Context) error {
 		return h.r.ErrorResponse(c, http.StatusBadRequest, err)
 	}
 
-	return h.r.SuccessResponse(c, nil, "Password reset successfully")
+	return h.r.SuccessResponse(c, nil, "msg.auth.password_reset")
 }
 
 // GoogleLogin redirects to Google OAuth consent screen.
 func (h *AuthHandler) GoogleLogin(c *echo.Context) error {
 	if oauth.GoogleOAuthConfig == nil {
-		return h.r.ErrorResponse(c, http.StatusServiceUnavailable, utils.NewAppError(utils.CodeUnavailable, "Google OAuth not configured"))
+		return h.r.ErrorResponse(c, http.StatusServiceUnavailable, authErrs.ErrGoogleNotConfigured)
 	}
 	url := oauth.GoogleOAuthConfig.AuthCodeURL("state", oauth2.AccessTypeOffline)
 	return c.Redirect(http.StatusTemporaryRedirect, url)
@@ -538,17 +538,17 @@ func (h *AuthHandler) GoogleLogin(c *echo.Context) error {
 func (h *AuthHandler) GoogleCallback(c *echo.Context) error {
 	code := c.QueryParam("code")
 	if code == "" {
-		return h.r.ErrorResponse(c, http.StatusBadRequest, utils.NewAppError(utils.CodeBadRequest, "Authorization code not found"))
+		return h.r.ErrorResponse(c, http.StatusBadRequest, authErrs.ErrGoogleCodeMissing)
 	}
 
 	userInfo, err := oauth.GetGoogleUserInfo(c.Request().Context(), code)
 	if err != nil {
 		h.log.Error("Google OAuth error:", err)
-		return h.r.ErrorResponse(c, http.StatusUnauthorized, utils.NewAppError(utils.CodeUnauthorized, "Google authentication failed"))
+		return h.r.ErrorResponse(c, http.StatusUnauthorized, authErrs.ErrGoogleAuthFailed)
 	}
 
 	if !userInfo.VerifiedEmail {
-		return h.r.ErrorResponse(c, http.StatusUnauthorized, utils.NewAppError(utils.CodeUnauthorized, "Google email not verified"))
+		return h.r.ErrorResponse(c, http.StatusUnauthorized, authErrs.ErrGoogleEmailUnverified)
 	}
 
 	user, err := h.authService.GetUserByEmail(c.Request().Context(), userInfo.Email)
@@ -556,7 +556,7 @@ func (h *AuthHandler) GoogleCallback(c *echo.Context) error {
 		user = entity.NewGoogleUser(userInfo.Name, "", userInfo.Email, userInfo.ID, userInfo.Picture)
 		if err := h.authService.CreateUser(c.Request().Context(), user); err != nil {
 			h.log.Error("Failed to create user from Google:", err)
-			return h.r.ErrorResponse(c, http.StatusInternalServerError, utils.NewAppError(utils.CodeInternal, "Failed to create user"))
+			return h.r.ErrorResponse(c, http.StatusInternalServerError, authErrs.ErrUserCreateFailed)
 		}
 	}
 
@@ -576,7 +576,7 @@ func (h *AuthHandler) GoogleCallback(c *echo.Context) error {
 func (h *AuthHandler) UploadFile(c *echo.Context) error {
 	file, err := c.FormFile("file")
 	if err != nil {
-		return h.r.ErrorResponse(c, http.StatusBadRequest, utils.NewAppError(utils.CodeBadRequest, "File not found"))
+		return h.r.ErrorResponse(c, http.StatusBadRequest, authErrs.ErrFileNotFound)
 	}
 
 	src, err := file.Open()
@@ -609,7 +609,7 @@ func (h *AuthHandler) UploadFile(c *echo.Context) error {
 
 		fileURL, err := storage.UploadObject(c.Request().Context(), objectPath, src, file.Size, contentType)
 		if err == nil {
-			return h.r.SuccessResponse(c, map[string]string{"url": fileURL}, "File uploaded successfully to object storage")
+			return h.r.SuccessResponse(c, map[string]string{"url": fileURL}, "msg.auth.upload_success")
 		}
 		h.log.Warn("Failed to upload to object storage, falling back to local disk: %v", err)
 		// Reset reader offset if possible or re-open
@@ -624,7 +624,7 @@ func (h *AuthHandler) UploadFile(c *echo.Context) error {
 	// 2. Fallback to local storage (./public/uploads/{module})
 	uploadDir := filepath.Join("./public/uploads", strings.TrimSuffix(folderPrefix, "/"))
 	if err := os.MkdirAll(uploadDir, 0755); err != nil {
-		return h.r.ErrorResponse(c, http.StatusInternalServerError, utils.NewAppError(utils.CodeInternal, "Failed to create upload directory"))
+		return h.r.ErrorResponse(c, http.StatusInternalServerError, authErrs.ErrUploadDirFailed)
 	}
 
 	dstPath := filepath.Join(uploadDir, cleanFilename)
@@ -639,7 +639,7 @@ func (h *AuthHandler) UploadFile(c *echo.Context) error {
 	}
 
 	fileURL := fmt.Sprintf("/public/uploads/%s%s", folderPrefix, cleanFilename)
-	return h.r.SuccessResponse(c, map[string]string{"url": fileURL}, "File uploaded successfully")
+	return h.r.SuccessResponse(c, map[string]string{"url": fileURL}, "msg.auth.upload_success")
 }
 
 // RegisterRoutes sets up the auth routes.

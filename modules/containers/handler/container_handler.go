@@ -40,7 +40,7 @@ func (h *ContainerHandler) GetContainers(c *echo.Context) error {
 	userID := utils.UserIDFromCtx(c)
 	userRole := utils.UserRoleFromCtx(c)
 	if userID == 0 {
-		return h.r.UnauthorizedResponse(c, utils.NewAppError(utils.CodeUnauthorized, "Unauthorized"))
+		return h.r.UnauthorizedResponse(c, containerErrs.ErrContainerUnauthorized)
 	}
 
 	var containers []*entity.Container
@@ -55,7 +55,7 @@ func (h *ContainerHandler) GetContainers(c *echo.Context) error {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
-	return h.r.SuccessResponse(c, response.FromEntities(containers), "Containers retrieved successfully")
+	return h.r.SuccessResponse(c, response.FromEntities(containers), "msg.containers.list_retrieved")
 }
 
 // GetUserContainers lists all containers for current user
@@ -71,7 +71,7 @@ func (h *ContainerHandler) GetContainerByID(c *echo.Context) error {
 
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		return h.r.BadRequestResponse(c, utils.NewAppError(utils.CodeBadRequest, "Invalid container ID"))
+		return h.r.BadRequestResponse(c, containerErrs.ErrContainerInvalidID)
 	}
 
 	container, err := h.containerService.GetContainerByID(ctx, uint(id))
@@ -83,10 +83,10 @@ func (h *ContainerHandler) GetContainerByID(c *echo.Context) error {
 	}
 
 	if userRole != middleware.RoleAdmin && container.UserID != userID {
-		return h.r.ForbiddenResponse(c, utils.NewAppError(utils.CodeForbidden, "You do not have access to this container"))
+		return h.r.ForbiddenResponse(c, containerErrs.ErrContainerForbidden)
 	}
 
-	return h.r.SuccessResponse(c, response.FromEntity(container), "Container retrieved successfully")
+	return h.r.SuccessResponse(c, response.FromEntity(container), "msg.containers.retrieved")
 }
 
 // StartContainer starts container
@@ -97,7 +97,7 @@ func (h *ContainerHandler) StartContainer(c *echo.Context) error {
 
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		return h.r.BadRequestResponse(c, utils.NewAppError(utils.CodeBadRequest, "Invalid container ID"))
+		return h.r.BadRequestResponse(c, containerErrs.ErrContainerInvalidID)
 	}
 
 	container, err := h.containerService.GetContainerByID(ctx, uint(id))
@@ -105,7 +105,7 @@ func (h *ContainerHandler) StartContainer(c *echo.Context) error {
 		return h.r.NotFoundResponse(c, err)
 	}
 	if userRole != middleware.RoleAdmin && container.UserID != userID {
-		return h.r.ForbiddenResponse(c, utils.NewAppError(utils.CodeForbidden, "Unauthorized"))
+		return h.r.ForbiddenResponse(c, containerErrs.ErrContainerForbidden)
 	}
 
 	if err := h.containerService.StartContainer(ctx, uint(id), container.UserID); err != nil {
@@ -115,7 +115,7 @@ func (h *ContainerHandler) StartContainer(c *echo.Context) error {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
-	return h.r.SuccessResponse(c, map[string]string{"status": "running"}, "Container started successfully")
+	return h.r.SuccessResponse(c, map[string]string{"status": "running"}, "msg.containers.started")
 }
 
 // StopContainer stops container
@@ -126,7 +126,7 @@ func (h *ContainerHandler) StopContainer(c *echo.Context) error {
 
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		return h.r.BadRequestResponse(c, utils.NewAppError(utils.CodeBadRequest, "Invalid container ID"))
+		return h.r.BadRequestResponse(c, containerErrs.ErrContainerInvalidID)
 	}
 
 	container, err := h.containerService.GetContainerByID(ctx, uint(id))
@@ -134,7 +134,7 @@ func (h *ContainerHandler) StopContainer(c *echo.Context) error {
 		return h.r.NotFoundResponse(c, err)
 	}
 	if userRole != middleware.RoleAdmin && container.UserID != userID {
-		return h.r.ForbiddenResponse(c, utils.NewAppError(utils.CodeForbidden, "Unauthorized"))
+		return h.r.ForbiddenResponse(c, containerErrs.ErrContainerForbidden)
 	}
 
 	if err := h.containerService.StopContainer(ctx, uint(id), container.UserID); err != nil {
@@ -144,7 +144,7 @@ func (h *ContainerHandler) StopContainer(c *echo.Context) error {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
-	return h.r.SuccessResponse(c, map[string]string{"status": "stopped"}, "Container stopped successfully")
+	return h.r.SuccessResponse(c, map[string]string{"status": "stopped"}, "msg.containers.stopped")
 }
 
 // RestartContainer restarts container
@@ -155,7 +155,7 @@ func (h *ContainerHandler) RestartContainer(c *echo.Context) error {
 
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		return h.r.BadRequestResponse(c, utils.NewAppError(utils.CodeBadRequest, "Invalid container ID"))
+		return h.r.BadRequestResponse(c, containerErrs.ErrContainerInvalidID)
 	}
 
 	container, err := h.containerService.GetContainerByID(ctx, uint(id))
@@ -163,14 +163,14 @@ func (h *ContainerHandler) RestartContainer(c *echo.Context) error {
 		return h.r.NotFoundResponse(c, err)
 	}
 	if userRole != middleware.RoleAdmin && container.UserID != userID {
-		return h.r.ForbiddenResponse(c, utils.NewAppError(utils.CodeForbidden, "Unauthorized"))
+		return h.r.ForbiddenResponse(c, containerErrs.ErrContainerForbidden)
 	}
 
 	if err := h.containerService.RestartContainer(ctx, uint(id), container.UserID); err != nil {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
-	return h.r.SuccessResponse(c, map[string]string{"status": "running"}, "Container restarted successfully")
+	return h.r.SuccessResponse(c, map[string]string{"status": "running"}, "msg.containers.restarted")
 }
 
 // RebootContainer force kills and reboots container
@@ -181,7 +181,7 @@ func (h *ContainerHandler) RebootContainer(c *echo.Context) error {
 
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		return h.r.BadRequestResponse(c, utils.NewAppError(utils.CodeBadRequest, "Invalid container ID"))
+		return h.r.BadRequestResponse(c, containerErrs.ErrContainerInvalidID)
 	}
 
 	container, err := h.containerService.GetContainerByID(ctx, uint(id))
@@ -189,14 +189,14 @@ func (h *ContainerHandler) RebootContainer(c *echo.Context) error {
 		return h.r.NotFoundResponse(c, err)
 	}
 	if userRole != middleware.RoleAdmin && container.UserID != userID {
-		return h.r.ForbiddenResponse(c, utils.NewAppError(utils.CodeForbidden, "Unauthorized"))
+		return h.r.ForbiddenResponse(c, containerErrs.ErrContainerForbidden)
 	}
 
 	if err := h.containerService.RebootContainer(ctx, uint(id), container.UserID); err != nil {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
-	return h.r.SuccessResponse(c, map[string]string{"status": "running"}, "Container rebooted successfully")
+	return h.r.SuccessResponse(c, map[string]string{"status": "running"}, "msg.containers.rebooted")
 }
 
 // ResetContainer resets container
@@ -207,7 +207,7 @@ func (h *ContainerHandler) ResetContainer(c *echo.Context) error {
 
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		return h.r.BadRequestResponse(c, utils.NewAppError(utils.CodeBadRequest, "Invalid container ID"))
+		return h.r.BadRequestResponse(c, containerErrs.ErrContainerInvalidID)
 	}
 
 	container, err := h.containerService.GetContainerByID(ctx, uint(id))
@@ -215,7 +215,7 @@ func (h *ContainerHandler) ResetContainer(c *echo.Context) error {
 		return h.r.NotFoundResponse(c, err)
 	}
 	if userRole != middleware.RoleAdmin && container.UserID != userID {
-		return h.r.ForbiddenResponse(c, utils.NewAppError(utils.CodeForbidden, "Unauthorized"))
+		return h.r.ForbiddenResponse(c, containerErrs.ErrContainerForbidden)
 	}
 
 	req := new(request.ResetContainerRequest)
@@ -230,7 +230,7 @@ func (h *ContainerHandler) ResetContainer(c *echo.Context) error {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
-	return h.r.SuccessResponse(c, map[string]string{"status": "running"}, "Container reset successfully")
+	return h.r.SuccessResponse(c, map[string]string{"status": "running"}, "msg.containers.reset")
 }
 
 // DeleteContainer deletes container and releases resources
@@ -241,7 +241,7 @@ func (h *ContainerHandler) DeleteContainer(c *echo.Context) error {
 
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		return h.r.BadRequestResponse(c, utils.NewAppError(utils.CodeBadRequest, "Invalid container ID"))
+		return h.r.BadRequestResponse(c, containerErrs.ErrContainerInvalidID)
 	}
 
 	container, err := h.containerService.GetContainerByID(ctx, uint(id))
@@ -249,7 +249,7 @@ func (h *ContainerHandler) DeleteContainer(c *echo.Context) error {
 		return h.r.NotFoundResponse(c, err)
 	}
 	if userRole != middleware.RoleAdmin && container.UserID != userID {
-		return h.r.ForbiddenResponse(c, utils.NewAppError(utils.CodeForbidden, "Unauthorized"))
+		return h.r.ForbiddenResponse(c, containerErrs.ErrContainerForbidden)
 	}
 
 	if err := h.containerService.DeleteContainer(ctx, uint(id), container.UserID); err != nil {
@@ -267,7 +267,7 @@ func (h *ContainerHandler) GetContainerEvents(c *echo.Context) error {
 
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		return h.r.BadRequestResponse(c, utils.NewAppError(utils.CodeBadRequest, "Invalid container ID"))
+		return h.r.BadRequestResponse(c, containerErrs.ErrContainerInvalidID)
 	}
 
 	container, err := h.containerService.GetContainerByID(ctx, uint(id))
@@ -275,7 +275,7 @@ func (h *ContainerHandler) GetContainerEvents(c *echo.Context) error {
 		return h.r.NotFoundResponse(c, err)
 	}
 	if userRole != middleware.RoleAdmin && container.UserID != userID {
-		return h.r.ForbiddenResponse(c, utils.NewAppError(utils.CodeForbidden, "Unauthorized"))
+		return h.r.ForbiddenResponse(c, containerErrs.ErrContainerForbidden)
 	}
 
 	events, err := h.containerService.GetContainerEvents(ctx, uint(id))
@@ -283,7 +283,7 @@ func (h *ContainerHandler) GetContainerEvents(c *echo.Context) error {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
-	return h.r.SuccessResponse(c, events, "Container events retrieved successfully")
+	return h.r.SuccessResponse(c, events, "msg.containers.events_retrieved")
 }
 
 // GetStats returns current container resource stats
@@ -294,7 +294,7 @@ func (h *ContainerHandler) GetStats(c *echo.Context) error {
 
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		return h.r.BadRequestResponse(c, utils.NewAppError(utils.CodeBadRequest, "Invalid container ID"))
+		return h.r.BadRequestResponse(c, containerErrs.ErrContainerInvalidID)
 	}
 
 	container, err := h.containerService.GetContainerByID(ctx, uint(id))
@@ -302,7 +302,7 @@ func (h *ContainerHandler) GetStats(c *echo.Context) error {
 		return h.r.NotFoundResponse(c, err)
 	}
 	if userRole != middleware.RoleAdmin && container.UserID != userID {
-		return h.r.ForbiddenResponse(c, utils.NewAppError(utils.CodeForbidden, "Unauthorized"))
+		return h.r.ForbiddenResponse(c, containerErrs.ErrContainerForbidden)
 	}
 
 	var cpuUsage float64 = 0.0
@@ -331,7 +331,7 @@ func (h *ContainerHandler) GetStats(c *echo.Context) error {
 		"recorded_at":       time.Now().Format(time.RFC3339),
 	}
 
-	return h.r.SuccessResponse(c, stats, "Container stats retrieved successfully")
+	return h.r.SuccessResponse(c, stats, "msg.containers.stats_retrieved")
 }
 
 // GetLogs returns stdout/stderr output from the container.
@@ -342,7 +342,7 @@ func (h *ContainerHandler) GetLogs(c *echo.Context) error {
 
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		return h.r.BadRequestResponse(c, utils.NewAppError(utils.CodeBadRequest, "Invalid container ID"))
+		return h.r.BadRequestResponse(c, containerErrs.ErrContainerInvalidID)
 	}
 
 	container, err := h.containerService.GetContainerByID(ctx, uint(id))
@@ -350,7 +350,7 @@ func (h *ContainerHandler) GetLogs(c *echo.Context) error {
 		return h.r.NotFoundResponse(c, err)
 	}
 	if userRole != middleware.RoleAdmin && container.UserID != userID {
-		return h.r.ForbiddenResponse(c, utils.NewAppError(utils.CodeForbidden, "Unauthorized"))
+		return h.r.ForbiddenResponse(c, containerErrs.ErrContainerForbidden)
 	}
 
 	tail := c.QueryParam("tail")
@@ -363,7 +363,7 @@ func (h *ContainerHandler) GetLogs(c *echo.Context) error {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
-	return h.r.SuccessResponse(c, map[string]string{"logs": logs}, "Container logs retrieved successfully")
+	return h.r.SuccessResponse(c, map[string]string{"logs": logs}, "msg.containers.logs_retrieved")
 }
 
 // SuspendContainer force suspends container (admin)
@@ -371,7 +371,7 @@ func (h *ContainerHandler) SuspendContainer(c *echo.Context) error {
 	ctx := c.Request().Context()
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		return h.r.BadRequestResponse(c, utils.NewAppError(utils.CodeBadRequest, "Invalid container ID"))
+		return h.r.BadRequestResponse(c, containerErrs.ErrContainerInvalidID)
 	}
 
 	container, err := h.containerService.GetContainerByID(ctx, uint(id))
@@ -380,7 +380,7 @@ func (h *ContainerHandler) SuspendContainer(c *echo.Context) error {
 	}
 
 	_ = h.containerService.StopContainer(ctx, uint(id), container.UserID)
-	return h.r.SuccessResponse(c, map[string]string{"status": "suspended"}, "Container suspended successfully")
+	return h.r.SuccessResponse(c, map[string]string{"status": "suspended"}, "msg.containers.suspended")
 }
 
 // GetAllContainers (admin)
@@ -390,7 +390,7 @@ func (h *ContainerHandler) GetAllContainers(c *echo.Context) error {
 	if err != nil {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
-	return h.r.SuccessResponse(c, response.FromEntities(containers), "Containers retrieved successfully")
+	return h.r.SuccessResponse(c, response.FromEntities(containers), "msg.containers.list_retrieved")
 }
 
 func (h *ContainerHandler) AdminForceDeleteContainer(c *echo.Context) error {
@@ -398,7 +398,7 @@ func (h *ContainerHandler) AdminForceDeleteContainer(c *echo.Context) error {
 
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		return h.r.BadRequestResponse(c, utils.NewAppError(utils.CodeBadRequest, "Invalid container ID"))
+		return h.r.BadRequestResponse(c, containerErrs.ErrContainerInvalidID)
 	}
 
 	container, err := h.containerService.GetContainerByID(ctx, uint(id))
@@ -418,14 +418,14 @@ func (h *ContainerHandler) AdminRestartContainer(c *echo.Context) error {
 
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		return h.r.BadRequestResponse(c, utils.NewAppError(utils.CodeBadRequest, "Invalid container ID"))
+		return h.r.BadRequestResponse(c, containerErrs.ErrContainerInvalidID)
 	}
 
 	if err := h.containerService.RestartContainer(ctx, uint(id), 0); err != nil {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
-	return h.r.SuccessResponse(c, nil, "Container restarted")
+	return h.r.SuccessResponse(c, nil, "msg.containers.restarted")
 }
 
 func (h *ContainerHandler) RegisterRoutes(e *echo.Echo, basePath string) {

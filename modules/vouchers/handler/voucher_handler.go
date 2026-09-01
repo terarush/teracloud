@@ -41,7 +41,7 @@ func (h *VoucherHandler) ValidateVoucher(c *echo.Context) error {
 	ctx := c.Request().Context()
 	userID := utils.UserIDFromCtx(c)
 	if userID == 0 {
-		return h.r.UnauthorizedResponse(c, utils.NewAppError(utils.CodeUnauthorized, "Unauthorized"))
+		return h.r.UnauthorizedResponse(c, voucherErrs.ErrVoucherUnauthorized)
 	}
 
 	req := new(request.ValidateVoucherRequest)
@@ -73,10 +73,10 @@ func (h *VoucherHandler) ValidateVoucher(c *echo.Context) error {
 			TotalSubtotal: totalSubtotal,
 			ErrorCode:     utils.CodeOf(err),
 			ErrorMessage:  err.Error(),
-		}, "Voucher validation completed")
+		}, "msg.vouchers.quote_valid")
 	}
 
-	return h.r.SuccessResponse(c, response.FromQuote(res, req.VoucherCode, totalSubtotal), "Voucher validation completed")
+	return h.r.SuccessResponse(c, response.FromQuote(res, req.VoucherCode, totalSubtotal), "msg.vouchers.quote_valid")
 }
 
 // CreateVoucher handles admin voucher creation.
@@ -134,7 +134,7 @@ func (h *VoucherHandler) CreateVoucher(c *echo.Context) error {
 		NewValues: voucher,
 	})
 
-	return h.r.CreatedResponse(c, response.FromEntity(voucher), "Voucher created successfully")
+	return h.r.CreatedResponse(c, response.FromEntity(voucher), "msg.vouchers.created")
 }
 
 // UpdateVoucher handles admin voucher update.
@@ -143,7 +143,7 @@ func (h *VoucherHandler) UpdateVoucher(c *echo.Context) error {
 
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		return h.r.BadRequestResponse(c, utils.NewAppError(utils.CodeBadRequest, "Invalid voucher ID"))
+		return h.r.BadRequestResponse(c, voucherErrs.ErrVoucherInvalidID)
 	}
 
 	voucher, err := h.voucherService.GetVoucherByID(ctx, uint(id))
@@ -202,7 +202,7 @@ func (h *VoucherHandler) UpdateVoucher(c *echo.Context) error {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
-	return h.r.SuccessResponse(c, response.FromEntity(voucher), "Voucher updated successfully")
+	return h.r.SuccessResponse(c, response.FromEntity(voucher), "msg.vouchers.updated")
 }
 
 // DeleteVoucher handles admin voucher deletion.
@@ -211,7 +211,7 @@ func (h *VoucherHandler) DeleteVoucher(c *echo.Context) error {
 
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		return h.r.BadRequestResponse(c, utils.NewAppError(utils.CodeBadRequest, "Invalid voucher ID"))
+		return h.r.BadRequestResponse(c, voucherErrs.ErrVoucherInvalidID)
 	}
 
 	if err := h.voucherService.DeleteVoucher(ctx, uint(id)); err != nil {
@@ -227,7 +227,7 @@ func (h *VoucherHandler) ToggleVoucher(c *echo.Context) error {
 
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		return h.r.BadRequestResponse(c, utils.NewAppError(utils.CodeBadRequest, "Invalid voucher ID"))
+		return h.r.BadRequestResponse(c, voucherErrs.ErrVoucherInvalidID)
 	}
 
 	voucher, err := h.voucherService.ToggleVoucher(ctx, uint(id))
@@ -235,7 +235,7 @@ func (h *VoucherHandler) ToggleVoucher(c *echo.Context) error {
 		return h.r.NotFoundResponse(c, voucherErrs.ErrVoucherNotFound)
 	}
 
-	return h.r.SuccessResponse(c, response.FromEntity(voucher), "Voucher toggled successfully")
+	return h.r.SuccessResponse(c, response.FromEntity(voucher), "msg.vouchers.toggled")
 }
 
 // ListVouchers returns all vouchers (admin).
@@ -245,7 +245,7 @@ func (h *VoucherHandler) ListVouchers(c *echo.Context) error {
 	if err != nil {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
-	return h.r.SuccessResponse(c, response.FromEntities(vouchers), "Vouchers retrieved successfully")
+	return h.r.SuccessResponse(c, response.FromEntities(vouchers), "msg.vouchers.list_retrieved")
 }
 
 // GetVoucher returns a single voucher by ID (admin).
@@ -253,13 +253,13 @@ func (h *VoucherHandler) GetVoucher(c *echo.Context) error {
 	ctx := c.Request().Context()
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		return h.r.BadRequestResponse(c, utils.NewAppError(utils.CodeBadRequest, "Invalid voucher ID"))
+		return h.r.BadRequestResponse(c, voucherErrs.ErrVoucherInvalidID)
 	}
 	voucher, err := h.voucherService.GetVoucherByID(ctx, uint(id))
 	if err != nil {
 		return h.r.NotFoundResponse(c, voucherErrs.ErrVoucherNotFound)
 	}
-	return h.r.SuccessResponse(c, response.FromEntity(voucher), "Voucher retrieved successfully")
+	return h.r.SuccessResponse(c, response.FromEntity(voucher), "msg.vouchers.retrieved")
 }
 
 // RegisterRoutes registers voucher routes.
