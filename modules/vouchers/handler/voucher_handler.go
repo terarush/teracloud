@@ -34,6 +34,51 @@ func NewVoucherHandler(log *logger.Logger, voucherService *service.VoucherServic
 	}
 }
 
+// ValidateVoucher validates a voucher against line items and returns the discount
+// for the current user. It is the live pre-check used to update the price summary
+// before an order is created. It does NOT record usage.
+func (h *VoucherHandler) ValidateVoucher(c *echo.Context) error {
+	ctx := c.Request().Context()
+	userID := utils.UserIDFromCtx(c)
+	if userID == 0 {
+		return h.r.UnauthorizedResponse(c, utils.NewAppError(utils.CodeUnauthorized, "Unauthorized"))
+	}
+
+	req := new(request.ValidateVoucherRequest)
+	if err := c.Bind(req); err != nil {
+		return h.r.BadRequestResponse(c, err)
+	}
+	if err := c.Validate(req); err != nil {
+		msgs := validator.TranslateError(err, voucherErrs.FieldLabels)
+		return h.r.BadRequestResponse(c, utils.NewAppError(utils.CodeValidation, strings.Join(msgs, ". ")))
+	}
+
+	items := make([]service.DiscountItem, len(req.Items))
+	var totalSubtotal int64
+	for i, it := range req.Items {
+		items[i] = service.DiscountItem{
+			PlanID:    it.PlanID,
+			UnitPrice: it.UnitPrice,
+			Duration:  it.Duration,
+			Subtotal:  it.Subtotal,
+		}
+		totalSubtotal += it.Subtotal
+	}
+
+	res, err := h.voucherService.ApplyVoucher(ctx, req.VoucherCode, userID, items)
+	if err != nil {
+		return h.r.SuccessResponse(c, response.VoucherQuoteResponse{
+			Valid:         false,
+			Code:          req.VoucherCode,
+			TotalSubtotal: totalSubtotal,
+			ErrorCode:     utils.CodeOf(err),
+			ErrorMessage:  err.Error(),
+		}, "Voucher validation completed")
+	}
+
+	return h.r.SuccessResponse(c, response.FromQuote(res, req.VoucherCode, totalSubtotal), "Voucher validation completed")
+}
+
 // CreateVoucher handles admin voucher creation.
 func (h *VoucherHandler) CreateVoucher(c *echo.Context) error {
 	ctx := c.Request().Context()
@@ -226,4 +271,8 @@ func (h *VoucherHandler) RegisterRoutes(e *echo.Echo, basePath string) {
 	admin.PUT("/:id", h.UpdateVoucher)
 	admin.DELETE("/:id", h.DeleteVoucher)
 	admin.PATCH("/:id/toggle", h.ToggleVoucher)
+
+	// Authenticated user routes
+	user := e.Group(basePath+"/vouchers", middleware.Auth)
+	user.POST("/validate", h.ValidateVoucher)
 }

@@ -8,6 +8,8 @@ import {
 } from "@/service/mutation/cart"
 import { CartItemCard } from "../components/CartItemCard"
 import { CartSummaryCard } from "../components/CartSummaryCard"
+import { useVoucherQuote } from "@/service/hooks/useVoucherQuote"
+import type { VoucherQuoteItem } from "@/service/api/vouchers"
 import { ShoppingCart, ArrowLeft, Loader2, PackagePlus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -18,6 +20,7 @@ import { useTranslation } from "react-i18next"
 
 export const CartView: React.FC = () => {
   const { data: cart, isLoading } = useCartQuery()
+  const { quote, isValidating, validate } = useVoucherQuote()
   const updateMutation = useUpdateCartMutation()
   const removeMutation = useRemoveCartMutation()
   const clearMutation = useClearCartMutation()
@@ -25,6 +28,18 @@ export const CartView: React.FC = () => {
   const navigate = useNavigate()
   const { t } = useTranslation()
   const [voucherCode, setVoucherCode] = React.useState("")
+
+  const quoteItems: VoucherQuoteItem[] = (cart?.items || []).map((item) => ({
+    plan_id: item.plan_id,
+    unit_price: item.monthly_price,
+    duration_months: item.duration_months,
+    subtotal: item.subtotal,
+  }))
+
+  const handleVoucherChange = (code: string) => {
+    setVoucherCode(code)
+    validate(code, quoteItems)
+  }
 
   const handleUpdateItem = async (
     id: number,
@@ -155,7 +170,9 @@ export const CartView: React.FC = () => {
               totalItems={totalItems}
               totalAmount={totalAmount}
               voucherCode={voucherCode}
-              onVoucherChange={setVoucherCode}
+              onVoucherChange={handleVoucherChange}
+              quote={quote}
+              isValidating={isValidating}
               onCheckout={handleCheckout}
               onClear={handleClearCart}
               isCheckingOut={checkoutMutation.isPending}

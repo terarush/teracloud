@@ -37,3 +37,17 @@ type UpdateVoucherRequest struct {
 	IsActive          *bool      `json:"is_active"`
 	PlanIDs           []uint     `json:"plan_ids"`
 }
+
+// QuoteItem describes a single line item to validate a voucher against.
+type QuoteItem struct {
+	PlanID    uint  `json:"plan_id" validate:"required"`
+	UnitPrice int64 `json:"unit_price" validate:"required,min=0"`
+	Duration  int   `json:"duration_months" validate:"required,min=1"`
+	Subtotal  int64 `json:"subtotal" validate:"required,min=0"`
+}
+
+// ValidateVoucherRequest validates a voucher against line items and returns the discount.
+type ValidateVoucherRequest struct {
+	VoucherCode string      `json:"voucher_code" validate:"required"`
+	Items       []QuoteItem `json:"items" validate:"required,min=1,dive"`
+}

@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"ruang-tukar/modules/vouchers/domain/entity"
+	"ruang-tukar/modules/vouchers/domain/service"
 )
 
 type PlanRef struct {
@@ -67,4 +68,36 @@ func FromEntities(vs []*entity.Voucher) []*VoucherResponse {
 		responses[i] = FromEntity(v)
 	}
 	return responses
+}
+
+// VoucherQuoteResponse is the result of validating a voucher against line items.
+type VoucherQuoteResponse struct {
+	Valid         bool    `json:"valid"`
+	Code          string  `json:"code"`
+	Name          string  `json:"name,omitempty"`
+	DiscountType  string  `json:"discount_type,omitempty"`
+	DiscountValue int64   `json:"discount_value,omitempty"`
+	TotalSubtotal int64   `json:"total_subtotal"`
+	TotalDiscount int64   `json:"total_discount"`
+	TotalAfter    int64   `json:"total_after"`
+	DiscountItems []int64 `json:"discount_items"`
+	ErrorCode     string  `json:"error_code,omitempty"`
+	ErrorMessage  string  `json:"error_message,omitempty"`
+}
+
+func FromQuote(res *service.VoucherResult, code string, totalSubtotal int64) *VoucherQuoteResponse {
+	resp := &VoucherQuoteResponse{
+		Valid:         true,
+		Code:          code,
+		TotalSubtotal: totalSubtotal,
+		TotalDiscount: res.TotalDiscount,
+		TotalAfter:    res.TotalAfter,
+		DiscountItems: res.DiscountPerItem,
+	}
+	if res.Voucher != nil {
+		resp.Name = res.Voucher.Name
+		resp.DiscountType = res.Voucher.DiscountType
+		resp.DiscountValue = res.Voucher.DiscountValue
+	}
+	return resp
 }
