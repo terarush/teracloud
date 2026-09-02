@@ -10,7 +10,7 @@ import { CartItemCard } from "../components/CartItemCard"
 import { CartSummaryCard } from "../components/CartSummaryCard"
 import { useVoucherQuote } from "@/service/hooks/useVoucherQuote"
 import type { VoucherQuoteItem } from "@/service/api/vouchers"
-import { ShoppingCart, ArrowLeft, Loader2, PackagePlus } from "lucide-react"
+import { ShoppingCart, ArrowLeft, PackagePlus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -47,28 +47,28 @@ export const CartView: React.FC = () => {
   ) => {
     try {
       await updateMutation.mutateAsync({ id, payload })
-      toast.success("Keranjang diperbarui")
+      toast.success(t("hosting.toast.cartUpdated"))
     } catch (err: any) {
-      toast.error(err?.message || "Gagal memperbarui item")
+      toast.error(err?.message || t("hosting.toast.cartUpdateFailed"))
     }
   }
 
   const handleRemoveItem = async (id: number) => {
     try {
       await removeMutation.mutateAsync(id)
-      toast.success("Item dihapus dari keranjang")
+      toast.success(t("hosting.toast.itemRemoved"))
     } catch (err: any) {
-      toast.error(err?.message || "Gagal menghapus item")
+      toast.error(err?.message || t("hosting.toast.itemRemoveFailed"))
     }
   }
 
   const handleClearCart = async () => {
-    if (!window.confirm("Apakah Anda yakin ingin mengosongkan keranjang belanja?")) return
+    if (!window.confirm(t("hosting.toast.confirmClearCart"))) return
     try {
       await clearMutation.mutateAsync()
-      toast.success("Keranjang berhasil dikosongkan")
+      toast.success(t("hosting.toast.cartCleared"))
     } catch (err: any) {
-      toast.error(err?.message || "Gagal mengosongkan keranjang")
+      toast.error(err?.message || t("hosting.toast.cartClearFailed"))
     }
   }
 
@@ -77,13 +77,13 @@ export const CartView: React.FC = () => {
       const order = await checkoutMutation.mutateAsync({
         voucherCode: voucherCode.trim() || undefined,
       })
-      toast.success("Order berhasil dibuat!")
+      toast.success(t("hosting.toast.orderCreated"))
       navigate({
         to: "/orders/checkout/$orderId",
         params: { orderId: String(order.id) },
       })
     } catch (err: any) {
-      toast.error(err?.message || "Gagal memproses checkout")
+      toast.error(err?.message || t("hosting.toast.orderCreateFailed"))
     }
   }
 
@@ -102,13 +102,13 @@ export const CartView: React.FC = () => {
             className="gap-1 mb-1 text-xs text-muted-foreground hover:text-foreground cursor-pointer -ml-2 h-7"
           >
             <ArrowLeft className="size-3.5" />
-            <span>Kembali ke Dashboard</span>
+            <span>{t("hosting.backToDashboard")}</span>
           </Button>
           <h1 className="text-2xl font-bold tracking-tight text-foreground">
-            Keranjang Belanja
+            {t("hosting.cartTitle")}
           </h1>
           <p className="text-sm text-muted-foreground mt-0.5">
-            Daftar paket hosting yang siap untuk dicheckout dan dideploy.
+            {t("hosting.cartSubtitle")}
           </p>
         </div>
 
@@ -119,7 +119,7 @@ export const CartView: React.FC = () => {
           className="gap-1.5 text-xs font-semibold cursor-pointer"
         >
           <PackagePlus className="size-3.5" />
-          <span>Tambah Paket Lain</span>
+          <span>{t("hosting.addAnotherPlan")}</span>
         </Button>
       </div>
 
@@ -135,16 +135,16 @@ export const CartView: React.FC = () => {
         <Card className="ring-1 ring-foreground/10">
           <CardContent className="py-16 text-center space-y-3">
             <ShoppingCart className="size-12 mx-auto text-muted-foreground/30 mb-2" />
-            <h3 className="font-semibold text-base text-foreground">Keranjang Belanja Anda Kosong</h3>
+            <h3 className="font-semibold text-base text-foreground">{t("hosting.cartEmptyTitle")}</h3>
             <p className="text-xs text-muted-foreground max-w-sm mx-auto">
-              Belum ada paket container yang dipilih. Silakan pilih paket hosting untuk mulai memesan.
+              {t("hosting.cartEmptyDesc")}
             </p>
             <Button
               size="sm"
               onClick={() => navigate({ to: "/pricing" })}
               className="mt-2 text-xs font-semibold cursor-pointer"
             >
-              Lihat Pilihan Paket Hosting
+              {t("hosting.browsePlans")}
             </Button>
           </CardContent>
         </Card>

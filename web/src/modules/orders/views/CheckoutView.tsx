@@ -114,7 +114,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ orderId, planSlug })
               <div className="space-y-4">
                 <div className="p-3.5 bg-muted/50 rounded-lg text-xs space-y-1.5">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Order ID:</span>
+                    <span className="text-muted-foreground">{t("hosting.orderIdLabel")}:</span>
                     <span className="font-mono font-medium text-foreground">{order.order_number}</span>
                   </div>
                   <div className="flex justify-between">
@@ -149,51 +149,51 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ orderId, planSlug })
             ) : plan ? (
               <div className="space-y-4 text-center py-4">
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Klik tombol di bawah ini untuk membuat tagihan resmi, lalu pilih metode pembayaran Anda.
+                  {t("hosting.checkoutIntro")}
                 </p>
 
                 {/* Voucher */}
                 <div className="text-left space-y-1.5">
                   <label className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
                     <Tag className="size-3.5" />
-                    <span>Kode Voucher</span>
+                    <span>{t("hosting.voucherCode")}</span>
                   </label>
                   <Input
                     value={voucherCode}
                     onChange={(e) => handleVoucherChange(e.target.value)}
-                    placeholder="Masukkan kode (mis. HEMAT10)"
+                    placeholder={t("hosting.voucherPlaceholder")}
                     className="h-9 text-xs uppercase"
                   />
                   {isValidating && (
                     <p className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
                       <Loader2 className="size-3 animate-spin" />
-                      <span>Memeriksa voucher...</span>
+                      <span>{t("hosting.checkingVoucher")}</span>
                     </p>
                   )}
                   {!isValidating && quote && !quote.valid && (
                     <p className="flex items-center gap-1.5 text-[11px] text-destructive">
                       <XCircle className="size-3.5" />
-                      <span>{quote.error_message || "Kode voucher tidak valid"}</span>
+                      <span>{quote.error_message || t("hosting.voucherInvalid")}</span>
                     </p>
                   )}
                   {!isValidating && quote && quote.valid && plan && (
                     <>
                       <p className="flex items-center gap-1.5 text-[11px] text-primary">
                         <CheckCircle2 className="size-3.5" />
-                        <span>Voucher berlaku — hemat {formatIDR(quote.total_discount)}</span>
+                        <span>{t("hosting.voucherApplied", { amount: formatIDR(quote.total_discount) })}</span>
                       </p>
                       <div className="flex justify-between text-xs pt-1">
-                        <span className="text-muted-foreground">Diskon Voucher</span>
+                        <span className="text-muted-foreground">{t("hosting.discountVoucher")}</span>
                         <span className="font-medium text-primary">- {formatIDR(quote.total_discount)}</span>
                       </div>
                       <div className="flex justify-between text-sm font-bold text-foreground pt-1 border-t border-border/50">
-                        <span>Total Pembayaran</span>
+                        <span>{t("hosting.totalPayment")}</span>
                         <span className="text-primary">{formatIDR(quote.total_after)}</span>
                       </div>
                     </>
                   )}
                   <p className="text-[11px] text-muted-foreground">
-                    Diskon diterapkan otomatis saat pembayaran untuk paket yang memenuhi syarat.
+                    {t("hosting.voucherHint")}
                   </p>
                 </div>
 
