@@ -7,6 +7,7 @@ import {
   ShoppingCart,
   ScrollText,
   Ticket,
+  Telescope,
 } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 import type { ComponentType } from "react"
@@ -47,6 +48,12 @@ export const getSidebarContentList = (
           title: translate("hosting.yourContainers", "Containers"),
           href: "/app/containers",
           icon: Server,
+        },
+        {
+          titleKey: "hosting.plansTitle",
+          title: translate("hosting.plansTitle", "Plans"),
+          href: "/app/browse",
+          icon: Telescope,
         },
         {
           titleKey: "hosting.cart",

@@ -2,7 +2,7 @@ import React from "react"
 import { usePricing } from "../hooks/usePricing"
 import { PlanCard } from "../components/PlanCard"
 import { PlanComparison } from "../components/PlanComparison"
-import { Loader2, ArrowLeft, Sun, Moon, Globe, Check, ShoppingCart } from "lucide-react"
+import { Loader2, ArrowLeft, Sun, Moon, ShoppingCart } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useNavigate } from "@tanstack/react-router"
 import { useTheme } from "@/components/theme-provider"
@@ -10,14 +10,7 @@ import { useCartQuery } from "@/service/query/cart"
 import { useAddToCartMutation } from "@/service/mutation/cart"
 import { companyMeta } from "@/meta"
 import { useTranslation } from "react-i18next"
-import { currentLocale, changeLocale } from "@/lib/i18n"
 import { toast } from "sonner"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import type { Plan } from "@/service/api/plans"
 
 export const PricingView: React.FC = () => {
@@ -27,7 +20,6 @@ export const PricingView: React.FC = () => {
   const navigate = useNavigate()
   const { theme, setTheme } = useTheme()
   const { t } = useTranslation()
-  const activeLang = currentLocale()
 
   const handleAddToCart = async (plan: Plan) => {
     try {
@@ -75,24 +67,6 @@ export const PricingView: React.FC = () => {
                 </span>
               )}
             </Button>
-
-            {/* Language Switcher */}
-            <DropdownMenu>
-              <DropdownMenuTrigger className="h-9 px-3 gap-1.5 inline-flex items-center justify-center rounded-xl border border-border bg-background text-xs font-semibold hover:bg-muted hover:text-foreground cursor-pointer transition-colors outline-hidden">
-                <Globe className="h-3.5 w-3.5 text-primary" />
-                <span className="uppercase">{activeLang}</span>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-40 rounded-xl">
-                <DropdownMenuItem onClick={() => changeLocale("id")} className="flex justify-between text-xs cursor-pointer">
-                  <span>{t("nav.languageLabelId")}</span>
-                  {activeLang === "id" && <Check className="w-3.5 h-3.5 text-primary" />}
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => changeLocale("en")} className="flex justify-between text-xs cursor-pointer">
-                  <span>{t("nav.languageLabelEn")}</span>
-                  {activeLang === "en" && <Check className="w-3.5 h-3.5 text-primary" />}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
 
             {/* Theme Toggle */}
             <button
