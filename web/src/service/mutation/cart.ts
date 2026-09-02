@@ -11,6 +11,9 @@ export const useAddToCartMutation = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY })
     },
+    onError: (err) => {
+      console.error("useAddToCartMutation error:", err)
+    },
   })
 }
 
@@ -22,6 +25,9 @@ export const useUpdateCartMutation = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY })
     },
+    onError: (err) => {
+      console.error("useUpdateCartMutation error:", err)
+    },
   })
 }
 
@@ -32,6 +38,9 @@ export const useRemoveCartMutation = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY })
     },
+    onError: (err) => {
+      console.error("useRemoveCartMutation error:", err)
+    },
   })
 }
 
@@ -41,6 +50,9 @@ export const useClearCartMutation = () => {
     mutationFn: () => cartApi.clearCart(),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY })
+    },
+    onError: (err) => {
+      console.error("useClearCartMutation error:", err)
     },
   })
 }
@@ -54,6 +66,9 @@ export const useCheckoutCartMutation = () => {
       queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY })
       queryClient.invalidateQueries({ queryKey: ["orders"] })
       queryClient.invalidateQueries({ queryKey: ["dashboard"] })
+    },
+    onError: (err) => {
+      console.error("useCheckoutCartMutation error:", err)
     },
   })
 }

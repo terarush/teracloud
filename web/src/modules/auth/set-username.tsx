@@ -3,10 +3,13 @@ import { usernameSchema } from "@/modules/auth/schemas"
 import { useUsernameAvailability } from "./hooks/useAvailability"
 import { useSetUsername } from "./hooks/useSetUsername"
 import { authContent } from "./content/auth"
+import { Seo } from "@/components/seo"
+import { getSeoMeta } from "@/meta"
 
 const c = authContent.setUsername
 
 export default function SetUsernamePage() {
+  const seo = getSeoMeta()
   const {
     inputValue, setInputValue, loading, pending, error, touched,
     setTouched, handleSubmit,
@@ -21,9 +24,12 @@ export default function SetUsernamePage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <p className="text-sm text-muted-foreground">{c.loadingProfile}</p>
-      </div>
+      <>
+        <Seo title={c.title} description={seo.description} path="/auth/set-username" robots="noindex, follow" />
+        <div className="flex min-h-screen items-center justify-center">
+          <p className="text-sm text-muted-foreground">{c.loadingProfile}</p>
+        </div>
+      </>
     )
   }
 
@@ -41,8 +47,10 @@ export default function SetUsernamePage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <div className="w-full max-w-sm">
+    <>
+      <Seo title={c.title} description={seo.description} path="/auth/set-username" robots="noindex, follow" />
+      <div className="flex min-h-screen items-center justify-center p-4">
+        <div className="w-full max-w-sm">
         <div className="text-center space-y-1 mb-6">
           <h1 className="text-2xl font-bold tracking-tight text-foreground">{c.title}</h1>
           <p className="text-sm text-muted-foreground">{c.subtitle}</p>
@@ -88,6 +96,7 @@ export default function SetUsernamePage() {
           </button>
         </form>
       </div>
-    </div>
+      </div>
+    </>
   )
 }

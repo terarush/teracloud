@@ -9,5 +9,8 @@ export function useCreateOrderMutation() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["orders"] })
     },
+    onError: (err) => {
+      console.error("useCreateOrderMutation error:", err)
+    },
   })
 }

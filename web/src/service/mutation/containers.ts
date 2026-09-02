@@ -9,6 +9,9 @@ export function useStartContainerMutation() {
       queryClient.invalidateQueries({ queryKey: ["containers"] })
       queryClient.invalidateQueries({ queryKey: ["containers", id] })
     },
+    onError: (err) => {
+      console.error("useStartContainerMutation error:", err)
+    },
   })
 }
 
@@ -19,6 +22,9 @@ export function useStopContainerMutation() {
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: ["containers"] })
       queryClient.invalidateQueries({ queryKey: ["containers", id] })
+    },
+    onError: (err) => {
+      console.error("useStopContainerMutation error:", err)
     },
   })
 }
@@ -31,6 +37,9 @@ export function useRestartContainerMutation() {
       queryClient.invalidateQueries({ queryKey: ["containers"] })
       queryClient.invalidateQueries({ queryKey: ["containers", id] })
     },
+    onError: (err) => {
+      console.error("useRestartContainerMutation error:", err)
+    },
   })
 }
 
@@ -41,6 +50,9 @@ export function useRebootContainerMutation() {
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: ["containers"] })
       queryClient.invalidateQueries({ queryKey: ["containers", id] })
+    },
+    onError: (err) => {
+      console.error("useRebootContainerMutation error:", err)
     },
   })
 }
@@ -54,6 +66,9 @@ export function useResetContainerMutation() {
       queryClient.invalidateQueries({ queryKey: ["containers"] })
       queryClient.invalidateQueries({ queryKey: ["containers", id] })
     },
+    onError: (err) => {
+      console.error("useResetContainerMutation error:", err)
+    },
   })
 }
 
@@ -63,6 +78,9 @@ export function useDeleteContainerMutation() {
     mutationFn: (id: number) => containersApi.deleteContainer(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["containers"] })
+    },
+    onError: (err) => {
+      console.error("useDeleteContainerMutation error:", err)
     },
   })
 }

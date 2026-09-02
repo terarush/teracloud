@@ -1,5 +1,11 @@
 import { DashboardView } from '../views/DashboardView'
+import { Seo } from '@/components/seo'
 
 export const DashboardPage = () => {
-  return <DashboardView />
+  return (
+    <>
+      <Seo title="Dashboard" path="/app" robots="noindex, follow" />
+      <DashboardView />
+    </>
+  )
 }

@@ -1,16 +1,13 @@
-import { Helmet } from "react-helmet-async"
 import { AuthLayout } from "./layouts/AuthLayout"
 import { ResetPasswordForm } from "./components/ResetPasswordForm"
-import { companyMeta, getSeoMeta } from "@/meta"
+import { Seo } from "@/components/seo"
+import { getSeoMeta } from "@/meta"
 
 export default function ResetPassword() {
   const seo = getSeoMeta()
   return (
     <>
-      <Helmet>
-        <title>Reset Password — {companyMeta.name}</title>
-        <meta name="description" content={seo.description} />
-      </Helmet>
+      <Seo title="Reset Password" description={seo.description} path="/reset-password" />
       <AuthLayout>
         <ResetPasswordForm />
       </AuthLayout>

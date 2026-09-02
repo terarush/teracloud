@@ -10,6 +10,9 @@ export function useCreatePlanMutation() {
       queryClient.invalidateQueries({ queryKey: ["plans"] })
       queryClient.invalidateQueries({ queryKey: ["admin", "plans"] })
     },
+    onError: (err) => {
+      console.error("useCreatePlanMutation error:", err)
+    },
   })
 }
 
@@ -22,6 +25,9 @@ export function useUpdatePlanMutation() {
       queryClient.invalidateQueries({ queryKey: ["plans"] })
       queryClient.invalidateQueries({ queryKey: ["admin", "plans"] })
     },
+    onError: (err) => {
+      console.error("useUpdatePlanMutation error:", err)
+    },
   })
 }
 
@@ -33,6 +39,9 @@ export function useDeletePlanMutation() {
       queryClient.invalidateQueries({ queryKey: ["plans"] })
       queryClient.invalidateQueries({ queryKey: ["admin", "plans"] })
     },
+    onError: (err) => {
+      console.error("useDeletePlanMutation error:", err)
+    },
   })
 }
 
@@ -43,6 +52,9 @@ export function useTogglePlanMutation() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["plans"] })
       queryClient.invalidateQueries({ queryKey: ["admin", "plans"] })
+    },
+    onError: (err) => {
+      console.error("useTogglePlanMutation error:", err)
     },
   })
 }
