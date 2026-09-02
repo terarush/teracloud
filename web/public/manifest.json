@@ -1,7 +1,7 @@
 {
-  "short_name": "TeraRush",
-  "name": "TeraRush - Open Source Development Agency",
-  "description": "Empowering developers worldwide through open-source innovation. Build, collaborate, and scale with reliable web solutions.",
+  "short_name": "TeraCloud",
+  "name": "TeraCloud - Modern Cloud & Container Hosting Platform",
+  "description": "High-performance cloud hosting and modern container deployment platform. Effortlessly deploy applications, manage databases, and scale infrastructure.",
   "icons": [
     {
       "src": "/favicon.ico",

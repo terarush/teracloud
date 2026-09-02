@@ -22,7 +22,11 @@ export function HomeView() {
       <header className="sticky top-0 z-50 border-b border-border/70 bg-background/88 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-8 lg:px-10">
           <button type="button" className="flex items-center gap-3 rounded-md" onClick={() => navigate({ to: "/" })} aria-label={t("nav.homeAria", { name: companyMeta.name })}>
-            <span className="flex size-8 items-center justify-center rounded-md bg-primary text-base font-semibold text-primary-foreground">T</span>
+            <img
+              src={companyMeta.logo}
+              alt={companyMeta.name}
+              className="size-8 rounded-md object-contain shrink-0"
+            />
             <span className="text-[15px] font-semibold tracking-[-0.02em]">{t("nav.brandName")}</span>
           </button>
 
@@ -74,7 +78,14 @@ export function HomeView() {
 
       <footer className="border-t border-border/70">
         <div className="mx-auto flex max-w-7xl flex-col gap-5 px-5 py-8 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-10">
-          <div className="flex items-center gap-3"><span className="flex size-6 items-center justify-center rounded bg-foreground text-[10px] font-semibold text-background">T</span><span>© {new Date().getFullYear()} {t("nav.brandName")}</span></div>
+          <div className="flex items-center gap-3">
+            <img
+              src={companyMeta.logo}
+              alt={companyMeta.name}
+              className="size-6 rounded-md object-contain shrink-0"
+            />
+            <span>© {new Date().getFullYear()} {t("nav.brandName")}</span>
+          </div>
           <p>{t("hosting.footer.tagline")}</p>
           <a href={`mailto:${companyMeta.email}`} className="transition-colors hover:text-foreground">{companyMeta.email}</a>
         </div>

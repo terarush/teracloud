@@ -73,9 +73,11 @@ export function AppSidebar() {
           className="flex items-center gap-2.5 overflow-hidden w-full px-5 cursor-pointer group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0"
           onClick={() => handleItemClick("/app")}
         >
-          <div className="flex size-6 shrink-0 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground text-xs font-bold">
-            {companyMeta.name.charAt(0) || "T"}
-          </div>
+          <img
+            src={companyMeta.logo}
+            alt={companyMeta.name}
+            className="size-6 shrink-0 rounded-md object-contain"
+          />
           <span className="text-sm font-semibold tracking-tight text-sidebar-foreground truncate group-data-[collapsible=icon]:hidden">
             {companyMeta.name}
           </span>
