@@ -10,6 +10,7 @@
     "SERVICE_UNAVAILABLE": "Service is temporarily unavailable.",
     "AUTH_USER_NOT_FOUND": "Account not found.",
     "AUTH_EMAIL_ALREADY_USED": "This email address is already registered.",
+    "AUTH_EMAIL_INVALID": "Please enter a valid email address.",
     "AUTH_INVALID_PASSWORD": "Incorrect email or password.",
     "AUTH_USERNAME_TAKEN": "This username is already taken.",
     "AUTH_TOKEN_EXPIRED": "The link or token has expired. Please request a new one.",

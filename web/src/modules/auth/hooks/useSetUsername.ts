@@ -51,7 +51,7 @@ export function useSetUsername() {
     setTouched(true)
     const r = usernameSchema.safeParse({ username: value })
     if (!r.success) {
-      setError(r.error.issues[0]?.message ?? "Username tidak valid")
+      setError(r.error.issues[0]?.message ?? "")
       return false
     }
     setPending(true)

@@ -7,7 +7,7 @@ export default function GoogleCallback() {
 
   return (
     <>
-      <Seo title="Masuk" description={authContent.googleCallback.loading} path="/oauth2/google/callback" robots="noindex, follow" />
+      <Seo title={authContent.login.title} description={authContent.googleCallback.loading} path="/oauth2/google/callback" robots="noindex, follow" />
       <div className="flex min-h-screen items-center justify-center">
         <p className="text-sm text-muted-foreground">{authContent.googleCallback.loading}</p>
       </div>

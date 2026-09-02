@@ -10,6 +10,7 @@
     "SERVICE_UNAVAILABLE": "Layanan sedang tidak dapat diakses.",
     "AUTH_USER_NOT_FOUND": "Akun tidak ditemukan.",
     "AUTH_EMAIL_ALREADY_USED": "Alamat email ini sudah terdaftar.",
+    "AUTH_EMAIL_INVALID": "Format alamat email tidak valid.",
     "AUTH_INVALID_PASSWORD": "Email atau kata sandi salah.",
     "AUTH_USERNAME_TAKEN": "Username ini sudah digunakan.",
     "AUTH_TOKEN_EXPIRED": "Tautan atau token sudah kedaluwarsa. Silakan minta tautan baru.",
