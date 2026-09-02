@@ -1,4 +1,4 @@
-module ruang-tukar
+module teracloud
 
 go 1.25.0
 

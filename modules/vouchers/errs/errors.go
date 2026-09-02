@@ -1,7 +1,7 @@
 // File: modules/vouchers/errs/errors.go
 package errs
 
-import "ruang-tukar/internal/pkg/utils"
+import "teracloud/internal/pkg/utils"
 
 const (
 	CodeVoucherNotFound        = "VOUCHER_NOT_FOUND"

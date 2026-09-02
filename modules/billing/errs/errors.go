@@ -1,7 +1,7 @@
 // File: modules/billing/errs/errors.go
 package errs
 
-import "ruang-tukar/internal/pkg/utils"
+import "teracloud/internal/pkg/utils"
 
 const (
 	CodeSubscriptionNotFound = "SUBSCRIPTION_NOT_FOUND"

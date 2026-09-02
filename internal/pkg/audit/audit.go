@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"time"
 
-	"ruang-tukar/internal/pkg/database"
+	"teracloud/internal/pkg/database"
 )
 
 // AuditLog represents a single audit log entry in core.audit_logs.

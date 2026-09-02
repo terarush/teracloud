@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"ruang-tukar/internal/pkg/logger"
+	"teracloud/internal/pkg/logger"
 
 	"gorm.io/gorm"
 )

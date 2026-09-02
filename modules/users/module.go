@@ -1,12 +1,12 @@
 package user
 
 import (
-	"ruang-tukar/internal/pkg/bus"
-	"ruang-tukar/internal/pkg/logger"
-	"ruang-tukar/modules/users/domain/entity"
-	"ruang-tukar/modules/users/domain/repository"
-	"ruang-tukar/modules/users/domain/service"
-	"ruang-tukar/modules/users/handler"
+	"teracloud/internal/pkg/bus"
+	"teracloud/internal/pkg/logger"
+	"teracloud/modules/users/domain/entity"
+	"teracloud/modules/users/domain/repository"
+	"teracloud/modules/users/domain/service"
+	"teracloud/modules/users/handler"
 
 	"github.com/labstack/echo/v5"
 	"gorm.io/gorm"

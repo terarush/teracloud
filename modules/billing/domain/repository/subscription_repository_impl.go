@@ -6,8 +6,8 @@ import (
 	"errors"
 	"time"
 
-	"ruang-tukar/internal/pkg/database"
-	"ruang-tukar/modules/billing/domain/entity"
+	"teracloud/internal/pkg/database"
+	"teracloud/modules/billing/domain/entity"
 )
 
 var ErrRecordNotFound = errors.New("record not found")

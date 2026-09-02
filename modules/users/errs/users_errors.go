@@ -1,7 +1,7 @@
 package errs
 
 import (
-	"ruang-tukar/internal/pkg/utils"
+	"teracloud/internal/pkg/utils"
 )
 
 const (

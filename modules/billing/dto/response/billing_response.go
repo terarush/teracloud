@@ -4,7 +4,7 @@ package response
 import (
 	"time"
 
-	"ruang-tukar/modules/billing/domain/entity"
+	"teracloud/modules/billing/domain/entity"
 )
 
 type SubscriptionResponse struct {

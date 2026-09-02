@@ -6,7 +6,7 @@ import (
 	"net"
 	"sync"
 
-	"ruang-tukar/internal/pkg/database"
+	"teracloud/internal/pkg/database"
 
 	"gorm.io/gorm"
 )

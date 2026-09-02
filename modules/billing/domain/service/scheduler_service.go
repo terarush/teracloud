@@ -5,8 +5,8 @@ import (
 	"context"
 	"time"
 
-	"ruang-tukar/internal/pkg/logger"
-	"ruang-tukar/modules/billing/domain/repository"
+	"teracloud/internal/pkg/logger"
+	"teracloud/modules/billing/domain/repository"
 )
 
 type BillingSchedulerService struct {

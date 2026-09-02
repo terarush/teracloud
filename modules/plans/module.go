@@ -2,11 +2,11 @@
 package plans
 
 import (
-	"ruang-tukar/internal/pkg/bus"
-	"ruang-tukar/internal/pkg/logger"
-	"ruang-tukar/modules/plans/domain/repository"
-	"ruang-tukar/modules/plans/domain/service"
-	"ruang-tukar/modules/plans/handler"
+	"teracloud/internal/pkg/bus"
+	"teracloud/internal/pkg/logger"
+	"teracloud/modules/plans/domain/repository"
+	"teracloud/modules/plans/domain/service"
+	"teracloud/modules/plans/handler"
 
 	"github.com/labstack/echo/v5"
 	"gorm.io/gorm"

@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	"ruang-tukar/modules/users/domain/entity"
+	"teracloud/modules/users/domain/entity"
 )
 
 // UserRepository defines the user repository interface

@@ -3,8 +3,8 @@ package repository
 import (
 	"context"
 	"time"
-	"ruang-tukar/internal/pkg/database"
-	authEntity "ruang-tukar/modules/auth/domain/entity"
+	"teracloud/internal/pkg/database"
+	authEntity "teracloud/modules/auth/domain/entity"
 )
 
 // PasswordResetTokenRepositoryImpl implements PasswordResetTokenRepository.

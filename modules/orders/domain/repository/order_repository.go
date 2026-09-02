@@ -3,7 +3,7 @@ package repository
 
 import (
 	"context"
-	"ruang-tukar/modules/orders/domain/entity"
+	"teracloud/modules/orders/domain/entity"
 )
 
 type OrderRepository interface {

@@ -3,7 +3,7 @@ package entity
 import (
 	"time"
 
-	"ruang-tukar/internal/pkg/database"
+	"teracloud/internal/pkg/database"
 )
 
 // User represents a user entity in Teracloud

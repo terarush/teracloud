@@ -3,8 +3,8 @@ package repository
 import (
 	"context"
 	"errors"
-	"ruang-tukar/internal/pkg/database"
-	"ruang-tukar/modules/users/domain/entity"
+	"teracloud/internal/pkg/database"
+	"teracloud/modules/users/domain/entity"
 )
 
 var (

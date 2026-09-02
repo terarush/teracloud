@@ -2,11 +2,11 @@
 package vouchers
 
 import (
-	"ruang-tukar/internal/pkg/bus"
-	"ruang-tukar/internal/pkg/logger"
-	"ruang-tukar/modules/vouchers/domain/repository"
-	"ruang-tukar/modules/vouchers/domain/service"
-	"ruang-tukar/modules/vouchers/handler"
+	"teracloud/internal/pkg/bus"
+	"teracloud/internal/pkg/logger"
+	"teracloud/modules/vouchers/domain/repository"
+	"teracloud/modules/vouchers/domain/service"
+	"teracloud/modules/vouchers/handler"
 
 	"github.com/labstack/echo/v5"
 	"gorm.io/gorm"

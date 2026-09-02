@@ -1,7 +1,7 @@
 // File: modules/plans/errs/errors.go
 package errs
 
-import "ruang-tukar/internal/pkg/utils"
+import "teracloud/internal/pkg/utils"
 
 const (
 	CodePlanNotFound     = "PLAN_NOT_FOUND"

@@ -3,7 +3,7 @@ package repository
 
 import (
 	"context"
-	"ruang-tukar/modules/plans/domain/entity"
+	"teracloud/modules/plans/domain/entity"
 )
 
 type PlanRepository interface {

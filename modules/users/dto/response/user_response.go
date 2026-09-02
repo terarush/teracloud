@@ -1,7 +1,7 @@
 package response
 
 import (
-	"ruang-tukar/modules/users/domain/entity"
+	"teracloud/modules/users/domain/entity"
 	"time"
 )
 

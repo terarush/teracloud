@@ -3,7 +3,7 @@ package repository
 
 import (
 	"context"
-	"ruang-tukar/modules/containers/domain/entity"
+	"teracloud/modules/containers/domain/entity"
 )
 
 type EventRepository interface {

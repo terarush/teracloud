@@ -1,7 +1,7 @@
 // File: modules/containers/errs/errors.go
 package errs
 
-import "ruang-tukar/internal/pkg/utils"
+import "teracloud/internal/pkg/utils"
 
 const (
 	CodeContainerNotFound         = "CONTAINER_NOT_FOUND"

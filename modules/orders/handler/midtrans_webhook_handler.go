@@ -2,10 +2,10 @@
 package handler
 
 import (
-	"ruang-tukar/internal/pkg/logger"
-	"ruang-tukar/internal/pkg/utils"
-	orderErrs "ruang-tukar/modules/orders/errs"
-	"ruang-tukar/modules/orders/domain/service"
+	"teracloud/internal/pkg/logger"
+	"teracloud/internal/pkg/utils"
+	orderErrs "teracloud/modules/orders/errs"
+	"teracloud/modules/orders/domain/service"
 
 	"github.com/labstack/echo/v5"
 )

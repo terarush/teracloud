@@ -6,12 +6,12 @@ import (
 	"testing"
 	"time"
 
-	authEntity "ruang-tukar/modules/auth/domain/entity"
-	authRepo "ruang-tukar/modules/auth/domain/repository"
-	"ruang-tukar/internal/pkg/utils"
-	"ruang-tukar/modules/users/domain/entity"
-	"ruang-tukar/modules/users/domain/repository"
-	"ruang-tukar/modules/users/dto/request"
+	authEntity "teracloud/modules/auth/domain/entity"
+	authRepo "teracloud/modules/auth/domain/repository"
+	"teracloud/internal/pkg/utils"
+	"teracloud/modules/users/domain/entity"
+	"teracloud/modules/users/domain/repository"
+	"teracloud/modules/users/dto/request"
 )
 
 type mockAuthUserRepo struct {

@@ -6,10 +6,10 @@ import (
 	"strings"
 	"time"
 
-	"ruang-tukar/internal/pkg/bus"
-	"ruang-tukar/modules/vouchers/domain/entity"
-	"ruang-tukar/modules/vouchers/domain/repository"
-	voucherErrs "ruang-tukar/modules/vouchers/errs"
+	"teracloud/internal/pkg/bus"
+	"teracloud/modules/vouchers/domain/entity"
+	"teracloud/modules/vouchers/domain/repository"
+	voucherErrs "teracloud/modules/vouchers/errs"
 )
 
 // DiscountItem describes a single line item the voucher is applied against.

@@ -217,7 +217,7 @@ application.RegisterModule(yourmodule.NewModule())
 
 ## 📝 Notes
 
-- Module name in `go.mod` is `ruang-tukar`
+- Module name in `go.mod` is `teracloud`
 - Auth module duplicates user creation logic — `auth.CreateUser` has proper bcrypt hashing, `users.CreateUser` does not
 - Email uniqueness check is commented out in the user service — duplicate emails allowed
 - `internal/pkg/middleware/middleware.go` is empty (only package declaration)

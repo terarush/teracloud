@@ -5,7 +5,7 @@ import (
 	"context"
 	"time"
 
-	"ruang-tukar/modules/billing/domain/entity"
+	"teracloud/modules/billing/domain/entity"
 )
 
 type SubscriptionRepository interface {

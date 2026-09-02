@@ -4,8 +4,8 @@ package response
 import (
 	"time"
 
-	"ruang-tukar/modules/vouchers/domain/entity"
-	"ruang-tukar/modules/vouchers/domain/service"
+	"teracloud/modules/vouchers/domain/entity"
+	"teracloud/modules/vouchers/domain/service"
 )
 
 type PlanRef struct {

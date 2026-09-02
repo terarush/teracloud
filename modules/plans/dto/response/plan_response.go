@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"time"
 
-	"ruang-tukar/modules/plans/domain/entity"
+	"teracloud/modules/plans/domain/entity"
 )
 
 type PlanResponse struct {

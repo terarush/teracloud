@@ -2,14 +2,14 @@ package app
 
 import (
 	"fmt"
-	"ruang-tukar/internal/pkg/bus"
-	"ruang-tukar/internal/pkg/config"
-	"ruang-tukar/internal/pkg/database"
-	"ruang-tukar/internal/pkg/logger"
-	"ruang-tukar/internal/pkg/migrate"
-	"ruang-tukar/internal/pkg/server"
-	"ruang-tukar/internal/pkg/storage"
-	_validator "ruang-tukar/internal/pkg/validator"
+	"teracloud/internal/pkg/bus"
+	"teracloud/internal/pkg/config"
+	"teracloud/internal/pkg/database"
+	"teracloud/internal/pkg/logger"
+	"teracloud/internal/pkg/migrate"
+	"teracloud/internal/pkg/server"
+	"teracloud/internal/pkg/storage"
+	_validator "teracloud/internal/pkg/validator"
 	"time"
 
 	"github.com/labstack/echo/v5"

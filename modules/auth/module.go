@@ -1,18 +1,18 @@
 package auth
 
 import (
-	authEntity "ruang-tukar/modules/auth/domain/entity"
-	authRepo "ruang-tukar/modules/auth/domain/repository"
+	authEntity "teracloud/modules/auth/domain/entity"
+	authRepo "teracloud/modules/auth/domain/repository"
 
-	"ruang-tukar/internal/pkg/bus"
-	"ruang-tukar/internal/pkg/config"
-	"ruang-tukar/internal/pkg/jwt"
-	"ruang-tukar/internal/pkg/logger"
-	"ruang-tukar/internal/pkg/mailer"
-	"ruang-tukar/internal/pkg/oauth"
-	"ruang-tukar/modules/auth/domain/service"
-	"ruang-tukar/modules/auth/handler"
-	"ruang-tukar/modules/users/domain/repository"
+	"teracloud/internal/pkg/bus"
+	"teracloud/internal/pkg/config"
+	"teracloud/internal/pkg/jwt"
+	"teracloud/internal/pkg/logger"
+	"teracloud/internal/pkg/mailer"
+	"teracloud/internal/pkg/oauth"
+	"teracloud/modules/auth/domain/service"
+	"teracloud/modules/auth/handler"
+	"teracloud/modules/users/domain/repository"
 
 	"fmt"
 	"os"

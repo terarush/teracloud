@@ -4,7 +4,7 @@ package response
 import (
 	"time"
 
-	"ruang-tukar/modules/orders/domain/entity"
+	"teracloud/modules/orders/domain/entity"
 )
 
 type OrderItemResponse struct {

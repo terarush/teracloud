@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"testing"
-	"ruang-tukar/modules/users/domain/entity"
-	"ruang-tukar/modules/users/domain/repository"
+	"teracloud/modules/users/domain/entity"
+	"teracloud/modules/users/domain/repository"
 )
 
 type mockUserRepo struct {
