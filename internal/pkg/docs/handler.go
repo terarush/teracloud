@@ -3,7 +3,7 @@ package docs
 import (
 	"net/http"
 
-	"ruang-tukar/internal/pkg/config"
+	"teracloud/internal/pkg/config"
 
 	"github.com/labstack/echo/v5"
 	"github.com/swaggo/swag"

@@ -9,13 +9,13 @@ import (
 	"os"
 	"time"
 
-	"ruang-tukar/internal/pkg/mailer"
-	"ruang-tukar/internal/pkg/utils"
-	authEntity "ruang-tukar/modules/auth/domain/entity"
-	authRepo "ruang-tukar/modules/auth/domain/repository"
-	"ruang-tukar/modules/users/domain/entity"
-	"ruang-tukar/modules/users/domain/repository"
-	"ruang-tukar/modules/users/dto/request"
+	"teracloud/internal/pkg/mailer"
+	"teracloud/internal/pkg/utils"
+	authEntity "teracloud/modules/auth/domain/entity"
+	authRepo "teracloud/modules/auth/domain/repository"
+	"teracloud/modules/users/domain/entity"
+	"teracloud/modules/users/domain/repository"
+	"teracloud/modules/users/dto/request"
 )
 
 var (

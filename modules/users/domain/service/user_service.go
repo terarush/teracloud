@@ -2,9 +2,9 @@ package service
 
 import (
 	"context"
-	userErrs "ruang-tukar/modules/users/errs"
-	"ruang-tukar/modules/users/domain/entity"
-	"ruang-tukar/modules/users/domain/repository"
+	userErrs "teracloud/modules/users/errs"
+	"teracloud/modules/users/domain/entity"
+	"teracloud/modules/users/domain/repository"
 )
 
 // Errors

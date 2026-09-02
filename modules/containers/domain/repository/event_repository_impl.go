@@ -4,8 +4,8 @@ package repository
 import (
 	"context"
 
-	"ruang-tukar/internal/pkg/database"
-	"ruang-tukar/modules/containers/domain/entity"
+	"teracloud/internal/pkg/database"
+	"teracloud/modules/containers/domain/entity"
 )
 
 type EventRepositoryImpl struct{}

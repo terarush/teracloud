@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	authEntity "ruang-tukar/modules/auth/domain/entity"
+	authEntity "teracloud/modules/auth/domain/entity"
 )
 
 // PasswordResetTokenRepository handles password reset token persistence.

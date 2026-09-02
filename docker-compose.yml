@@ -27,7 +27,7 @@ services:
 
 #   db:
 #     image: postgres:16-alpine
-#     container_name: db-ruang-tukar
+#     container_name: db-teracloud
 #     restart: always
 #     env_file:
 #       - .env

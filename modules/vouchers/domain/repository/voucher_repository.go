@@ -5,7 +5,7 @@ import (
 	"context"
 	"errors"
 
-	"ruang-tukar/modules/vouchers/domain/entity"
+	"teracloud/modules/vouchers/domain/entity"
 )
 
 var ErrRecordNotFound = errors.New("record not found")

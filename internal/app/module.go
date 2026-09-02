@@ -1,8 +1,8 @@
 package app
 
 import (
-	"ruang-tukar/internal/pkg/bus"
-	"ruang-tukar/internal/pkg/logger"
+	"teracloud/internal/pkg/bus"
+	"teracloud/internal/pkg/logger"
 
 	"github.com/labstack/echo/v5"
 	"gorm.io/gorm"

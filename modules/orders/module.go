@@ -2,17 +2,17 @@
 package orders
 
 import (
-	"ruang-tukar/internal/pkg/bus"
-	"ruang-tukar/internal/pkg/logger"
-	"ruang-tukar/internal/pkg/midtrans"
-	"ruang-tukar/modules/orders/domain/repository"
-	"ruang-tukar/modules/orders/domain/service"
-	"ruang-tukar/modules/orders/handler"
-	planRepo "ruang-tukar/modules/plans/domain/repository"
-	planService "ruang-tukar/modules/plans/domain/service"
-	userRepo "ruang-tukar/modules/users/domain/repository"
-	userService "ruang-tukar/modules/users/domain/service"
-	"ruang-tukar/modules/vouchers"
+	"teracloud/internal/pkg/bus"
+	"teracloud/internal/pkg/logger"
+	"teracloud/internal/pkg/midtrans"
+	"teracloud/modules/orders/domain/repository"
+	"teracloud/modules/orders/domain/service"
+	"teracloud/modules/orders/handler"
+	planRepo "teracloud/modules/plans/domain/repository"
+	planService "teracloud/modules/plans/domain/service"
+	userRepo "teracloud/modules/users/domain/repository"
+	userService "teracloud/modules/users/domain/service"
+	"teracloud/modules/vouchers"
 
 	"github.com/labstack/echo/v5"
 	"gorm.io/gorm"

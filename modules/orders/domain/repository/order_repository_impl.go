@@ -5,8 +5,8 @@ import (
 	"context"
 	"errors"
 
-	"ruang-tukar/internal/pkg/database"
-	"ruang-tukar/modules/orders/domain/entity"
+	"teracloud/internal/pkg/database"
+	"teracloud/modules/orders/domain/entity"
 
 	"gorm.io/gorm"
 )

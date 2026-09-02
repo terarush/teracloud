@@ -176,7 +176,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ orderId, planSlug })
                       <span>{quote.error_message || t("hosting.voucherInvalid")}</span>
                     </p>
                   )}
-                  {!isValidating && quote && quote.valid && plan && (
+                  {!isValidating && quote && quote.valid && (
                     <>
                       <p className="flex items-center gap-1.5 text-[11px] text-primary">
                         <CheckCircle2 className="size-3.5" />

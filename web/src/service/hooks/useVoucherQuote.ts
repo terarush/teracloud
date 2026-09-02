@@ -1,5 +1,6 @@
 import React from "react"
-import { vouchersApi, type VoucherQuote, type VoucherQuoteItem } from "../api/vouchers"
+import { vouchersApi   } from "../api/vouchers"
+import type {VoucherQuote, VoucherQuoteItem} from "../api/vouchers";
 
 const DEBOUNCE_MS = 400
 

@@ -4,8 +4,8 @@ package entity
 import (
 	"time"
 
-	"ruang-tukar/internal/pkg/database"
-	planEntity "ruang-tukar/modules/plans/domain/entity"
+	"teracloud/internal/pkg/database"
+	planEntity "teracloud/modules/plans/domain/entity"
 )
 
 const (

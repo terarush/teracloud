@@ -4,14 +4,14 @@ package handler
 import (
 	"strconv"
 
-	"ruang-tukar/internal/pkg/bus"
-	"ruang-tukar/internal/pkg/logger"
-	"ruang-tukar/internal/pkg/middleware"
-	"ruang-tukar/internal/pkg/utils"
-	billingErrs "ruang-tukar/modules/billing/errs"
-	"ruang-tukar/modules/billing/domain/entity"
-	"ruang-tukar/modules/billing/domain/service"
-	"ruang-tukar/modules/billing/dto/response"
+	"teracloud/internal/pkg/bus"
+	"teracloud/internal/pkg/logger"
+	"teracloud/internal/pkg/middleware"
+	"teracloud/internal/pkg/utils"
+	billingErrs "teracloud/modules/billing/errs"
+	"teracloud/modules/billing/domain/entity"
+	"teracloud/modules/billing/domain/service"
+	"teracloud/modules/billing/dto/response"
 
 	"github.com/labstack/echo/v5"
 )

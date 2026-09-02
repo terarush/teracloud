@@ -7,11 +7,11 @@ import (
 	"sync"
 	"time"
 
-	"ruang-tukar/internal/pkg/config"
-	"ruang-tukar/internal/pkg/docker"
-	"ruang-tukar/internal/pkg/logger"
-	"ruang-tukar/internal/pkg/ws"
-	"ruang-tukar/modules/containers/domain/service"
+	"teracloud/internal/pkg/config"
+	"teracloud/internal/pkg/docker"
+	"teracloud/internal/pkg/logger"
+	"teracloud/internal/pkg/ws"
+	"teracloud/modules/containers/domain/service"
 
 	"github.com/gorilla/websocket"
 	"github.com/labstack/echo/v5"

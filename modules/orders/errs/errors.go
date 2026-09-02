@@ -1,7 +1,7 @@
 // File: modules/orders/errs/errors.go
 package errs
 
-import "ruang-tukar/internal/pkg/utils"
+import "teracloud/internal/pkg/utils"
 
 const (
 	CodeOrderNotFound            = "ORDER_NOT_FOUND"

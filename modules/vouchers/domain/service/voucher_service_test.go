@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
-	"ruang-tukar/internal/pkg/utils"
-	"ruang-tukar/modules/vouchers/domain/entity"
-	"ruang-tukar/modules/vouchers/domain/repository"
+	"teracloud/internal/pkg/utils"
+	"teracloud/modules/vouchers/domain/entity"
+	"teracloud/modules/vouchers/domain/repository"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

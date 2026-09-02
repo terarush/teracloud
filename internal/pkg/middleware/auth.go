@@ -3,7 +3,7 @@ package middleware
 import (
 	"fmt"
 	"net/http"
-	"ruang-tukar/internal/pkg/jwt"
+	"teracloud/internal/pkg/jwt"
 	"strings"
 
 	"github.com/labstack/echo/v5"

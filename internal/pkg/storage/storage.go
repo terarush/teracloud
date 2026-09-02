@@ -12,7 +12,7 @@ import (
 	"os"
 	"strings"
 
-	"ruang-tukar/internal/pkg/logger"
+	"teracloud/internal/pkg/logger"
 
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
@@ -122,7 +122,7 @@ func FolderFromPath(path string) string {
 }
 
 // BaseURL returns the public base URL files are served from, e.g.
-// "http://192.168.200.150:9000/ruang-tukar". Empty when storage is disabled.
+// "http://192.168.200.150:9000/teracloud". Empty when storage is disabled.
 func BaseURL() string {
 	if Client == nil {
 		return ""

@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"time"
 
-	"ruang-tukar/modules/containers/domain/entity"
+	"teracloud/modules/containers/domain/entity"
 )
 
 type ContainerResponse struct {

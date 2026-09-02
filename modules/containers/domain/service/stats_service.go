@@ -5,11 +5,11 @@ import (
 	"context"
 	"time"
 
-	"ruang-tukar/internal/pkg/database"
-	"ruang-tukar/internal/pkg/docker"
-	"ruang-tukar/internal/pkg/logger"
-	"ruang-tukar/modules/containers/domain/entity"
-	"ruang-tukar/modules/containers/domain/repository"
+	"teracloud/internal/pkg/database"
+	"teracloud/internal/pkg/docker"
+	"teracloud/internal/pkg/logger"
+	"teracloud/modules/containers/domain/entity"
+	"teracloud/modules/containers/domain/repository"
 
 	"gorm.io/gorm"
 )

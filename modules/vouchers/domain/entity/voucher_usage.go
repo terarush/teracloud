@@ -4,7 +4,7 @@ package entity
 import (
 	"time"
 
-	"ruang-tukar/internal/pkg/database"
+	"teracloud/internal/pkg/database"
 )
 
 type VoucherUsage struct {

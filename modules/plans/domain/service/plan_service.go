@@ -5,9 +5,9 @@ import (
 	"context"
 	"strings"
 
-	planErrs "ruang-tukar/modules/plans/errs"
-	"ruang-tukar/modules/plans/domain/entity"
-	"ruang-tukar/modules/plans/domain/repository"
+	planErrs "teracloud/modules/plans/errs"
+	"teracloud/modules/plans/domain/entity"
+	"teracloud/modules/plans/domain/repository"
 )
 
 type PlanService struct {

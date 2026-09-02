@@ -67,25 +67,23 @@ export const CartSummaryCard: React.FC<CartSummaryCardProps> = ({
               <Tag className="size-3.5" />
               <span>{t("hosting.voucherCode")}</span>
             </label>
-            {onVoucherChange && (
-              <div className="relative">
-                <Input
-                  value={voucherCode}
-                  onChange={(e) => onVoucherChange(e.target.value)}
-                  placeholder={t("hosting.voucherPlaceholder")}
-                  className="h-9 text-xs uppercase pr-8"
-                />
-                {hasCode && (
-                  <button
-                    onClick={() => onVoucherChange("")}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition cursor-pointer"
-                    aria-label={t("hosting.voucherRemoveAria")}
-                  >
-                    <X className="size-3.5" />
-                  </button>
-                )}
-              </div>
-            )}
+            <div className="relative">
+              <Input
+                value={voucherCode}
+                onChange={(e) => onVoucherChange(e.target.value)}
+                placeholder={t("hosting.voucherPlaceholder")}
+                className="h-9 text-xs uppercase pr-8"
+              />
+              {hasCode && (
+                <button
+                  onClick={() => onVoucherChange("")}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition cursor-pointer"
+                  aria-label={t("hosting.voucherRemoveAria")}
+                >
+                  <X className="size-3.5" />
+                </button>
+              )}
+            </div>
             <p className="text-[11px] text-muted-foreground">
               {t("hosting.voucherHint")}
             </p>

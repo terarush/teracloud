@@ -6,7 +6,7 @@ import (
 	"html/template"
 	"os"
 
-	"ruang-tukar/internal/pkg/mailer"
+	"teracloud/internal/pkg/mailer"
 )
 
 type ReminderService struct {

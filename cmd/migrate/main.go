@@ -19,9 +19,9 @@ import (
 	"log"
 	"os"
 
-	"ruang-tukar/internal/pkg/config"
-	"ruang-tukar/internal/pkg/database"
-	"ruang-tukar/internal/pkg/migrate"
+	"teracloud/internal/pkg/config"
+	"teracloud/internal/pkg/database"
+	"teracloud/internal/pkg/migrate"
 )
 
 func main() {

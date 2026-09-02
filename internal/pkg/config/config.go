@@ -1,7 +1,7 @@
 package config
 
 import (
-	"ruang-tukar/internal/pkg/jwt"
+	"teracloud/internal/pkg/jwt"
 	"log"
 	"os"
 	"strconv"

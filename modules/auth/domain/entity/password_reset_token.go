@@ -3,7 +3,7 @@ package entity
 import (
 	"time"
 
-	"ruang-tukar/internal/pkg/database"
+	"teracloud/internal/pkg/database"
 )
 
 // PasswordResetToken represents a password reset token.

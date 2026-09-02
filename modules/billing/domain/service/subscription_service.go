@@ -5,9 +5,9 @@ import (
 	"context"
 	"time"
 
-	billingErrs "ruang-tukar/modules/billing/errs"
-	"ruang-tukar/modules/billing/domain/entity"
-	"ruang-tukar/modules/billing/domain/repository"
+	billingErrs "teracloud/modules/billing/errs"
+	"teracloud/modules/billing/domain/entity"
+	"teracloud/modules/billing/domain/repository"
 )
 
 type SubscriptionService struct {

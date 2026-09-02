@@ -34,7 +34,7 @@ swag init -d .,./modules/auth,./modules/users -o docs --parseDependency --parseI
 
 **Modular monolith** backend (Go 1.25 + Echo v5 + GORM).
 
-### Backend (`ruang-tukar`)
+### Backend (`teracloud`)
 
 Module interface at `internal/app/module.go`. Every feature is a module with `Name()`, `Initialize(db, logger, eventBus)`, `RegisterRoutes(e, group)`, `Migrations()`, `Logger()`.
 
@@ -79,7 +79,7 @@ Copy `.env.example` → `.env`. Key vars:
 
 ## Notes
 
-- Module name in `go.mod` is `ruang-tukar`
+- Module name in `go.mod` is `teracloud`
 - Dockerfile targets Go 1.25-alpine; local uses 1.25
 - Config is 100% env-var driven — no TOML files despite Dockerfile comment
 - Auth module duplicates user creation logic — `auth.CreateUser` has proper bcrypt hashing, `users.CreateUser` does not
