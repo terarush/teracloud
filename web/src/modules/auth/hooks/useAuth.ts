@@ -18,7 +18,7 @@ export function useLogin() {
   const [touched, setTouched] = useState<{ email?: boolean; password?: boolean }>({})
 
   const validateEmail = (value: string) => {
-    if (!value) return tl("auth.login.emailLabel")
+    if (!value) return tl("common.validation.required")
     if (!EMAIL_REGEX.test(value)) return tl("error.AUTH_EMAIL_INVALID")
     return undefined
   }
@@ -36,20 +36,20 @@ export function useLogin() {
   const handlePasswordChange = (value: string) => {
     setPassword(value)
     if (touched.password) {
-      setErrors((p) => ({ ...p, password: !value ? tl("error.AUTH_INVALID_PASSWORD") : undefined }))
+      setErrors((p) => ({ ...p, password: !value ? tl("common.validation.required") : undefined }))
     }
   }
 
   const handlePasswordBlur = () => {
     setTouched((p) => ({ ...p, password: true }))
-    setErrors((p) => ({ ...p, password: !password ? tl("error.AUTH_INVALID_PASSWORD") : undefined }))
+    setErrors((p) => ({ ...p, password: !password ? tl("common.validation.required") : undefined }))
   }
 
   const validate = () => {
     const errs: typeof errors = {}
     const e = validateEmail(email)
     if (e) errs.email = e
-    if (!password) errs.password = tl("error.AUTH_INVALID_PASSWORD")
+    if (!password) errs.password = tl("common.validation.required")
     setErrors(errs)
     return Object.keys(errs).length === 0
   }

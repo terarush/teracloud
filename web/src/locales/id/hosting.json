@@ -513,6 +513,29 @@
       "payment": "Pembayaran QRIS dan VA"
     },
     "rootUser": "root@container",
-    "lanSwitchLoading": "Memuat..."
+    "lanSwitchLoading": "Memuat...",
+    "billing": {
+      "subscription": "Langganan",
+      "container": "Container",
+      "period": "Periode",
+      "remainingDays": "{{days}} hari lagi",
+      "todayExpires": "Berakhir hari ini",
+      "expired": "Kedaluwarsa",
+      "graceDays": "Grace: {{days}} hari lagi",
+      "autoRenew": "Perpanjangan Otomatis",
+      "autoRenewOn": "Aktif",
+      "autoRenewOff": "Nonaktif",
+      "openContainer": "Buka Container",
+      "noSubscriptions": "Belum ada langganan aktif.",
+      "invoiceDetail": "Detail Invoice",
+      "invoiceDetailSubtitle": "Rincian pembayaran dan metadata transaksi.",
+      "itemDescription": "Deskripsi",
+      "qty": "Jml",
+      "amount": "Nominal",
+      "paidAt": "Waktu Pembayaran",
+      "unpaid": "Belum Dibayar",
+      "orderId": "ID Pesanan",
+      "viewDetail": "Lihat Detail"
+    }
   }
 }

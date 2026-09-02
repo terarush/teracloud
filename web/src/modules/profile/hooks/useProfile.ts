@@ -34,10 +34,10 @@ export function useProfile() {
         email,
         avatar: avatar || undefined,
       })
-      toast.success(t("profile.saved", "Profile updated successfully"))
+      toast.success(t("auth.profile.saved", "Profile updated successfully"))
     } catch (err) {
       console.error("Failed to update profile:", err)
-      const msg = translateApiError(err, t) || t("profile.saveFailed", "Failed to update profile")
+      const msg = translateApiError(err, t) || t("auth.profile.saveFailed", "Failed to update profile")
       toast.error(msg)
     } finally {
       setIsSavingProfile(false)
@@ -47,19 +47,19 @@ export function useProfile() {
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault()
     if (newPassword !== confirmPassword) {
-      toast.error(t("profile.passwordsDontMatch", "Passwords do not match"))
+      toast.error(t("auth.profile.passwordsDontMatch", "Passwords do not match"))
       return
     }
     setIsChangingPassword(true)
     try {
       await changePassword({ old_password: oldPassword, new_password: newPassword, confirm_password: confirmPassword })
-      toast.success(t("profile.passwordChanged", "Password changed successfully"))
+      toast.success(t("auth.profile.passwordChanged", "Password changed successfully"))
       setOldPassword("")
       setNewPassword("")
       setConfirmPassword("")
     } catch (err) {
       console.error("Failed to change password:", err)
-      const msg = translateApiError(err, t) || t("profile.changePasswordFailed", "Failed to change password")
+      const msg = translateApiError(err, t) || t("auth.profile.changePasswordFailed", "Failed to change password")
       toast.error(msg)
     } finally {
       setIsChangingPassword(false)

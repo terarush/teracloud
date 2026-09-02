@@ -513,6 +513,29 @@
       "payment": "QRIS and VA payments"
     },
     "rootUser": "root@container",
-    "lanSwitchLoading": "Loading..."
+    "lanSwitchLoading": "Loading...",
+    "billing": {
+      "subscription": "Subscription",
+      "container": "Container",
+      "period": "Period",
+      "remainingDays": "{{days}} days left",
+      "todayExpires": "Expires today",
+      "expired": "Expired",
+      "graceDays": "Grace: {{days}} days left",
+      "autoRenew": "Auto-renew",
+      "autoRenewOn": "Active",
+      "autoRenewOff": "Disabled",
+      "openContainer": "Open Container",
+      "noSubscriptions": "No active subscriptions found.",
+      "invoiceDetail": "Invoice Detail",
+      "invoiceDetailSubtitle": "Payment breakdown and transaction metadata.",
+      "itemDescription": "Description",
+      "qty": "Qty",
+      "amount": "Amount",
+      "paidAt": "Paid At",
+      "unpaid": "Unpaid",
+      "orderId": "Order ID",
+      "viewDetail": "View Detail"
+    }
   }
 }
