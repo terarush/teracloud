@@ -12,6 +12,7 @@ import {
 } from "@/service/mutation/containers"
 import { toast } from "sonner"
 import { useNavigate } from "@tanstack/react-router"
+import { tl } from "@/lib/i18n"
 
 export function useContainerDetail(containerId: number) {
   const navigate = useNavigate()
@@ -36,51 +37,54 @@ export function useContainerDetail(containerId: number) {
   const handleStart = async () => {
     try {
       await startMutation.mutateAsync(containerId)
-      toast.success("Container berhasil dijalankan")
+      toast.success(tl("hosting.toast.containerStarted"))
     } catch (err: any) {
-      toast.error(err.response?.data?.message || "Gagal memulai container")
+      toast.error(err.response?.data?.message || tl("hosting.toast.containerStartFailed"))
     }
   }
 
   const handleStop = async () => {
     try {
       await stopMutation.mutateAsync(containerId)
-      toast.success("Container berhasil dihentikan")
+      toast.success(tl("hosting.toast.containerStopped"))
     } catch (err: any) {
-      toast.error(err.response?.data?.message || "Gagal menghentikan container")
+      toast.error(err.response?.data?.message || tl("hosting.toast.containerStopFailed"))
     }
   }
 
   const handleRestart = async () => {
     try {
       await restartMutation.mutateAsync(containerId)
-      toast.success("Container berhasil direstart")
+      toast.success(tl("hosting.toast.containerRestarted"))
     } catch (err: any) {
-      toast.error(err.response?.data?.message || "Gagal me-restart container")
+      toast.error(err.response?.data?.message || tl("hosting.toast.containerRestartFailed"))
     }
   }
 
   const handleReset = async (mode: "soft" | "hard" = "soft") => {
-    const modeLabel = mode === "hard" ? "Hard Reset (Hapus semua file)" : "Soft Reset (Pertahankan volume)"
-    if (!confirm(`Konfirmasi ${modeLabel}? Tindakan ini akan membuat ulang instance container.`)) {
+    const modeLabel =
+      mode === "hard"
+        ? tl("hosting.toast.hardResetMode")
+        : tl("hosting.toast.softResetMode")
+    if (!confirm(tl("hosting.toast.confirmReset", { mode: modeLabel }))) {
       return
     }
     try {
       await resetMutation.mutateAsync({ id: containerId, mode })
-      toast.success("Container berhasil di-reset")
+      toast.success(tl("hosting.toast.containerReset"))
     } catch (err: any) {
-      toast.error(err.response?.data?.message || "Gagal me-reset container")
+      toast.error(err.response?.data?.message || tl("hosting.toast.containerResetFailed"))
     }
   }
 
   const handleDelete = async () => {
-    if (!confirm("Yakin ingin menghapus container ini dan semua file di dalamnya?")) return
+    if (!confirm(tl("hosting.toast.confirmDeleteContainer"))) return
     try {
       await deleteMutation.mutateAsync(containerId)
-      toast.success("Container berhasil dihapus")
+      toast.success(tl("hosting.toast.containerDeleted"))
       navigate({ to: "/app" })
     } catch (err: any) {
-      toast.error(err.response?.data?.message || "Gagal menghapus container")
+      toast.error(err.response?.data?.message || tl("hosting.toast.containerDeleteFailed"))
     }
   }
 

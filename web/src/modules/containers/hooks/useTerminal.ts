@@ -5,6 +5,7 @@ import { FitAddon } from "@xterm/addon-fit"
 import { WebLinksAddon } from "@xterm/addon-web-links"
 import "@xterm/xterm/css/xterm.css"
 import Cookies from "js-cookie"
+import { tl } from "@/lib/i18n"
 
 export interface UseTerminalOptions {
   containerId: number
@@ -17,7 +18,7 @@ export function useTerminal({ containerId, terminalContainerRef, isActive = true
   const fitAddonRef = useRef<FitAddon | null>(null)
   const socketRef = useRef<WebSocket | null>(null)
   const [connected, setConnected] = useState(false)
-  const [statusText, setStatusText] = useState("Connecting...")
+  const [statusText, setStatusText] = useState(tl("hosting.connecting"))
 
   const fitTerminal = useCallback(() => {
     if (fitAddonRef.current && terminalContainerRef.current && xtermRef.current) {
@@ -107,7 +108,7 @@ export function useTerminal({ containerId, terminalContainerRef, isActive = true
 
     ws.onopen = () => {
       setConnected(true)
-      setStatusText("Connected")
+      setStatusText(tl("hosting.connected"))
       ws.send(
         JSON.stringify({
           type: "resize",
@@ -138,14 +139,14 @@ export function useTerminal({ containerId, terminalContainerRef, isActive = true
 
     ws.onclose = () => {
       setConnected(false)
-      setStatusText("Disconnected")
-      term.writeln("\r\n\x1b[33mConnection closed\x1b[0m")
+      setStatusText(tl("hosting.disconnected"))
+      term.writeln(`\r\n\x1b[33m${tl("hosting.connectionClosed")}\x1b[0m`)
     }
 
     ws.onerror = () => {
       setConnected(false)
-      setStatusText("Connection Error")
-      term.writeln("\r\n\x1b[31mConnection error\x1b[0m")
+      setStatusText(tl("hosting.connectionError"))
+      term.writeln(`\r\n\x1b[31m${tl("hosting.connectionError")}\x1b[0m`)
     }
 
     term.onData((data) => {
