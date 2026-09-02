@@ -36,6 +36,7 @@ export function useProfile() {
       })
       toast.success(t("profile.saved", "Profile updated successfully"))
     } catch (err) {
+      console.error("Failed to update profile:", err)
       const msg = translateApiError(err, t) || t("profile.saveFailed", "Failed to update profile")
       toast.error(msg)
     } finally {
@@ -57,6 +58,7 @@ export function useProfile() {
       setNewPassword("")
       setConfirmPassword("")
     } catch (err) {
+      console.error("Failed to change password:", err)
       const msg = translateApiError(err, t) || t("profile.changePasswordFailed", "Failed to change password")
       toast.error(msg)
     } finally {

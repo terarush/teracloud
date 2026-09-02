@@ -42,7 +42,8 @@ export const PricingView: React.FC = () => {
         },
       })
     } catch (err: any) {
-      toast.error(err?.message || t("hosting.cartAddFailed"))
+      console.error("Failed to add plan to cart:", err)
+      toast.error(err.response?.data?.message || err?.message || t("hosting.cartAddFailed"))
     }
   }
 

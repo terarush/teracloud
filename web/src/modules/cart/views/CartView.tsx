@@ -49,7 +49,8 @@ export const CartView: React.FC = () => {
       await updateMutation.mutateAsync({ id, payload })
       toast.success(t("hosting.toast.cartUpdated"))
     } catch (err: any) {
-      toast.error(err?.message || t("hosting.toast.cartUpdateFailed"))
+      console.error("Failed to update cart:", err)
+      toast.error(err.response?.data?.message || err?.message || t("hosting.toast.cartUpdateFailed"))
     }
   }
 
@@ -58,7 +59,8 @@ export const CartView: React.FC = () => {
       await removeMutation.mutateAsync(id)
       toast.success(t("hosting.toast.itemRemoved"))
     } catch (err: any) {
-      toast.error(err?.message || t("hosting.toast.itemRemoveFailed"))
+      console.error("Failed to remove item from cart:", err)
+      toast.error(err.response?.data?.message || err?.message || t("hosting.toast.itemRemoveFailed"))
     }
   }
 
@@ -68,7 +70,8 @@ export const CartView: React.FC = () => {
       await clearMutation.mutateAsync()
       toast.success(t("hosting.toast.cartCleared"))
     } catch (err: any) {
-      toast.error(err?.message || t("hosting.toast.cartClearFailed"))
+      console.error("Failed to clear cart:", err)
+      toast.error(err.response?.data?.message || err?.message || t("hosting.toast.cartClearFailed"))
     }
   }
 
@@ -83,7 +86,8 @@ export const CartView: React.FC = () => {
         params: { orderId: String(order.id) },
       })
     } catch (err: any) {
-      toast.error(err?.message || t("hosting.toast.orderCreateFailed"))
+      console.error("Failed to checkout:", err)
+      toast.error(err.response?.data?.message || err?.message || t("hosting.toast.orderCreateFailed"))
     }
   }
 

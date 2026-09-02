@@ -22,7 +22,8 @@ export function useAdminData() {
       await createPlanMutation.mutateAsync(data)
       toast.success(tl("hosting.plan.toastCreated"))
     } catch (err: any) {
-      toast.error(err.response?.data?.message || tl("hosting.plan.toastCreateFailed"))
+      console.error("Failed to create plan:", err)
+      toast.error(err.response?.data?.message || err.message || tl("hosting.plan.toastCreateFailed"))
     }
   }
 
@@ -31,7 +32,8 @@ export function useAdminData() {
       await updatePlanMutation.mutateAsync({ id, data })
       toast.success(tl("hosting.plan.toastUpdated"))
     } catch (err: any) {
-      toast.error(err.response?.data?.message || tl("hosting.plan.toastUpdateFailed"))
+      console.error("Failed to update plan:", err)
+      toast.error(err.response?.data?.message || err.message || tl("hosting.plan.toastUpdateFailed"))
     }
   }
 
@@ -41,7 +43,8 @@ export function useAdminData() {
       await deletePlanMutation.mutateAsync(id)
       toast.success(tl("hosting.plan.toastDeleted"))
     } catch (err: any) {
-      toast.error(err.response?.data?.message || tl("hosting.plan.toastDeleteFailed"))
+      console.error("Failed to delete plan:", err)
+      toast.error(err.response?.data?.message || err.message || tl("hosting.plan.toastDeleteFailed"))
     }
   }
 
@@ -50,7 +53,8 @@ export function useAdminData() {
       await togglePlanMutation.mutateAsync(id)
       toast.success(tl("hosting.plan.toastToggled"))
     } catch (err: any) {
-      toast.error(err.response?.data?.message || tl("hosting.plan.toastToggleFailed"))
+      console.error("Failed to toggle plan:", err)
+      toast.error(err.response?.data?.message || err.message || tl("hosting.plan.toastToggleFailed"))
     }
   }
 

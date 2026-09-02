@@ -61,6 +61,7 @@ export function useSetUsername() {
       navigate({ to: "/app" as any, replace: true })
       return true
     } catch (err: any) {
+      console.error("Failed to set username:", err)
       setError(translateApiError(err))
       return false
     } finally {

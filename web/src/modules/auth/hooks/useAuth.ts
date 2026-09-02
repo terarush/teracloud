@@ -65,6 +65,7 @@ export function useLogin() {
       toast.success(tl("common.success"))
       navigate({ to: "/app" as any })
     } catch (error: any) {
+      console.error("Login failed:", error)
       const isNetError = !error?.response && (error?.code === "ERR_NETWORK" || error?.message === "Network Error")
       if (isNetError) {
         setErrorMessage(tl("error.SERVICE_UNAVAILABLE"))
@@ -107,6 +108,7 @@ export function useRegister() {
       toast.success(tl("common.success"))
       navigate({ to: "/app" as any })
     } catch (error: any) {
+      console.error("Registration failed:", error)
       const msg = translateApiError(error)
       setErrorMessage(msg)
       toast.error(msg || tl("common.error"))

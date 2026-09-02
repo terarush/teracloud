@@ -18,7 +18,8 @@ export function useCheckout(orderId?: number, planSlug?: string) {
       toast.success(tl("hosting.toast.orderCreated"))
       navigate({ to: "/orders/checkout/$orderId", params: { orderId: String(created.id) } })
     } catch (err: any) {
-      toast.error(err.response?.data?.message || tl("hosting.toast.orderCreateFailed"))
+      console.error("Failed to create order:", err)
+      toast.error(err.response?.data?.message || err.message || tl("hosting.toast.orderCreateFailed"))
     }
   }
 
