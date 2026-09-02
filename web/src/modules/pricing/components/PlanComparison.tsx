@@ -1,17 +1,19 @@
 import React from "react"
 import { pricingComparisonList } from "../content/pricingContent"
 import { Check, Minus } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 export const PlanComparison: React.FC = () => {
+  const { t } = useTranslation()
   return (
     <div className="overflow-x-auto">
       <table className="w-full border-collapse text-left text-sm">
         <thead>
           <tr className="border-b border-border text-muted-foreground uppercase text-xs">
-            <th className="py-4 px-6 font-semibold">Fitur &amp; Spesifikasi</th>
-            <th className="py-4 px-6 font-semibold text-center">Starter</th>
-            <th className="py-4 px-6 font-semibold text-center text-primary">Standard</th>
-            <th className="py-4 px-6 font-semibold text-center">Pro</th>
+            <th className="py-4 px-6 font-semibold">{t("hosting.feature")}</th>
+            <th className="py-4 px-6 font-semibold text-center">{t("hosting.featureComparison.starter")}</th>
+            <th className="py-4 px-6 font-semibold text-center text-primary">{t("hosting.featureComparison.standard")}</th>
+            <th className="py-4 px-6 font-semibold text-center">{t("hosting.featureComparison.pro")}</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-border/60">

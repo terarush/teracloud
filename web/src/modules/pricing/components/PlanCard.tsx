@@ -3,6 +3,7 @@ import type { Plan } from "@/service/api/plans"
 import { Button } from "@/components/ui/button"
 import { Check, ShoppingCart, ArrowRight } from "lucide-react"
 import { getImageUrl } from "@/lib/utils"
+import { useTranslation } from "react-i18next"
 
 interface PlanCardProps {
   plan: Plan
@@ -19,6 +20,7 @@ export const PlanCard: React.FC<PlanCardProps> = ({
   isAddingToCart = false,
   isPopular = false,
 }) => {
+  const { t } = useTranslation()
   const formattedPrice = new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
@@ -39,7 +41,7 @@ export const PlanCard: React.FC<PlanCardProps> = ({
       {(plan.badge || isPopular) && (
         <div className="absolute top-0 right-0 z-20">
           <div className="rounded-bl-xl rounded-tr-xl bg-primary px-3.5 py-1 text-[11px] font-bold text-primary-foreground uppercase tracking-wider shadow-sm">
-            {plan.badge || "Paling Populer"}
+            {plan.badge || t("hosting.plan.popularFallback")}
           </div>
         </div>
       )}
@@ -88,27 +90,27 @@ export const PlanCard: React.FC<PlanCardProps> = ({
         </div>
 
         <p className="text-sm text-muted-foreground min-h-[40px] mb-6">
-          {plan.short_description || plan.description || "Solusi hosting container docker berperforma tinggi."}
+          {plan.short_description || plan.description || t("hosting.plan.descFallback")}
         </p>
 
         <div className="mb-6">
           <span className="text-3xl sm:text-4xl font-extrabold text-foreground">{formattedPrice}</span>
-          <span className="text-sm text-muted-foreground font-medium"> / bulan</span>
+          <span className="text-sm text-muted-foreground font-medium">{t("hosting.perMonth")}</span>
         </div>
 
         {/* Specs Overview */}
         <div className="grid grid-cols-3 gap-2 py-3.5 mb-6 rounded-xl bg-muted text-center">
           <div>
-            <div className="text-xs text-muted-foreground">vCPU</div>
-            <div className="font-bold text-sm text-foreground">{plan.cpu_limit} Core</div>
+            <div className="text-xs text-muted-foreground">{t("hosting.unitVcpu")}</div>
+            <div className="font-bold text-sm text-foreground">{plan.cpu_limit} {t("hosting.unitCore")}</div>
           </div>
           <div>
-            <div className="text-xs text-muted-foreground">RAM</div>
-            <div className="font-bold text-sm text-foreground">{plan.memory_limit} MB</div>
+            <div className="text-xs text-muted-foreground">{t("hosting.unitRam")}</div>
+            <div className="font-bold text-sm text-foreground">{plan.memory_limit} {t("hosting.unitMb")}</div>
           </div>
           <div>
-            <div className="text-xs text-muted-foreground">Disk</div>
-            <div className="font-bold text-sm text-foreground">{plan.disk_limit} GB</div>
+            <div className="text-xs text-muted-foreground">{t("hosting.unitDisk")}</div>
+            <div className="font-bold text-sm text-foreground">{plan.disk_limit} {t("hosting.unitGb")}</div>
           </div>
         </div>
 
@@ -116,11 +118,11 @@ export const PlanCard: React.FC<PlanCardProps> = ({
         <ul className="space-y-3 text-sm text-muted-foreground mb-8">
           <li className="flex items-center gap-2">
             <Check className="h-4 w-4 text-primary shrink-0" />
-            <span>Image: {plan.image_name}:{plan.image_tag}</span>
+            <span>{t("hosting.imageLabel")} {plan.image_name}:{plan.image_tag}</span>
           </li>
           <li className="flex items-center gap-2">
             <Check className="h-4 w-4 text-primary shrink-0" />
-            <span>Web Terminal (xterm.js) &amp; SSH Port</span>
+            <span>{t("hosting.plan.webTerminalSsh")}</span>
           </li>
           {features.map((feat, i) => (
             <li key={i} className="flex items-center gap-2">
@@ -138,7 +140,7 @@ export const PlanCard: React.FC<PlanCardProps> = ({
           className="w-full font-semibold cursor-pointer gap-2"
           onClick={() => onSelect(plan)}
         >
-          <span>Beli Langsung</span>
+          <span>{t("hosting.buyDirect")}</span>
           <ArrowRight className="size-4" />
         </Button>
 
@@ -151,7 +153,7 @@ export const PlanCard: React.FC<PlanCardProps> = ({
             onClick={() => onAddToCart(plan)}
           >
             <ShoppingCart className="size-3.5" />
-            <span>Tambah ke Keranjang</span>
+            <span>{t("hosting.addToCart")}</span>
           </Button>
         )}
       </div>
