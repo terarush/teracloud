@@ -28,7 +28,7 @@ export const AdminAuditView: React.FC = () => {
             {t("hosting.adminAudit", "Log Audit Sistem")}
           </h1>
           <p className="text-sm text-muted-foreground mt-0.5">
-            Riwayat aksi admin dan pengguna untuk kebutuhan audit trail.
+            {t("hosting.auditDesc")}
           </p>
         </div>
       </div>
@@ -40,8 +40,8 @@ export const AdminAuditView: React.FC = () => {
               <tr>
                 <th className="px-4 py-3">{t("hosting.auditAction", "Aksi")}</th>
                 <th className="px-4 py-3">{t("hosting.auditEntity", "Entitas")}</th>
-                <th className="px-4 py-3">User ID</th>
-                <th className="px-4 py-3">IP Address</th>
+                <th className="px-4 py-3">{t("hosting.colUserId")}</th>
+                <th className="px-4 py-3">{t("hosting.colIp")}</th>
                 <th className="px-4 py-3">{t("hosting.date", "Waktu")}</th>
               </tr>
             </thead>
@@ -56,7 +56,7 @@ export const AdminAuditView: React.FC = () => {
               ) : auditLogs.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="px-4 py-12 text-center text-xs text-muted-foreground">
-                    Belum ada aktivitas yang tercatat.
+                    {t("hosting.auditEmpty")}
                   </td>
                 </tr>
               ) : (

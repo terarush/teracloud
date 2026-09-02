@@ -2,6 +2,7 @@ import React from "react"
 import { ArrowLeft } from "lucide-react"
 import { useNavigate } from "@tanstack/react-router"
 import { Button } from "@/components/ui/button"
+import { useTranslation } from "react-i18next"
 
 interface TerminalLayoutProps {
   containerId: number
@@ -10,6 +11,7 @@ interface TerminalLayoutProps {
 
 export const TerminalLayout: React.FC<TerminalLayoutProps> = ({ containerId, children }) => {
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   return (
     <div className="h-screen w-screen flex flex-col bg-[#05070d] text-foreground overflow-hidden">
@@ -27,7 +29,7 @@ export const TerminalLayout: React.FC<TerminalLayoutProps> = ({ containerId, chi
             className="h-8 text-xs gap-1.5"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Kembali ke Container</span>
+            <span>{t("hosting.backToContainer")}</span>
           </Button>
           <span className="text-xs text-muted-foreground font-mono">
             /app/containers/{containerId}/terminal

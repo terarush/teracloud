@@ -2,13 +2,14 @@ import { useState } from "react"
 import { ArrowLeft, Check } from "lucide-react"
 import { Link } from "@tanstack/react-router"
 import { toast } from "sonner"
-import { Trans } from "react-i18next"
+import { Trans, useTranslation } from "react-i18next"
 
 import { AuthField } from "./fragments/AuthField"
 import { authContent } from "../content/auth"
 import { useForgotPasswordMutation } from "@/service/mutation/auth"
 
 export function ForgotPasswordForm() {
+  const { t } = useTranslation()
   const [email, setEmail] = useState("")
   const [sent, setSent] = useState(false)
   const mutation = useForgotPasswordMutation()
@@ -55,11 +56,11 @@ export function ForgotPasswordForm() {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <AuthField
-          label="Email"
+          label={t("auth.forgotPassword.emailLabel")}
           id="email"
           name="email"
           type="email"
-          placeholder="nama@email.com"
+          placeholder={t("auth.forgotPassword.emailPlaceholder")}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required

@@ -65,7 +65,7 @@ export const AdminContainersView: React.FC = () => {
             {t("hosting.adminContainers", "Semua Container")}
           </h1>
           <p className="text-sm text-muted-foreground mt-0.5">
-            Daftar seluruh container milik semua pengguna platform.
+            {t("hosting.containerListDesc")}
           </p>
         </div>
       </div>
@@ -76,12 +76,12 @@ export const AdminContainersView: React.FC = () => {
             <thead className="bg-muted/40 border-b border-border/50 text-muted-foreground text-[11px] font-medium uppercase tracking-wider">
               <tr>
                 <th className="px-4 py-3">{t("hosting.containerName", "Nama Container")}</th>
-                <th className="px-4 py-3">User ID</th>
+                <th className="px-4 py-3">{t("hosting.colUserId")}</th>
                 <th className="px-4 py-3">{t("hosting.dockerImage", "Image Docker")}</th>
                 <th className="px-4 py-3">{t("hosting.resourceAllocation", "Resource")}</th>
                 <th className="px-4 py-3">{t("hosting.status", "Status")}</th>
                 <th className="px-4 py-3">{t("hosting.date", "Dibuat")}</th>
-                <th className="px-4 py-3 text-right">Aksi</th>
+                <th className="px-4 py-3 text-right">{t("common.actions")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/50">
@@ -95,7 +95,7 @@ export const AdminContainersView: React.FC = () => {
               ) : containers.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="px-4 py-12 text-center text-xs text-muted-foreground">
-                    Belum ada container yang tercatat.
+                    {t("hosting.container.emptyRows")}
                   </td>
                 </tr>
               ) : (
@@ -127,14 +127,14 @@ export const AdminContainersView: React.FC = () => {
                           className="h-7 px-2.5 text-[11px] gap-1 cursor-pointer"
                           disabled={loadingId === container.id}
                           onClick={() => handleRestart(container.id)}
-                          title="Restart container"
+                          title={t("hosting.container.restartTitle")}
                         >
                           {loadingId === container.id && actionType === "restart" ? (
                             <Loader2 className="size-3 animate-spin" />
                           ) : (
                             <RotateCcw className="size-3" />
                           )}
-                          Restart
+                          {t("hosting.restart")}
                         </Button>
 
                         {confirmDeleteId === container.id ? (
@@ -149,7 +149,7 @@ export const AdminContainersView: React.FC = () => {
                               {loadingId === container.id && actionType === "delete" ? (
                                 <Loader2 className="size-3 animate-spin" />
                               ) : (
-                                "Yakin?"
+                                t("common.verify")
                               )}
                             </Button>
                             <Button
@@ -158,7 +158,7 @@ export const AdminContainersView: React.FC = () => {
                               className="h-7 px-2 text-[11px] cursor-pointer"
                               onClick={() => setConfirmDeleteId(null)}
                             >
-                              Batal
+                              {t("common.cancel")}
                             </Button>
                           </div>
                         ) : (
@@ -167,10 +167,10 @@ export const AdminContainersView: React.FC = () => {
                             variant="ghost"
                             className="h-7 px-2.5 text-[11px] gap-1 cursor-pointer text-destructive hover:text-destructive hover:bg-destructive/10"
                             onClick={() => setConfirmDeleteId(container.id)}
-                            title="Hapus container"
+                            title={t("hosting.container.deleteTitle")}
                           >
                             <Trash2 className="size-3" />
-                            Hapus
+                            {t("common.delete")}
                           </Button>
                         )}
                       </div>

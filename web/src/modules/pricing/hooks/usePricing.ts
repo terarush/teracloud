@@ -1,27 +1,15 @@
 import { usePlansQuery } from "@/service/query/plans"
-import { useCreateOrderMutation } from "@/service/mutation/orders"
 import type { Plan } from "@/service/api/plans"
 import { useNavigate } from "@tanstack/react-router"
-import { toast } from "sonner"
-import { useTranslation } from "react-i18next"
 
 export function usePricing() {
   const navigate = useNavigate()
-  const { t } = useTranslation()
   const { data: plans, isLoading, error, refetch } = usePlansQuery()
-  const createOrderMutation = useCreateOrderMutation()
 
-  const handleSelectPlan = async (plan: Plan) => {
-    try {
-      const order = await createOrderMutation.mutateAsync(plan.id)
-      if (order.snap_redirect_url) {
-        window.location.href = order.snap_redirect_url
-      } else {
-        navigate({ to: "/app/orders" })
-      }
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || t("common.error", "Gagal membuat pesanan paket hosting"))
-    }
+  const handleSelectPlan = (plan: Plan) => {
+    // "Beli Langsung" → arahkan ke checkout supaya user bisa input voucher dulu
+    // sebelum order dibuat & sebelum bayar.
+    navigate({ to: "/app/orders/checkout/plan/$slug", params: { slug: plan.slug } })
   }
 
   return {
@@ -30,6 +18,5 @@ export function usePricing() {
     error,
     refetch,
     handleSelectPlan,
-    isCreatingOrder: createOrderMutation.isPending,
   }
 }

@@ -1,3 +1,5 @@
+import { tl } from "@/lib/i18n"
+
 export interface FeatureItem {
   title: string
   description: string
@@ -11,52 +13,52 @@ export interface FAQItem {
 
 export const homeFeatures: FeatureItem[] = [
   {
-    title: "Instant Provisioning",
-    description: "Container Docker Anda siap digunakan dalam hitungan detik setelah pembayaran dikonfirmasi.",
+    title: tl("hosting.homeFeatures.instant.title"),
+    description: tl("hosting.homeFeatures.instant.desc"),
     icon: "Zap",
   },
   {
-    title: "Persistent NVMe Storage",
-    description: "Semua data konfigurasi, aplikasi, dan file Anda tersimpan permanen di storage NVMe berkecepatan tinggi.",
+    title: tl("hosting.homeFeatures.persistentStorage.title"),
+    description: tl("hosting.homeFeatures.persistentStorage.desc"),
     icon: "HardDrive",
   },
   {
-    title: "Web Terminal & SSH Access",
-    description: "Akses shell langsung dari browser menggunakan xterm.js interaktif atau melalui SSH client favorit Anda.",
+    title: tl("hosting.homeFeatures.webTerminal.title"),
+    description: tl("hosting.homeFeatures.webTerminal.desc"),
     icon: "Terminal",
   },
   {
-    title: "Realtime Resource Monitoring",
-    description: "Pantau penggunaan CPU, RAM, Network I/O, dan Disk secara realtime melalui grafik interaktif.",
+    title: tl("hosting.homeFeatures.realtimeMonitoring.title"),
+    description: tl("hosting.homeFeatures.realtimeMonitoring.desc"),
     icon: "Activity",
   },
   {
-    title: "Full Root & Port Control",
-    description: "Dapatkan akses root penuh dengan port publik otomatis untuk SSH dan Web application Anda.",
+    title: tl("hosting.homeFeatures.fullRoot.title"),
+    description: tl("hosting.homeFeatures.fullRoot.desc"),
     icon: "ShieldCheck",
   },
   {
-    title: "Otomatisasi Pembayaran",
-    description: "Mendukung pembayaran mudah via QRIS, Virtual Account bank nasional, dan e-wallet melalui Midtrans.",
+    title: tl("hosting.homeFeatures.autoPayment.title"),
+    description: tl("hosting.homeFeatures.autoPayment.desc"),
     icon: "CreditCard",
   },
 ]
 
 export const homeFAQs: FAQItem[] = [
   {
-    question: "Apa itu Teracloud Docker Hosting?",
-    answer: "Teracloud adalah platform hosting cloud berbasis container Docker terisolasi yang memberikan kebebasan bagi developer untuk menjalankan berbagai aplikasi, bot, database, atau web server dengan performa tinggi dan harga terjangkau.",
+    question: tl("hosting.homeFaqs.what.q"),
+    answer: tl("hosting.homeFaqs.what.a"),
   },
   {
-    question: "Bagaimana cara mengakses container saya?",
-    answer: "Setelah pembelian berhasil, container langsung aktif. Anda dapat mengakses terminal langsung di browser melalui Web Terminal atau menggunakan port SSH yang diberikan pada dashboard.",
+    question: tl("hosting.homeFaqs.access.q"),
+    answer: tl("hosting.homeFaqs.access.a"),
   },
   {
-    question: "Apakah data saya aman jika container di-restart?",
-    answer: "Ya, direktori penyimpanan Anda terikat ke persistent volume khusus, sehingga data Anda tidak akan hilang saat container di-restart, di-reboot, ataupun dilakukan soft reset.",
+    question: tl("hosting.homeFaqs.restartSafe.q"),
+    answer: tl("hosting.homeFaqs.restartSafe.a"),
   },
   {
-    question: "Metode pembayaran apa saja yang didukung?",
-    answer: "Kami mendukung QRIS (GoPay, OVO, Dana, ShopeePay), Transfer Virtual Account (BCA, Mandiri, BNI, BRI, Permata), dan kartu kredit.",
+    question: tl("hosting.homeFaqs.paymentMethods.q"),
+    answer: tl("hosting.homeFaqs.paymentMethods.a"),
   },
 ]

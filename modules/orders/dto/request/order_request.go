@@ -5,10 +5,12 @@ type CreateOrderRequest struct {
 	PlanID         uint   `json:"plan_id" validate:"required"`
 	CustomName     string `json:"custom_name"`
 	DurationMonths int    `json:"duration_months" validate:"omitempty,min=1,max=36"`
+	VoucherCode    string `json:"voucher_code"`
 }
 
 type CheckoutCartRequest struct {
 	CartItemIDs []uint `json:"cart_item_ids"` // if empty, checkout all user's cart items
+	VoucherCode string `json:"voucher_code"`
 }
 
 type DirectCheckoutItem struct {

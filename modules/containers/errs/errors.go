@@ -10,6 +10,9 @@ const (
 	CodeContainerSuspended        = "CONTAINER_SUSPENDED"
 	CodeContainerActionNotAllowed = "CONTAINER_ACTION_NOT_ALLOWED"
 	CodeMaxSessionsReached        = "MAX_SESSIONS_REACHED"
+	CodeContainerInvalidID       = "CONTAINER_INVALID_ID"
+	CodeContainerForbidden       = "CONTAINER_FORBIDDEN"
+	CodeContainerUnauthorized    = "CONTAINER_UNAUTHORIZED"
 )
 
 var (
@@ -19,4 +22,7 @@ var (
 	ErrContainerSuspended        = utils.NewAppError(CodeContainerSuspended, "Container is suspended due to unpaid bill.")
 	ErrContainerActionNotAllowed = utils.NewAppError(CodeContainerActionNotAllowed, "This action is not allowed for the container's current state.")
 	ErrMaxSessionsReached        = utils.NewAppError(CodeMaxSessionsReached, "Maximum concurrent terminal sessions reached for this container.")
+	ErrContainerInvalidID       = utils.NewAppError(CodeContainerInvalidID, "Invalid container ID")
+	ErrContainerForbidden       = utils.NewAppError(CodeContainerForbidden, "You do not have access to this container")
+	ErrContainerUnauthorized    = utils.NewAppError(CodeContainerUnauthorized, "Unauthorized")
 )

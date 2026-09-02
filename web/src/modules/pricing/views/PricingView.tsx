@@ -35,14 +35,14 @@ export const PricingView: React.FC = () => {
         plan_id: plan.id,
         duration_months: 1,
       })
-      toast.success(`${plan.name} berhasil ditambahkan ke keranjang!`, {
+      toast.success(t("hosting.addedToCartToast", { name: plan.name }), {
         action: {
-          label: "Lihat Keranjang",
+          label: t("hosting.viewCart"),
           onClick: () => navigate({ to: "/app/cart" as any }),
         },
       })
     } catch (err: any) {
-      toast.error(err?.message || "Gagal menambahkan ke keranjang")
+      toast.error(err?.message || t("hosting.cartAddFailed"))
     }
   }
 
@@ -67,7 +67,7 @@ export const PricingView: React.FC = () => {
               className="relative gap-1.5 text-xs font-semibold cursor-pointer"
             >
               <ShoppingCart className="size-3.5" />
-              <span className="hidden sm:inline">Keranjang</span>
+              <span className="hidden sm:inline">{t("nav.cart")}</span>
               {totalCartItems > 0 && (
                 <span className="flex size-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
                   {totalCartItems}
@@ -83,11 +83,11 @@ export const PricingView: React.FC = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-40 rounded-xl">
                 <DropdownMenuItem onClick={() => changeLocale("id")} className="flex justify-between text-xs cursor-pointer">
-                  <span>Bahasa Indonesia</span>
+                  <span>{t("nav.languageLabelId")}</span>
                   {activeLang === "id" && <Check className="w-3.5 h-3.5 text-primary" />}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => changeLocale("en")} className="flex justify-between text-xs cursor-pointer">
-                  <span>English (US)</span>
+                  <span>{t("nav.languageLabelEn")}</span>
                   {activeLang === "en" && <Check className="w-3.5 h-3.5 text-primary" />}
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -97,7 +97,7 @@ export const PricingView: React.FC = () => {
             <button
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
               className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-border text-foreground hover:bg-muted transition cursor-pointer"
-              aria-label="Toggle theme"
+              aria-label={t("nav.toggleTheme")}
             >
               {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </button>
@@ -128,7 +128,7 @@ export const PricingView: React.FC = () => {
             </div>
           ) : plans.length === 0 ? (
             <div className="text-center py-16 bg-card ring-1 ring-foreground/10 rounded-xl">
-              <p className="text-muted-foreground">Belum ada paket hosting yang aktif saat ini.</p>
+              <p className="text-muted-foreground">{t("hosting.noActivePlans")}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch pt-4">
@@ -161,7 +161,7 @@ export const PricingView: React.FC = () => {
       </main>
 
       <footer className="border-t border-border py-8 text-center text-sm text-muted-foreground">
-        <p>&copy; {new Date().getFullYear()} {companyMeta.name}. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} {companyMeta.name}. {t("hosting.allRightsReserved")}</p>
       </footer>
     </div>
   )

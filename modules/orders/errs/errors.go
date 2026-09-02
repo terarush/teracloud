@@ -10,6 +10,8 @@ const (
 	CodePaymentVerificationFail  = "PAYMENT_VERIFICATION_FAILED"
 	CodeInvalidWebhookSignature  = "INVALID_WEBHOOK_SIGNATURE"
 	CodePlanLimitReached         = "PLAN_LIMIT_REACHED"
+	CodeOrderInvalidID           = "ORDER_INVALID_ID"
+	CodeOrderForbidden           = "ORDER_FORBIDDEN"
 )
 
 var (
@@ -19,6 +21,8 @@ var (
 	ErrPaymentVerificationFail  = utils.NewAppError(CodePaymentVerificationFail, "Payment verification failed")
 	ErrInvalidWebhookSignature  = utils.NewAppError(CodeInvalidWebhookSignature, "Invalid webhook signature")
 	ErrPlanLimitReached         = utils.NewAppError(CodePlanLimitReached, "You have reached the maximum active containers allowed for this plan")
+	ErrOrderInvalidID           = utils.NewAppError(CodeOrderInvalidID, "Invalid order ID")
+	ErrOrderForbidden           = utils.NewAppError(CodeOrderForbidden, "You do not have access to this order")
 )
 
 var FieldLabels = map[string]string{

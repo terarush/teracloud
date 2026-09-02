@@ -17,6 +17,9 @@ type Order struct {
 	OrderType             string          `json:"order_type" gorm:"type:varchar(20);not null"` // 'new_purchase', 'renewal', 'upgrade'
 	Amount                int64           `json:"amount" gorm:"not null"`
 	TotalAmount           int64           `json:"total_amount" gorm:"not null"`
+	DiscountAmount        int64           `json:"discount_amount" gorm:"not null;default:0"`
+	VoucherID             *uint           `json:"voucher_id" gorm:"index"`
+	VoucherCode           string          `json:"voucher_code" gorm:"type:varchar(50)"`
 	Currency              string          `json:"currency" gorm:"type:varchar(3);default:IDR"`
 	Status                string          `json:"status" gorm:"type:varchar(20);default:pending;index"` // pending, awaiting_payment, paid, failed, expired
 	MidtransOrderID       string          `json:"midtrans_order_id" gorm:"type:varchar(100);uniqueIndex"`

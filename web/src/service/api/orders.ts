@@ -11,6 +11,7 @@ export interface OrderItem {
   duration_months: number
   unit_price: number
   subtotal: number
+  discount_amount?: number
   provisioning_status: "pending" | "provisioning" | "completed" | "failed"
   error_message?: string
   created_at: string
@@ -25,6 +26,8 @@ export interface Order {
   order_type: string
   amount: number
   total_amount?: number
+  discount_amount?: number
+  voucher_code?: string
   currency: string
   status: "pending" | "awaiting_payment" | "paid" | "failed" | "expired"
   midtrans_order_id: string
@@ -38,18 +41,20 @@ export interface Order {
 }
 
 export const ordersApi = {
-  createOrder: async (planId: number, customName?: string, durationMonths = 1): Promise<Order> => {
+  createOrder: async (planId: number, customName?: string, durationMonths = 1, voucherCode?: string): Promise<Order> => {
     const res = await apiClient.post<Order>("/orders", {
       plan_id: planId,
       custom_name: customName,
       duration_months: durationMonths,
+      voucher_code: voucherCode || undefined,
     })
     return (res as any)?.data ?? res.data
   },
 
-  checkoutCart: async (cartItemIds?: number[]): Promise<Order> => {
+  checkoutCart: async (cartItemIds?: number[], voucherCode?: string): Promise<Order> => {
     const res = await apiClient.post<Order>("/orders/checkout", {
       cart_item_ids: cartItemIds,
+      voucher_code: voucherCode || undefined,
     })
     return (res as any)?.data ?? res.data
   },

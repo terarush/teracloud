@@ -12,6 +12,7 @@ import (
 	planService "ruang-tukar/modules/plans/domain/service"
 	userRepo "ruang-tukar/modules/users/domain/repository"
 	userService "ruang-tukar/modules/users/domain/service"
+	"ruang-tukar/modules/vouchers"
 
 	"github.com/labstack/echo/v5"
 	"gorm.io/gorm"
@@ -42,7 +43,7 @@ func (m *Module) Initialize(db *gorm.DB, log *logger.Logger, event *bus.EventBus
 	uService := userService.NewUserService(uRepo)
 	midtransClient := midtrans.NewClient()
 
-	m.orderService = service.NewOrderService(orderRepository, pService, uService, midtransClient, m.event)
+	m.orderService = service.NewOrderService(orderRepository, pService, uService, vouchers.Service(), midtransClient, m.event)
 	m.orderHandler = handler.NewOrderHandler(m.logger, m.event, m.orderService)
 	m.webhookHandler = handler.NewWebhookHandler(m.logger, m.orderService)
 

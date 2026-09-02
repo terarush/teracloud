@@ -26,15 +26,15 @@ import (
 )
 
 type Module struct {
-	db             *gorm.DB
-	logger         *logger.Logger
-	subService     *service.SubscriptionService
-	invoiceService *service.InvoiceService
+	db              *gorm.DB
+	logger          *logger.Logger
+	subService      *service.SubscriptionService
+	invoiceService  *service.InvoiceService
 	reminderService *service.ReminderService
-	schedulerSvc   *service.BillingSchedulerService
-	billingHandler *handler.BillingHandler
-	scheduler      *scheduler.Scheduler
-	event          *bus.EventBus
+	schedulerSvc    *service.BillingSchedulerService
+	billingHandler  *handler.BillingHandler
+	scheduler       *scheduler.Scheduler
+	event           *bus.EventBus
 }
 
 func (m *Module) Name() string {
@@ -86,7 +86,11 @@ func (m *Module) Initialize(db *gorm.DB, log *logger.Logger, event *bus.EventBus
 						subID = &sub.ID
 						item.SubscriptionID = subID
 					}
-					_, _ = m.invoiceService.GenerateInvoice(ctx, order.UserID, subID, &order.ID, item.Subtotal, planName)
+					charged := item.Subtotal - item.DiscountAmount
+					if charged < 0 {
+						charged = 0
+					}
+					_, _ = m.invoiceService.GenerateInvoice(ctx, order.UserID, subID, &order.ID, charged, planName)
 				}
 			} else if order.PlanID != nil {
 				plan, _ := pService.GetPlanByID(ctx, *order.PlanID)

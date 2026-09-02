@@ -100,14 +100,14 @@ export const ContainerDetailView: React.FC<ContainerDetailViewProps> = ({ contai
               <StatusBadge status={container.status} />
             </div>
             <p className="text-xs text-muted-foreground font-mono">
-              Image: {container.image_name}:{container.image_tag} &bull; Hostname: {container.hostname || "localhost"}
+              {t("hosting.imageLabel")} {container.image_name}:{container.image_tag} &bull; {t("hosting.hostnameLabel")} {container.hostname || "localhost"}
             </p>
           </div>
         </CardContent>
       </Card>
 
       {/* Navigation Tabs */}
-      <div role="tablist" aria-label="Container sections" className="flex gap-1 border-b border-border pb-px overflow-x-auto">
+      <div role="tablist" aria-label={t("hosting.containerSectionsAria")} className="flex gap-1 border-b border-border pb-px overflow-x-auto">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.key
           return (
@@ -137,15 +137,15 @@ export const ContainerDetailView: React.FC<ContainerDetailViewProps> = ({ contai
               <h2 className="text-sm font-semibold text-foreground">{t("hosting.hardwareAllocation", "Alokasi Hardware")}</h2>
               <div className="grid grid-cols-3 gap-2.5 text-center">
                 <div className="p-3 bg-muted/50 rounded-lg">
-                  <div className="text-[11px] text-muted-foreground">vCPU</div>
-                  <div className="text-base font-bold text-foreground mt-0.5">{container.cpu_limit} Core</div>
+                  <div className="text-[11px] text-muted-foreground">{t("hosting.unitVcpu")}</div>
+                  <div className="text-base font-bold text-foreground mt-0.5">{container.cpu_limit} {t("hosting.unitCore")}</div>
                 </div>
                 <div className="p-3 bg-muted/50 rounded-lg">
-                  <div className="text-[11px] text-muted-foreground">RAM</div>
+                  <div className="text-[11px] text-muted-foreground">{t("hosting.unitRam")}</div>
                   <div className="text-base font-bold text-foreground mt-0.5">{container.memory_limit} MB</div>
                 </div>
                 <div className="p-3 bg-muted/50 rounded-lg">
-                  <div className="text-[11px] text-muted-foreground">Storage</div>
+                  <div className="text-[11px] text-muted-foreground">{t("hosting.unitDisk")}</div>
                   <div className="text-base font-bold text-foreground mt-0.5">{container.disk_limit} GB</div>
                 </div>
               </div>
@@ -174,7 +174,7 @@ export const ContainerDetailView: React.FC<ContainerDetailViewProps> = ({ contai
                   Object.entries(assigned).map(([name, port]) => (
                     <div key={name} className="flex justify-between items-center py-1.5 border-b border-border/50">
                       <span className="text-muted-foreground capitalize font-medium">{name.replace("_", " ")}:</span>
-                      <span className="font-mono text-muted-foreground">Port {port} (Menunggu DNS)</span>
+                      <span className="font-mono text-muted-foreground">Port {port} {t("hosting.portWaitingDns")}</span>
                     </div>
                   ))
                 ) : (

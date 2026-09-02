@@ -1,6 +1,7 @@
-import React, { useEffect } from "react"
+import React from "react"
 import { Button } from "@/components/ui/button"
 import { CreditCard, ExternalLink } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 declare global {
   interface Window {
@@ -25,16 +26,17 @@ export const MidtransSnap: React.FC<MidtransSnapProps> = ({
   onError,
   onClose,
 }) => {
+  const { t } = useTranslation()
   const handlePay = () => {
     if (snapToken && window.snap) {
       window.snap.pay(snapToken, {
-        onSuccess: (result: any) => {
+        onSuccess: () => {
           onSuccess?.()
         },
-        onPending: (result: any) => {
+        onPending: () => {
           onPending?.()
         },
-        onError: (result: any) => {
+        onError: () => {
           onError?.()
         },
         onClose: () => {
@@ -54,19 +56,19 @@ export const MidtransSnap: React.FC<MidtransSnapProps> = ({
         className="w-full flex items-center justify-center gap-2 font-bold cursor-pointer"
       >
         <CreditCard className="w-5 h-5" />
-        <span>Bayar Sekarang (Midtrans)</span>
+        <span>{t("hosting.payNowShort")}</span>
       </Button>
 
       {redirectUrl && (
         <p className="text-center text-xs text-muted-foreground">
-          Atau buka link{" "}
+          {t("hosting.openLink")}{" "}
           <a
             href={redirectUrl}
             target="_blank"
             rel="noreferrer"
             className="text-primary underline inline-flex items-center gap-0.5"
           >
-            Halaman Pembayaran Midtrans <ExternalLink className="w-3 h-3" />
+            {t("hosting.midtransPage")} <ExternalLink className="w-3 h-3" />
           </a>
         </p>
       )}

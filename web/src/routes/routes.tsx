@@ -30,6 +30,7 @@ import { AdminPlans } from "@/modules/admin/pages/AdminPlans"
 import { AdminOrders } from "@/modules/admin/pages/AdminOrders"
 import { AdminContainers } from "@/modules/admin/pages/AdminContainers"
 import { AdminAudit } from "@/modules/admin/pages/AdminAudit"
+import { AdminVouchers } from "@/modules/admin/pages/AdminVouchers"
 
 import "../styles.css"
 import { Toaster } from "@/components/ui/sonner"
@@ -215,6 +216,17 @@ const appCheckoutRoute = createRoute({
   },
 })
 
+// Checkout by plan slug — entry point untuk "Beli Langsung" dari pricing,
+// tempat user menginput voucher sebelum order dibuat & sebelum bayar.
+const appCheckoutByPlanRoute = createRoute({
+  getParentRoute: () => appLayoutRoute,
+  path: "/orders/checkout/plan/$slug",
+  component: () => {
+    const { slug } = appCheckoutByPlanRoute.useParams()
+    return <CheckoutPage planSlug={slug} />
+  },
+})
+
 const rootCheckoutRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/orders/checkout/$orderId",
@@ -261,6 +273,12 @@ const appAdminAuditRoute = createRoute({
   component: AdminAudit,
 })
 
+const appAdminVouchersRoute = createRoute({
+  getParentRoute: () => appLayoutRoute,
+  path: "/vouchers",
+  component: AdminVouchers,
+})
+
 export const routeTree = rootRoute.addChildren([
   homeRoute,
   pricingRoute,
@@ -285,11 +303,13 @@ export const routeTree = rootRoute.addChildren([
     appCartRoute,
     appOrdersRoute,
     appCheckoutRoute,
+    appCheckoutByPlanRoute,
     appOrdersFinishRoute,
     appConsoleRoute,
     appPlansManageRoute,
     appOrdersListRoute,
     appAdminContainersRoute,
     appAdminAuditRoute,
+    appAdminVouchersRoute,
   ]),
 ])

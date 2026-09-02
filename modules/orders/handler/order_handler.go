@@ -57,7 +57,7 @@ func (h *OrderHandler) CreateOrder(c *echo.Context) error {
 		duration = 1
 	}
 
-	order, err := h.orderService.CreateNewPurchaseOrder(ctx, userID, req.PlanID, req.CustomName, duration)
+	order, err := h.orderService.CreateNewPurchaseOrder(ctx, userID, req.PlanID, req.CustomName, duration, req.VoucherCode)
 	if err != nil {
 		if err == orderErrs.ErrPlanLimitReached {
 			return h.r.BadRequestResponse(c, err)
@@ -65,7 +65,7 @@ func (h *OrderHandler) CreateOrder(c *echo.Context) error {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
-	return h.r.CreatedResponse(c, response.FromEntity(order), "Order created successfully")
+	return h.r.CreatedResponse(c, response.FromEntity(order), "msg.orders.created")
 }
 
 // CheckoutCart handles creating an order from user cart
@@ -79,7 +79,7 @@ func (h *OrderHandler) CheckoutCart(c *echo.Context) error {
 	req := new(request.CheckoutCartRequest)
 	_ = c.Bind(req)
 
-	order, err := h.orderService.CheckoutCart(ctx, userID, req.CartItemIDs)
+	order, err := h.orderService.CheckoutCart(ctx, userID, req.CartItemIDs, req.VoucherCode)
 	if err != nil {
 		if err == orderErrs.ErrPlanLimitReached || err == orderErrs.ErrOrderNotFound {
 			return h.r.BadRequestResponse(c, err)
@@ -87,7 +87,7 @@ func (h *OrderHandler) CheckoutCart(c *echo.Context) error {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
-	return h.r.CreatedResponse(c, response.FromEntity(order), "Checkout initiated successfully")
+	return h.r.CreatedResponse(c, response.FromEntity(order), "msg.orders.checkout_started")
 }
 
 // GetOrderStatus gets real-time order & provisioning status
@@ -115,7 +115,7 @@ func (h *OrderHandler) GetOrderStatus(c *echo.Context) error {
 		return h.r.ForbiddenResponse(c, utils.NewAppError(utils.CodeForbidden, "Access denied"))
 	}
 
-	return h.r.SuccessResponse(c, response.FromEntity(order), "Order status retrieved")
+	return h.r.SuccessResponse(c, response.FromEntity(order), "msg.orders.status_retrieved")
 }
 
 // GetOrders gets orders (role-aware: user gets own, admin gets all)
@@ -139,7 +139,7 @@ func (h *OrderHandler) GetOrders(c *echo.Context) error {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
-	return h.r.SuccessResponse(c, response.FromEntities(orders), "Orders retrieved successfully")
+	return h.r.SuccessResponse(c, response.FromEntities(orders), "msg.orders.list_retrieved")
 }
 
 // GetUserOrders gets all orders for authenticated user
@@ -155,7 +155,7 @@ func (h *OrderHandler) GetOrderByID(c *echo.Context) error {
 
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		return h.r.BadRequestResponse(c, utils.NewAppError(utils.CodeBadRequest, "Invalid order ID"))
+		return h.r.BadRequestResponse(c, orderErrs.ErrOrderInvalidID)
 	}
 
 	order, err := h.orderService.GetOrderByID(ctx, uint(id))
@@ -168,10 +168,10 @@ func (h *OrderHandler) GetOrderByID(c *echo.Context) error {
 
 	// Ownership check
 	if userRole != middleware.RoleAdmin && order.UserID != userID {
-		return h.r.ForbiddenResponse(c, utils.NewAppError(utils.CodeForbidden, "You do not have access to this order"))
+		return h.r.ForbiddenResponse(c, orderErrs.ErrOrderForbidden)
 	}
 
-	return h.r.SuccessResponse(c, response.FromEntity(order), "Order retrieved successfully")
+	return h.r.SuccessResponse(c, response.FromEntity(order), "msg.orders.retrieved")
 }
 
 // GetAllOrders gets all orders (admin)
@@ -181,7 +181,7 @@ func (h *OrderHandler) GetAllOrders(c *echo.Context) error {
 	if err != nil {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
-	return h.r.SuccessResponse(c, response.FromEntities(orders), "All orders retrieved successfully")
+	return h.r.SuccessResponse(c, response.FromEntities(orders), "msg.orders.all_retrieved")
 }
 
 // GetOrderStats calculates revenue statistics (admin)
@@ -212,7 +212,7 @@ func (h *OrderHandler) GetOrderStats(c *echo.Context) error {
 		"pending_orders": pendingCount,
 	}
 
-	return h.r.SuccessResponse(c, stats, "Order statistics retrieved successfully")
+	return h.r.SuccessResponse(c, stats, "msg.orders.stats_retrieved")
 }
 
 // SimulatePayment marks an order as paid (for development/testing or direct confirmation)
@@ -244,7 +244,7 @@ func (h *OrderHandler) SimulatePayment(c *echo.Context) error {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
-	return h.r.SuccessResponse(c, response.FromEntity(updatedOrder), "Payment confirmed successfully")
+	return h.r.SuccessResponse(c, response.FromEntity(updatedOrder), "msg.orders.payment_confirmed")
 }
 
 // RegisterRoutes registers order routes

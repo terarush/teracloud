@@ -13,11 +13,16 @@ interface CheckoutSummaryProps {
 export const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({ plan, order }) => {
   const { t } = useTranslation()
   const amount = order?.amount || plan?.price_monthly || 0
-  const formattedAmount = new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-    maximumFractionDigits: 0,
-  }).format(amount)
+  const fmt = (n: number) =>
+    new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      maximumFractionDigits: 0,
+    }).format(n)
+  const formattedAmount = fmt(amount)
+
+  const discount = order?.discount_amount || 0
+  const subtotal = discount > 0 ? (order?.total_amount || amount) + discount : amount
 
   return (
     <Card className="ring-1 ring-foreground/10">
@@ -25,7 +30,7 @@ export const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({ plan, order })
         <div className="border-b border-border/50 pb-3">
           <h2 className="text-base font-semibold text-foreground">{t("hosting.orderSummary", "Ringkasan Pesanan")}</h2>
           <p className="text-xs text-muted-foreground mt-0.5">
-            {order ? `Order ID: ${order.order_number}` : "Konfirmasi pembelian paket"}
+            {order ? `${t("hosting.orderIdLabel")}: ${order.order_number}` : t("hosting.orderConfirmText")}
           </p>
         </div>
 
@@ -41,20 +46,20 @@ export const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({ plan, order })
 
             <div className="p-3.5 bg-muted/50 rounded-lg space-y-1.5 text-xs text-muted-foreground">
               <div className="flex justify-between">
-                <span>Alokasi CPU:</span>
+                <span>{t("hosting.allocCpu")}:</span>
                 <span className="font-medium text-foreground">{plan.cpu_limit} vCPU</span>
               </div>
               <div className="flex justify-between">
-                <span>Alokasi RAM:</span>
+                <span>{t("hosting.allocRam")}:</span>
                 <span className="font-medium text-foreground">{plan.memory_limit} MB</span>
               </div>
               <div className="flex justify-between">
-                <span>Storage NVMe:</span>
+                <span>{t("hosting.allocStorage")}:</span>
                 <span className="font-medium text-foreground">{plan.disk_limit} GB</span>
               </div>
               <div className="flex justify-between">
-                <span>Billing Cycle:</span>
-                <span className="font-medium text-foreground">Bulanan ({t("hosting.monthly", "bulan")})</span>
+                <span>{t("hosting.billingCycle")}:</span>
+                <span className="font-medium text-foreground">{t("hosting.monthlyCycle")} ({t("hosting.monthly")})</span>
               </div>
             </div>
           </div>
@@ -62,12 +67,25 @@ export const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({ plan, order })
 
         <div className="border-t border-border/50 pt-3 space-y-1.5 text-xs">
           <div className="flex justify-between">
-            <span className="text-muted-foreground">Subtotal</span>
-            <span className="font-medium text-foreground">{formattedAmount}</span>
+            <span className="text-muted-foreground">{t("hosting.subtotal")}</span>
+            <span className="font-medium text-foreground">{fmt(subtotal)}</span>
           </div>
+          {discount > 0 && (
+            <div className="flex justify-between">
+              <span className="text-muted-foreground flex items-center gap-1">
+                {t("hosting.discountVoucher")}
+                {order?.voucher_code && (
+                  <span className="font-mono text-[10px] uppercase text-primary px-1 py-0.5 rounded bg-primary/10">
+                    {order.voucher_code}
+                  </span>
+                )}
+              </span>
+              <span className="font-medium text-emerald-600 dark:text-emerald-400">-{formattedAmount}</span>
+            </div>
+          )}
           <div className="flex justify-between">
-            <span className="text-muted-foreground">PPN (11%)</span>
-            <span className="font-medium text-foreground">Termasuk</span>
+            <span className="text-muted-foreground">{t("hosting.ppn")}</span>
+            <span className="font-medium text-foreground">{t("hosting.included")}</span>
           </div>
           <div className="flex justify-between text-sm font-bold text-foreground pt-2 border-t border-border/50">
             <span>{t("hosting.total", "Total Tagihan")}</span>
@@ -77,7 +95,7 @@ export const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({ plan, order })
 
         <div className="p-3 bg-primary/5 ring-1 ring-primary/10 rounded-lg flex items-center gap-2.5 text-xs text-muted-foreground">
           <ShieldCheck className="size-4 text-primary shrink-0" />
-          <span>Pembayaran aman terenkripsi melalui Midtrans Snap.</span>
+          <span>{t("hosting.securePaymentNote")}</span>
         </div>
       </CardContent>
     </Card>

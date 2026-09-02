@@ -6,7 +6,7 @@ import {
   Package,
   ShoppingCart,
   ScrollText,
-  User,
+  Ticket,
 } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 import type { ComponentType } from "react"
@@ -66,12 +66,6 @@ export const getSidebarContentList = (
           href: "/app/orders",
           icon: Package,
         },
-        {
-          titleKey: "nav.userProfile",
-          title: translate("nav.userProfile", "User Profile"),
-          href: "/app/profile",
-          icon: User,
-        },
       ],
     },
     {
@@ -107,6 +101,12 @@ export const getSidebarContentList = (
           title: translate("hosting.adminAudit", "Log Audit"),
           href: "/app/admin/audit",
           icon: ScrollText,
+        },
+        {
+          titleKey: "hosting.adminVouchers",
+          title: translate("hosting.adminVouchers", "Voucher"),
+          href: "/app/vouchers",
+          icon: Ticket,
         },
       ],
     },

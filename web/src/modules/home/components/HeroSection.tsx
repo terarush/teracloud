@@ -1,16 +1,18 @@
 import React from "react"
 import { useNavigate } from "@tanstack/react-router"
 import { Button } from "@/components/ui/button"
-import { Activity, ArrowRight, Check, Database, Terminal } from "lucide-react"
-
-const metrics = [
-  { value: "08.4s", label: "rata-rata deploy" },
-  { value: "99.95%", label: "uptime 30 hari" },
-  { value: "24/7", label: "akses terminal" },
-]
+import { Activity, ArrowRight, Database, Terminal } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 export const HeroSection: React.FC = () => {
   const navigate = useNavigate()
+  const { t } = useTranslation()
+
+  const metrics = [
+    { value: "08.4s", label: t("hosting.home.metrics.avgDeploy") },
+    { value: "99.95%", label: t("hosting.home.metrics.uptime30d") },
+    { value: "24/7", label: t("hosting.home.metrics.terminalAccess") },
+  ]
 
   return (
     <section className="relative isolate overflow-hidden border-b border-border/70 pb-16 pt-12 sm:pb-24 sm:pt-16">
@@ -18,14 +20,14 @@ export const HeroSection: React.FC = () => {
         <div>
           <div className="mb-6 flex items-center gap-2.5 text-xs font-medium text-muted-foreground">
             <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-            <span>Cloud container, dikelola dari Indonesia</span>
+            <span>{t("hosting.home.badge")}</span>
           </div>
 
           <h1 className="max-w-2xl text-balance text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-foreground">
-            Deploy Docker tanpa mengurus server.
+            {t("hosting.home.heroTitle")}
           </h1>
           <p className="mt-5 max-w-xl text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg">
-            Ruang kerja yang tenang untuk menjalankan bot, API, database, dan web service, lengkap dengan storage persisten, terminal browser, dan kontrol resource yang jelas.
+            {t("hosting.home.heroDesc")}
           </p>
 
           <div className="mt-9 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
@@ -34,7 +36,7 @@ export const HeroSection: React.FC = () => {
               className="h-11 w-full gap-2 px-5 font-semibold sm:w-auto"
               onClick={() => navigate({ to: "/pricing" })}
             >
-              Pilih kapasitas
+              {t("hosting.home.choosePlan")}
               <ArrowRight className="size-4" />
             </Button>
             <button
@@ -42,7 +44,7 @@ export const HeroSection: React.FC = () => {
               onClick={() => navigate({ to: "/app" })}
               className="group inline-flex h-11 items-center gap-2 px-1 text-sm font-semibold text-foreground transition-colors hover:text-primary"
             >
-              Buka console
+              {t("hosting.home.openConsole")}
               <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
             </button>
           </div>
@@ -60,24 +62,24 @@ export const HeroSection: React.FC = () => {
         <div className="relative mx-auto w-full max-w-xl lg:mx-0">
           <div className="absolute -left-6 -top-6 hidden items-center gap-2 border border-border bg-background px-3 py-2 text-xs font-medium text-foreground sm:flex">
             <Activity className="size-3.5 text-primary" />
-            Semua sistem normal
+            {t("hosting.home.allSystemsNormal")}
           </div>
 
           <div className="overflow-hidden rounded-2xl bg-[oklch(0.16_0.016_190)] text-white ring-1 ring-foreground/15">
             <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
               <div className="flex items-center gap-2.5">
                 <span className="size-2 rounded-full bg-primary" />
-                <span className="font-mono text-xs text-white/70">api-production</span>
+                <span className="font-mono text-xs text-white/70">{t("hosting.home.terminal.window")}</span>
               </div>
-              <span className="border border-white/15 px-2 py-1 font-mono text-[10px] text-white/55">RUNNING</span>
+              <span className="border border-white/15 px-2 py-1 font-mono text-[10px] text-white/55">{t("hosting.home.terminal.runStatus")}</span>
             </div>
 
             <div className="p-5 sm:p-7">
               <div className="mb-7 grid grid-cols-3 gap-px overflow-hidden rounded-lg bg-white/10">
                 {[
-                  ["CPU", "0.42 vCPU"],
-                  ["RAM", "386 MB"],
-                  ["DISK", "7.8 GB"],
+                  [t("hosting.home.stat.cpuLabel"), "0.42 vCPU"],
+                  [t("hosting.home.stat.ramLabel"), "386 MB"],
+                  [t("hosting.home.stat.diskLabel"), "7.8 GB"],
                 ].map(([label, value]) => (
                   <div key={label} className="bg-[oklch(0.18_0.018_190)] px-3 py-4">
                     <p className="text-[9px] tracking-[0.18em] text-white/35">{label}</p>
@@ -101,11 +103,11 @@ export const HeroSection: React.FC = () => {
           <div className="ml-auto mt-3 grid w-[88%] grid-cols-2 gap-3 sm:absolute sm:-bottom-8 sm:-right-5 sm:mt-0 sm:w-[78%]">
             <div className="flex items-center gap-3 rounded-lg bg-card p-3.5 ring-1 ring-foreground/10">
               <div className="flex size-8 items-center justify-center rounded-md bg-secondary text-primary"><Database className="size-4" /></div>
-              <div><p className="text-[10px] text-muted-foreground">Volume</p><p className="text-xs font-semibold">Persistent NVMe</p></div>
+              <div><p className="text-[10px] text-muted-foreground">{t("hosting.home.stat.volumeLabel")}</p><p className="text-xs font-semibold">{t("hosting.home.stat.volumeValue")}</p></div>
             </div>
             <div className="flex items-center gap-3 rounded-lg bg-card p-3.5 ring-1 ring-foreground/10">
               <div className="flex size-8 items-center justify-center rounded-md bg-secondary text-primary"><Terminal className="size-4" /></div>
-              <div><p className="text-[10px] text-muted-foreground">Akses</p><p className="text-xs font-semibold">Web + SSH</p></div>
+              <div><p className="text-[10px] text-muted-foreground">{t("hosting.home.stat.accessLabel")}</p><p className="text-xs font-semibold">{t("hosting.home.stat.accessValue")}</p></div>
             </div>
           </div>
         </div>

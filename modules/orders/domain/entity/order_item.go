@@ -19,6 +19,7 @@ type OrderItem struct {
 	DurationMonths     int              `json:"duration_months" gorm:"default:1;not null"`
 	UnitPrice          int64            `json:"unit_price" gorm:"not null"`
 	Subtotal           int64            `json:"subtotal" gorm:"not null"`
+	DiscountAmount     int64            `json:"discount_amount" gorm:"not null;default:0"`
 	EnvironmentConfig  json.RawMessage  `json:"environment_config" gorm:"type:jsonb;default:'{}'"`
 	ProvisioningStatus string           `json:"provisioning_status" gorm:"type:varchar(20);default:'pending'"` // pending, provisioning, completed, failed
 	ErrorMessage       *string          `json:"error_message" gorm:"type:text"`

@@ -1,9 +1,8 @@
-import React from "react"
 import { useDashboard } from "../hooks/useDashboard"
 import { DashboardStats } from "../components/DashboardStats"
 import { BillingAlert } from "../components/BillingAlert"
 import { useNavigate } from "@tanstack/react-router"
-import { Server, Plus, ArrowRight, Loader2 } from "lucide-react"
+import { Server, Plus, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -113,11 +112,11 @@ export const DashboardView: React.FC = () => {
                     </p>
 
                     <div className="flex items-center gap-2 text-xs text-muted-foreground pt-0.5">
-                      <span>{container.cpu_limit} vCPU</span>
+                      <span>{container.cpu_limit} {t("hosting.unitVcpu")}</span>
                       <span>&bull;</span>
-                      <span>{container.memory_limit} MB RAM</span>
+                      <span>{container.memory_limit} {t("hosting.unitMbRam")}</span>
                       <span>&bull;</span>
-                      <span>{container.disk_limit} GB</span>
+                      <span>{container.disk_limit} {t("hosting.unitGb")}</span>
                     </div>
                   </div>
 

@@ -45,7 +45,7 @@ func (h *PlanHandler) GetActivePlans(c *echo.Context) error {
 	if err != nil {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
-	return h.r.SuccessResponse(c, response.FromEntities(plans), "Plans retrieved successfully")
+	return h.r.SuccessResponse(c, response.FromEntities(plans), "msg.plans.list_retrieved")
 }
 
 // GetPlanBySlug returns a plan by slug (public)
@@ -60,7 +60,7 @@ func (h *PlanHandler) GetPlanBySlug(c *echo.Context) error {
 		}
 		return h.r.InternalServerErrorResponse(c, err)
 	}
-	return h.r.SuccessResponse(c, response.FromEntity(plan), "Plan retrieved successfully")
+	return h.r.SuccessResponse(c, response.FromEntity(plan), "msg.plans.retrieved")
 }
 
 // GetAllPlans returns all plans including inactive (admin)
@@ -70,7 +70,7 @@ func (h *PlanHandler) GetAllPlans(c *echo.Context) error {
 	if err != nil {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
-	return h.r.SuccessResponse(c, response.FromEntities(plans), "Plans retrieved successfully")
+	return h.r.SuccessResponse(c, response.FromEntities(plans), "msg.plans.list_retrieved")
 }
 
 // CreatePlan creates a new plan (admin)
@@ -134,7 +134,7 @@ func (h *PlanHandler) CreatePlan(c *echo.Context) error {
 		NewValues: plan,
 	})
 
-	return h.r.CreatedResponse(c, response.FromEntity(plan), "Plan created successfully")
+	return h.r.CreatedResponse(c, response.FromEntity(plan), "msg.plans.created")
 }
 
 // UpdatePlan updates a plan (admin)
@@ -143,7 +143,7 @@ func (h *PlanHandler) UpdatePlan(c *echo.Context) error {
 
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		return h.r.BadRequestResponse(c, utils.NewAppError(utils.CodeBadRequest, "Invalid plan ID"))
+		return h.r.BadRequestResponse(c, planErrs.ErrPlanInvalidID)
 	}
 
 	plan, err := h.planService.GetPlanByID(ctx, uint(id))
@@ -197,7 +197,7 @@ func (h *PlanHandler) UpdatePlan(c *echo.Context) error {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
-	return h.r.SuccessResponse(c, response.FromEntity(plan), "Plan updated successfully")
+	return h.r.SuccessResponse(c, response.FromEntity(plan), "msg.plans.updated")
 }
 
 // DeletePlan soft-deletes a plan (admin)
@@ -206,7 +206,7 @@ func (h *PlanHandler) DeletePlan(c *echo.Context) error {
 
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		return h.r.BadRequestResponse(c, utils.NewAppError(utils.CodeBadRequest, "Invalid plan ID"))
+		return h.r.BadRequestResponse(c, planErrs.ErrPlanInvalidID)
 	}
 
 	if err := h.planService.DeletePlan(ctx, uint(id)); err != nil {
@@ -225,7 +225,7 @@ func (h *PlanHandler) TogglePlan(c *echo.Context) error {
 
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		return h.r.BadRequestResponse(c, utils.NewAppError(utils.CodeBadRequest, "Invalid plan ID"))
+		return h.r.BadRequestResponse(c, planErrs.ErrPlanInvalidID)
 	}
 
 	plan, err := h.planService.TogglePlan(ctx, uint(id))
@@ -236,7 +236,7 @@ func (h *PlanHandler) TogglePlan(c *echo.Context) error {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
 
-	return h.r.SuccessResponse(c, response.FromEntity(plan), "Plan toggled successfully")
+	return h.r.SuccessResponse(c, response.FromEntity(plan), "msg.plans.toggled")
 }
 
 // GetPlans handles GET /plans (public active plans, admin gets all plans if admin)
@@ -255,7 +255,7 @@ func (h *PlanHandler) GetPlans(c *echo.Context) error {
 	if err != nil {
 		return h.r.InternalServerErrorResponse(c, err)
 	}
-	return h.r.SuccessResponse(c, response.FromEntities(plans), "Plans retrieved successfully")
+	return h.r.SuccessResponse(c, response.FromEntities(plans), "msg.plans.list_retrieved")
 }
 
 // RegisterRoutes registers plan routes

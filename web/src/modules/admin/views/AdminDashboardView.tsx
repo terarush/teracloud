@@ -1,4 +1,5 @@
 import React from "react"
+import { useTranslation } from "react-i18next"
 import { useAdminData } from "../hooks/useAdminData"
 import { AdminStats } from "../components/AdminStats"
 import { ArrowRight, Layers, ShoppingCart, Server, ScrollText, Terminal } from "lucide-react"
@@ -6,15 +7,16 @@ import { useNavigate } from "@tanstack/react-router"
 import { Card, CardContent } from "@/components/ui/card"
 
 export const AdminDashboardView: React.FC = () => {
+  const { t } = useTranslation()
   const { stats, plans, containers, orders } = useAdminData()
   const navigate = useNavigate()
 
   return (
     <div className="px-6 py-8 max-w-5xl mx-auto space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">Admin Console</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">{t("hosting.adminConsole")}</h1>
         <p className="text-sm text-muted-foreground mt-0.5">
-          Pusat kontrol sistem, alokasi paket hosting, pemantauan pesanan, dan log audit.
+          {t("hosting.adminConsoleDesc")}
         </p>
       </div>
 
@@ -29,32 +31,32 @@ export const AdminDashboardView: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {[
           {
-            title: "Kelola Paket Hosting",
-            desc: "Tambah, perbarui konfigurasi hardware, atau aktifkan paket container.",
+            title: t("hosting.adminManagePlans"),
+            desc: t("hosting.adminManagePlansDesc"),
             href: "/app/plans",
             icon: Layers,
           },
           {
-            title: "Daftar Transaksi Pesanan",
-            desc: "Pantau status verifikasi pembayaran Midtrans dari pengguna.",
+            title: t("hosting.adminOrders"),
+            desc: t("hosting.adminOrdersListDesc"),
             href: "/app/orders-list",
             icon: ShoppingCart,
           },
           {
-            title: "Semua Container",
-            desc: "Lihat seluruh container aktif milik semua pengguna platform.",
+            title: t("hosting.adminContainers"),
+            desc: t("hosting.containerListDesc"),
             href: "/app/admin/containers",
             icon: Server,
           },
           {
-            title: "Log Audit Sistem",
-            desc: "Riwayat aksi admin dan pengguna untuk kebutuhan audit trail.",
+            title: t("hosting.adminAudit"),
+            desc: t("hosting.auditDesc"),
             href: "/app/admin/audit",
             icon: ScrollText,
           },
           {
-            title: "Console Container User",
-            desc: "Buka tampilan console pengguna untuk menguji provisioning.",
+            title: t("hosting.adminUserConsole"),
+            desc: t("hosting.adminUserConsoleDesc"),
             href: "/app",
             icon: Terminal,
           },

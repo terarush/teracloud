@@ -26,3 +26,16 @@ export function translateApiError(
   }
   return message ?? ''
 }
+
+// translateApiMessage resolves a backend success-message key (e.g.
+// "msg.auth.registration_success") to localized text via the merged
+// "translation" namespace. When the key has no translation registered
+// (i18next returns the key itself), falls back to the raw key string.
+export function translateApiMessage(
+  message?: string,
+  t: (key: string, opts?: Record<string, unknown>) => string = tl
+): string {
+  if (!message) return ''
+  const translated = t(message)
+  return translated && translated !== message ? translated : message
+}
