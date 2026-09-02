@@ -39,7 +39,8 @@ export function useContainerDetail(containerId: number) {
       await startMutation.mutateAsync(containerId)
       toast.success(tl("hosting.toast.containerStarted"))
     } catch (err: any) {
-      toast.error(err.response?.data?.message || tl("hosting.toast.containerStartFailed"))
+      console.error("Failed to start container:", err)
+      toast.error(err.response?.data?.message || err.message || tl("hosting.toast.containerStartFailed"))
     }
   }
 
@@ -48,7 +49,8 @@ export function useContainerDetail(containerId: number) {
       await stopMutation.mutateAsync(containerId)
       toast.success(tl("hosting.toast.containerStopped"))
     } catch (err: any) {
-      toast.error(err.response?.data?.message || tl("hosting.toast.containerStopFailed"))
+      console.error("Failed to stop container:", err)
+      toast.error(err.response?.data?.message || err.message || tl("hosting.toast.containerStopFailed"))
     }
   }
 
@@ -57,7 +59,8 @@ export function useContainerDetail(containerId: number) {
       await restartMutation.mutateAsync(containerId)
       toast.success(tl("hosting.toast.containerRestarted"))
     } catch (err: any) {
-      toast.error(err.response?.data?.message || tl("hosting.toast.containerRestartFailed"))
+      console.error("Failed to restart container:", err)
+      toast.error(err.response?.data?.message || err.message || tl("hosting.toast.containerRestartFailed"))
     }
   }
 
@@ -73,7 +76,8 @@ export function useContainerDetail(containerId: number) {
       await resetMutation.mutateAsync({ id: containerId, mode })
       toast.success(tl("hosting.toast.containerReset"))
     } catch (err: any) {
-      toast.error(err.response?.data?.message || tl("hosting.toast.containerResetFailed"))
+      console.error("Failed to reset container:", err)
+      toast.error(err.response?.data?.message || err.message || tl("hosting.toast.containerResetFailed"))
     }
   }
 
@@ -84,7 +88,8 @@ export function useContainerDetail(containerId: number) {
       toast.success(tl("hosting.toast.containerDeleted"))
       navigate({ to: "/app" })
     } catch (err: any) {
-      toast.error(err.response?.data?.message || tl("hosting.toast.containerDeleteFailed"))
+      console.error("Failed to delete container:", err)
+      toast.error(err.response?.data?.message || err.message || tl("hosting.toast.containerDeleteFailed"))
     }
   }
 

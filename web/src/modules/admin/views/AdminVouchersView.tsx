@@ -35,7 +35,8 @@ export const AdminVouchersView: React.FC = () => {
       await createMutation.mutateAsync(data)
       toast.success(t("hosting.voucher.toastCreated"))
     } catch (err: any) {
-      toast.error(err.response?.data?.message || t("hosting.voucher.toastCreateFailed"))
+      console.error("Failed to create voucher:", err)
+      toast.error(err.response?.data?.message || err.message || t("hosting.voucher.toastCreateFailed"))
     }
   }
 
@@ -45,7 +46,8 @@ export const AdminVouchersView: React.FC = () => {
       await updateMutation.mutateAsync({ id: selectedVoucher.id, data })
       toast.success(t("hosting.voucher.toastUpdated"))
     } catch (err: any) {
-      toast.error(err.response?.data?.message || t("hosting.voucher.toastUpdateFailed"))
+      console.error("Failed to update voucher:", err)
+      toast.error(err.response?.data?.message || err.message || t("hosting.voucher.toastUpdateFailed"))
     }
   }
 
@@ -55,7 +57,8 @@ export const AdminVouchersView: React.FC = () => {
       await deleteMutation.mutateAsync(id)
       toast.success(t("hosting.voucher.toastDeleted"))
     } catch (err: any) {
-      toast.error(err.response?.data?.message || t("hosting.voucher.toastDeleteFailed"))
+      console.error("Failed to delete voucher:", err)
+      toast.error(err.response?.data?.message || err.message || t("hosting.voucher.toastDeleteFailed"))
     }
   }
 
@@ -64,7 +67,8 @@ export const AdminVouchersView: React.FC = () => {
       await toggleMutation.mutateAsync(id)
       toast.success(t("hosting.voucher.toastToggled"))
     } catch (err: any) {
-      toast.error(err.response?.data?.message || t("hosting.voucher.toastToggleFailed"))
+      console.error("Failed to toggle voucher:", err)
+      toast.error(err.response?.data?.message || err.message || t("hosting.voucher.toastToggleFailed"))
     }
   }
 
@@ -164,7 +168,7 @@ export const AdminVouchersView: React.FC = () => {
                       )}
                     </td>
                     <td className="px-4 py-3 text-xs text-muted-foreground">
-                      {v.min_order_amount > 0 ? formatCurrency(v.min_order_amount) : "—"}
+                      {v.min_order_amount && v.min_order_amount > 0 ? formatCurrency(v.min_order_amount) : "—"}
                     </td>
                     <td className="px-4 py-3 text-xs text-muted-foreground">
                       <div>{v.total_usage_limit ? `${t("hosting.voucher.totalPrefix")} ${v.total_usage_limit}` : t("hosting.voucher.noLimit")}</div>
