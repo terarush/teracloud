@@ -35,7 +35,8 @@ export function useVoucherQuote() {
       try {
         const res = await vouchersApi.validate(trimmed, items)
         setQuote(res)
-      } catch {
+      } catch (err) {
+        console.error("Failed to validate voucher quote:", err)
         setQuote({
           valid: false,
           code: trimmed,

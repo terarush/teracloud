@@ -9,6 +9,9 @@ export function useLoginMutation() {
 
   return useMutation({
     mutationFn: (credentials: LoginRequest) => login(credentials),
+    onError: (err) => {
+      console.error("useLoginMutation error:", err)
+    },
   })
 }
 
@@ -17,6 +20,9 @@ export function useRegisterMutation() {
 
   return useMutation({
     mutationFn: (data: RegisterRequest) => register(data),
+    onError: (err) => {
+      console.error("useRegisterMutation error:", err)
+    },
   })
 }
 
@@ -26,6 +32,9 @@ export function useUpdateProfileMutation() {
   return useMutation({
     mutationKey: ["update-profile"],
     mutationFn: (data: UpdateProfileRequest) => updateProfile(data),
+    onError: (err) => {
+      console.error("useUpdateProfileMutation error:", err)
+    },
   })
 }
 
@@ -36,6 +45,9 @@ export function useChangePasswordMutation() {
     mutationKey: ["change-password"],
     mutationFn: (data: { old_password: string; new_password: string; confirm_password: string }) =>
       changePassword(data),
+    onError: (err) => {
+      console.error("useChangePasswordMutation error:", err)
+    },
   })
 }
 
@@ -43,6 +55,9 @@ export function useForgotPasswordMutation() {
   return useMutation({
     mutationKey: ["forgot-password"],
     mutationFn: (email: string) => authApi.forgotPassword(email),
+    onError: (err) => {
+      console.error("useForgotPasswordMutation error:", err)
+    },
   })
 }
 
@@ -50,6 +65,9 @@ export function useResetPasswordMutation() {
   return useMutation({
     mutationKey: ["reset-password"],
     mutationFn: (data: { token: string; new_password: string }) => authApi.resetPassword(data),
+    onError: (err) => {
+      console.error("useResetPasswordMutation error:", err)
+    },
   })
 }
 
@@ -58,6 +76,9 @@ export function useLogoutMutation() {
 
   return useMutation({
     mutationFn: () => logout(),
+    onError: (err) => {
+      console.error("useLogoutMutation error:", err)
+    },
   })
 }
 
@@ -65,5 +86,8 @@ export function useUploadFileMutation() {
   return useMutation({
     mutationKey: ["upload-file"],
     mutationFn: (args: { file: File }) => authApi.uploadFile(args.file),
+    onError: (err) => {
+      console.error("useUploadFileMutation error:", err)
+    },
   })
 }

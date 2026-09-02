@@ -9,6 +9,9 @@ export function useCreateVoucherMutation() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "vouchers"] })
     },
+    onError: (err) => {
+      console.error("useCreateVoucherMutation error:", err)
+    },
   })
 }
 
@@ -20,6 +23,9 @@ export function useUpdateVoucherMutation() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "vouchers"] })
     },
+    onError: (err) => {
+      console.error("useUpdateVoucherMutation error:", err)
+    },
   })
 }
 
@@ -30,6 +36,9 @@ export function useDeleteVoucherMutation() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "vouchers"] })
     },
+    onError: (err) => {
+      console.error("useDeleteVoucherMutation error:", err)
+    },
   })
 }
 
@@ -39,6 +48,9 @@ export function useToggleVoucherMutation() {
     mutationFn: (id: number) => vouchersApi.adminToggleVoucher(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "vouchers"] })
+    },
+    onError: (err) => {
+      console.error("useToggleVoucherMutation error:", err)
     },
   })
 }
