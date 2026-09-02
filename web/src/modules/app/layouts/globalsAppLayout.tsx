@@ -24,6 +24,7 @@ function AppHeader({ pageTitle }: { pageTitle: string }) {
   const { user } = useAuth()
   const { data: cart } = useCartQuery()
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   const cartItemCount = cart ? (cart.total_items || cart.items.length || 0) : 0
 
@@ -53,7 +54,7 @@ function AppHeader({ pageTitle }: { pageTitle: string }) {
           size="sm"
           onClick={() => navigate({ to: '/app/cart' as any })}
           className="relative h-8 w-8 p-0 cursor-pointer text-muted-foreground hover:text-foreground"
-          title="Keranjang Belanja"
+          title={t("hosting.cartTitle")}
         >
           <ShoppingCart className="size-4" />
           {cartItemCount > 0 && (
@@ -68,7 +69,7 @@ function AppHeader({ pageTitle }: { pageTitle: string }) {
         <div className="flex items-center gap-3">
           <div className="flex-col text-right hidden sm:flex">
             <span className="text-xs font-bold text-foreground">
-              {user ? `${user.first_name} ${user.last_name || ''}`.trim() : 'User'}
+              {user ? `${user.first_name} ${user.last_name || ''}`.trim() : t('common.user')}
             </span>
             <span className="text-xs text-muted-foreground">
               {user?.email || ''}

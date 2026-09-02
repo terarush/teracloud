@@ -150,13 +150,13 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton
               onClick={toggleLanguage}
-              tooltip={activeLocale === "en" ? "Switch to Bahasa Indonesia" : "Switch to English"}
+              tooltip={activeLocale === "en" ? t("nav.switchToId") : t("nav.switchToEn")}
               className="cursor-pointer justify-between group-data-[collapsible=icon]:justify-center"
             >
               <div className="flex items-center gap-2 min-w-0">
                 <Languages className="size-4 shrink-0" />
                 <span className="truncate group-data-[collapsible=icon]:hidden">
-                  {activeLocale === "en" ? "English" : "Bahasa Indonesia"}
+                  {activeLocale === "en" ? t("nav.languageLabelEn") : t("nav.languageLabelId")}
                 </span>
               </div>
               <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-sidebar-accent text-sidebar-accent-foreground border border-border/50 group-data-[collapsible=icon]:hidden">
@@ -168,22 +168,22 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton
               onClick={toggleTheme}
-              tooltip={theme === "light" ? t("nav.darkMode", "Dark Mode") : t("nav.lightMode", "Light Mode")}
+              tooltip={theme === "light" ? t("nav.darkMode") : t("nav.lightMode")}
               className="cursor-pointer"
             >
               {theme === "light" ? <Moon className="size-4" /> : <Sun className="size-4" />}
-              <span>{theme === "light" ? t("nav.darkMode", "Dark Mode") : t("nav.lightMode", "Light Mode")}</span>
+              <span>{theme === "light" ? t("nav.darkMode") : t("nav.lightMode")}</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
 
           <SidebarMenuItem>
             <SidebarMenuButton
               onClick={handleLogout}
-              tooltip={t("nav.signOut", "Keluar")}
+              tooltip={t("nav.signOut")}
               className="cursor-pointer text-destructive hover:bg-destructive/10 hover:text-destructive transition-colors"
             >
               <LogOut className="size-4" />
-              <span>{t("nav.signOut", "Keluar")}</span>
+              <span>{t("nav.signOut")}</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
