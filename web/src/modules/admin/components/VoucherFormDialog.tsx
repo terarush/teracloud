@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import type { Voucher, CreateVoucherRequest } from "@/service/api/vouchers"
 import { Loader2 } from "lucide-react"
+import { useTranslation } from "react-i18next"
 import {
   Dialog,
   DialogBody,
@@ -33,6 +34,7 @@ export const VoucherFormDialog: React.FC<VoucherFormDialogProps> = ({
   onSubmit,
   isPending,
 }) => {
+  const { t } = useTranslation()
   const [formData, setFormData] = useState<CreateVoucherRequest>({
     code: "",
     name: "",
@@ -110,7 +112,7 @@ export const VoucherFormDialog: React.FC<VoucherFormDialogProps> = ({
       <DialogContent showFullscreenButton={false} showCloseButton={true}>
         <DialogHeader>
           <DialogTitle>
-            {initialVoucher ? "Edit Voucher" : "Tambah Voucher Baru"}
+            {initialVoucher ? t("hosting.voucher.editTitle") : t("hosting.voucher.addTitle")}
           </DialogTitle>
         </DialogHeader>
 
@@ -119,17 +121,17 @@ export const VoucherFormDialog: React.FC<VoucherFormDialogProps> = ({
             {/* Basic Info */}
             <div className="space-y-4">
               <h3 className="text-xs font-bold text-foreground uppercase tracking-wider">
-                Informasi Dasar
+                {t("hosting.voucher.basicInfo")}
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-semibold text-muted-foreground block mb-1">
-                    Kode Voucher <span className="text-destructive">*</span>
+                    {t("hosting.voucher.codeLabel")} <span className="text-destructive">*</span>
                   </label>
                   <input
                     type="text"
                     required
-                    placeholder="e.g. DISKON20"
+                    placeholder={t("hosting.voucher.codePlaceholder")}
                     value={formData.code}
                     onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
                     className="w-full px-3 py-2 bg-background border border-border rounded-xl text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-primary"
@@ -137,11 +139,11 @@ export const VoucherFormDialog: React.FC<VoucherFormDialogProps> = ({
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-muted-foreground block mb-1">
-                    Nama Voucher
+                    {t("hosting.voucher.nameLabel")}
                   </label>
                   <input
                     type="text"
-                    placeholder="e.g. Diskon Spesial"
+                    placeholder={t("hosting.voucher.namePlaceholder")}
                     value={formData.name || ""}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className="w-full px-3 py-2 bg-background border border-border rounded-xl text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-primary"
@@ -154,7 +156,7 @@ export const VoucherFormDialog: React.FC<VoucherFormDialogProps> = ({
                 </label>
                 <textarea
                   rows={2}
-                  placeholder="Deskripsi voucher (opsional)"
+                  placeholder={t("hosting.voucher.descPlaceholder")}
                   value={formData.description || ""}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   className="w-full px-3 py-2 bg-background border border-border rounded-xl text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-primary resize-none"
@@ -165,35 +167,35 @@ export const VoucherFormDialog: React.FC<VoucherFormDialogProps> = ({
             {/* Discount Config */}
             <div className="space-y-4 pt-3 border-t border-border/50">
               <h3 className="text-xs font-bold text-foreground uppercase tracking-wider">
-                Konfigurasi Diskon
+                {t("hosting.voucher.discountSection")}
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <label className="text-xs font-semibold text-muted-foreground block mb-1">
-                    Tipe Diskon <span className="text-destructive">*</span>
+                    {t("hosting.voucher.typeLabel")} <span className="text-destructive">*</span>
                   </label>
                   <Select
                     value={formData.discount_type}
                     onValueChange={(val: any) => setFormData({ ...formData, discount_type: val })}
                   >
                     <SelectTrigger className="w-full h-10 bg-background border-border">
-                      <SelectValue placeholder="Pilih tipe" />
+                      <SelectValue placeholder={t("hosting.voucher.typePlaceholder")} />
                     </SelectTrigger>
                     <SelectContent className="z-[10000]">
-                      <SelectItem value="percentage">Persen (%)</SelectItem>
-                      <SelectItem value="fixed_amount">Nominal (IDR)</SelectItem>
+                      <SelectItem value="percentage">{t("hosting.voucher.typePercent")}</SelectItem>
+                      <SelectItem value="fixed_amount">{t("hosting.voucher.typeFixed")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-muted-foreground block mb-1">
-                    Nilai Diskon <span className="text-destructive">*</span>
+                    {t("hosting.voucher.valueLabel")} <span className="text-destructive">*</span>
                   </label>
                   <input
                     type="number"
                     required
                     min="1"
-                    placeholder={formData.discount_type === "percentage" ? "e.g. 20" : "e.g. 50000"}
+                    placeholder={formData.discount_type === "percentage" ? t("hosting.voucher.valuePlaceholderPct") : t("hosting.voucher.valuePlaceholderFixed")}
                     value={formData.discount_value || ""}
                     onChange={(e) =>
                       setFormData({ ...formData, discount_value: e.target.value === "" ? 0 : Number(e.target.value) })
@@ -203,12 +205,12 @@ export const VoucherFormDialog: React.FC<VoucherFormDialogProps> = ({
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-muted-foreground block mb-1">
-                    Maks. Diskon (IDR)
+                    {t("hosting.voucher.maxDiscountLabel")}
                   </label>
                   <input
                     type="number"
                     min="0"
-                    placeholder="Tanpa batas"
+                    placeholder={t("hosting.voucher.noLimit")}
                     value={formData.max_discount_amount ?? ""}
                     onChange={(e) =>
                       setFormData({
@@ -223,12 +225,12 @@ export const VoucherFormDialog: React.FC<VoucherFormDialogProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-semibold text-muted-foreground block mb-1">
-                    Min. Order (IDR)
+                    {t("hosting.voucher.minOrderLabel")}
                   </label>
                   <input
                     type="number"
                     min="0"
-                    placeholder="0"
+                    placeholder={t("hosting.voucher.minOrderPlaceholder")}
                     value={formData.min_order_amount || ""}
                     onChange={(e) =>
                       setFormData({ ...formData, min_order_amount: e.target.value === "" ? 0 : Number(e.target.value) })
@@ -238,18 +240,18 @@ export const VoucherFormDialog: React.FC<VoucherFormDialogProps> = ({
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-muted-foreground block mb-1">
-                    Berlaku Untuk
+                    {t("hosting.voucher.appliesTo")}
                   </label>
                   <Select
                     value={formData.applies_to || "all"}
                     onValueChange={(val: any) => setFormData({ ...formData, applies_to: val })}
                   >
                     <SelectTrigger className="w-full h-10 bg-background border-border">
-                      <SelectValue placeholder="Semua paket" />
+                      <SelectValue placeholder={t("hosting.voucher.appliesToPlaceholder")} />
                     </SelectTrigger>
                     <SelectContent className="z-[10000]">
-                      <SelectItem value="all">Semua Paket</SelectItem>
-                      <SelectItem value="specific_plans">Paket Tertentu</SelectItem>
+                      <SelectItem value="all">{t("hosting.voucher.allPlans")}</SelectItem>
+                      <SelectItem value="specific_plans">{t("hosting.voucher.specificPlans")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -259,17 +261,17 @@ export const VoucherFormDialog: React.FC<VoucherFormDialogProps> = ({
             {/* Usage Limits */}
             <div className="space-y-4 pt-3 border-t border-border/50">
               <h3 className="text-xs font-bold text-foreground uppercase tracking-wider">
-                Batasan Penggunaan
+                {t("hosting.voucher.usageSection")}
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-semibold text-muted-foreground block mb-1">
-                    Limit Total Penggunaan
+                    {t("hosting.voucher.totalUsageLabel")}
                   </label>
                   <input
                     type="number"
                     min="1"
-                    placeholder="Tanpa batas"
+                    placeholder={t("hosting.voucher.noLimit")}
                     value={formData.total_usage_limit ?? ""}
                     onChange={(e) =>
                       setFormData({
@@ -282,12 +284,12 @@ export const VoucherFormDialog: React.FC<VoucherFormDialogProps> = ({
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-muted-foreground block mb-1">
-                    Limit Per Pengguna
+                    {t("hosting.voucher.perUserUsageLabel")}
                   </label>
                   <input
                     type="number"
                     min="1"
-                    placeholder="Tanpa batas"
+                    placeholder={t("hosting.voucher.noLimit")}
                     value={formData.per_user_usage_limit ?? ""}
                     onChange={(e) =>
                       setFormData({
@@ -304,12 +306,12 @@ export const VoucherFormDialog: React.FC<VoucherFormDialogProps> = ({
             {/* Schedule */}
             <div className="space-y-4 pt-3 border-t border-border/50">
               <h3 className="text-xs font-bold text-foreground uppercase tracking-wider">
-                Jadwal Aktif
+                {t("hosting.voucher.scheduleSection")}
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-semibold text-muted-foreground block mb-1">
-                    Mulai Aktif
+                    {t("hosting.voucher.startsOn")}
                   </label>
                   <input
                     type="datetime-local"
@@ -322,7 +324,7 @@ export const VoucherFormDialog: React.FC<VoucherFormDialogProps> = ({
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-muted-foreground block mb-1">
-                    Berakhir
+                    {t("hosting.voucher.endsOn")}
                   </label>
                   <input
                     type="datetime-local"
@@ -345,7 +347,7 @@ export const VoucherFormDialog: React.FC<VoucherFormDialogProps> = ({
                   onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
                   className="size-4 rounded border-border accent-primary"
                 />
-                <span className="text-xs font-semibold text-muted-foreground">Aktif</span>
+                <span className="text-xs font-semibold text-muted-foreground">{t("hosting.voucher.activeBadge")}</span>
               </label>
             </div>
           </form>
@@ -353,7 +355,7 @@ export const VoucherFormDialog: React.FC<VoucherFormDialogProps> = ({
 
         <DialogFooter>
           <Button type="button" variant="ghost" onClick={onClose} className="cursor-pointer">
-            Batal
+            {t("common.cancel")}
           </Button>
           <Button
             type="submit"
@@ -362,7 +364,7 @@ export const VoucherFormDialog: React.FC<VoucherFormDialogProps> = ({
             className="font-semibold cursor-pointer"
           >
             {isPending && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
-            {initialVoucher ? "Simpan Perubahan" : "Buat Voucher"}
+            {initialVoucher ? t("hosting.voucher.saveChanges") : t("hosting.voucher.createBtn")}
           </Button>
         </DialogFooter>
       </DialogContent>

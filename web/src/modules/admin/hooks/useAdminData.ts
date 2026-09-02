@@ -2,6 +2,7 @@ import { useAdminStatsQuery, useAdminAuditLogsQuery, useAdminContainersQuery, us
 import { useAdminPlansQuery } from "@/service/query/plans"
 import { useCreatePlanMutation, useUpdatePlanMutation, useDeletePlanMutation, useTogglePlanMutation } from "@/service/mutation/plans"
 import { toast } from "sonner"
+import { tl } from "@/lib/i18n"
 import type { CreatePlanRequest } from "@/service/api/plans"
 
 export function useAdminData() {
@@ -19,37 +20,37 @@ export function useAdminData() {
   const handleCreatePlan = async (data: CreatePlanRequest) => {
     try {
       await createPlanMutation.mutateAsync(data)
-      toast.success("Paket hosting berhasil ditambahkan")
+      toast.success(tl("hosting.plan.toastCreated"))
     } catch (err: any) {
-      toast.error(err.response?.data?.message || "Gagal membuat paket")
+      toast.error(err.response?.data?.message || tl("hosting.plan.toastCreateFailed"))
     }
   }
 
   const handleUpdatePlan = async (id: number, data: CreatePlanRequest) => {
     try {
       await updatePlanMutation.mutateAsync({ id, data })
-      toast.success("Paket hosting berhasil diupdate")
+      toast.success(tl("hosting.plan.toastUpdated"))
     } catch (err: any) {
-      toast.error(err.response?.data?.message || "Gagal mengupdate paket")
+      toast.error(err.response?.data?.message || tl("hosting.plan.toastUpdateFailed"))
     }
   }
 
   const handleDeletePlan = async (id: number) => {
-    if (!confirm("Yakin ingin menghapus paket hosting ini?")) return
+    if (!confirm(tl("hosting.plan.confirmDelete"))) return
     try {
       await deletePlanMutation.mutateAsync(id)
-      toast.success("Paket hosting berhasil dihapus")
+      toast.success(tl("hosting.plan.toastDeleted"))
     } catch (err: any) {
-      toast.error(err.response?.data?.message || "Gagal menghapus paket")
+      toast.error(err.response?.data?.message || tl("hosting.plan.toastDeleteFailed"))
     }
   }
 
   const handleTogglePlan = async (id: number) => {
     try {
       await togglePlanMutation.mutateAsync(id)
-      toast.success("Status paket hosting berhasil diubah")
+      toast.success(tl("hosting.plan.toastToggled"))
     } catch (err: any) {
-      toast.error(err.response?.data?.message || "Gagal mengubah status paket")
+      toast.error(err.response?.data?.message || tl("hosting.plan.toastToggleFailed"))
     }
   }
 

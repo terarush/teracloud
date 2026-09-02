@@ -1,9 +1,9 @@
 import React, { useState } from "react"
 import { useAdminData } from "../hooks/useAdminData"
 import { PlanFormDialog } from "../components/PlanFormDialog"
-import { Plus, Edit, Trash2, CheckCircle, XCircle, ArrowLeft, Loader2 } from "lucide-react"
+import { Plus, Edit, Trash2, ArrowLeft, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useNavigate } from "@tanstack/react-router"
 import type { Plan } from "@/service/api/plans"
@@ -43,7 +43,7 @@ export const AdminPlansView: React.FC = () => {
             {t("hosting.adminPlans", "Manajemen Paket Hosting")}
           </h1>
           <p className="text-sm text-muted-foreground mt-0.5">
-            Konfigurasi spesifikasi dan paket container hosting.
+            {t("hosting.plan.adminDesc")}
           </p>
         </div>
 
@@ -84,7 +84,7 @@ export const AdminPlansView: React.FC = () => {
               ) : plans.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-4 py-12 text-center text-xs text-muted-foreground">
-                    Belum ada paket hosting yang dibuat.
+                    {t("hosting.plan.emptyRows")}
                   </td>
                 </tr>
               ) : (
@@ -113,7 +113,7 @@ export const AdminPlansView: React.FC = () => {
                             )}
                             {plan.thumbnail_url && (
                               <span className="text-[10px] px-1 py-0.2 rounded bg-muted text-muted-foreground font-normal">
-                                +Banner
+                                +{t("hosting.bannerShort")}
                               </span>
                             )}
                           </div>
@@ -139,7 +139,7 @@ export const AdminPlansView: React.FC = () => {
                       )}
                     </td>
                     <td className="px-4 py-3 text-xs text-muted-foreground">
-                      {plan.cpu_limit} vCPU &bull; {plan.memory_limit} MB RAM &bull; {plan.disk_limit} GB
+                      {t("hosting.plan.specText", { cpu: plan.cpu_limit, ram: plan.memory_limit, disk: plan.disk_limit })}
                     </td>
                     <td className="px-4 py-3 text-xs font-bold text-foreground">
                       {new Intl.NumberFormat("id-ID", {

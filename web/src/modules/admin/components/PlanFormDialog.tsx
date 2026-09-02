@@ -115,9 +115,9 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
       } else {
         setFormData((prev) => ({ ...prev, thumbnail_url: uploadedUrl }))
       }
-      toast.success("Gambar berhasil diupload!")
+      toast.success(t("hosting.plan.uploadImageSuccess"))
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || err?.message || "Gagal mengupload gambar")
+      toast.error(err?.response?.data?.message || err?.message || t("hosting.plan.uploadImageFailed"))
     } finally {
       setUploadingField(null)
       e.target.value = ""
@@ -178,28 +178,28 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
           {/* General Plan Info */}
           <div className="space-y-4">
             <h3 className="text-xs font-bold text-foreground uppercase tracking-wider">
-              Informasi Umum
+              {t("hosting.plan.generalInfo")}
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="text-xs font-semibold text-muted-foreground block mb-1">
-                  Nama Paket
+                  {t("hosting.planName")}
                 </label>
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Starter Nginx Server"
+                  placeholder={t("hosting.plan.namePlaceholder")}
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   className="w-full px-3 py-2 bg-background border border-border rounded-xl text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </div>
               <div>
-                <label className="text-xs font-semibold text-muted-foreground block mb-1">Slug</label>
+                <label className="text-xs font-semibold text-muted-foreground block mb-1">{t("hosting.plan.slugLabel")}</label>
                 <input
                   type="text"
                   required
-                  placeholder="e.g. starter-nginx"
+                  placeholder={t("hosting.plan.slugPlaceholder")}
                   value={formData.slug}
                   onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
                   className="w-full px-3 py-2 bg-background border border-border rounded-xl text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-primary"
@@ -210,11 +210,11 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="text-xs font-semibold text-muted-foreground block mb-1">
-                  Deskripsi Singkat
+                  {t("hosting.plan.shortDescLabel")}
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. Cocok untuk microservices atau web server statis"
+                  placeholder={t("hosting.plan.shortDescPlaceholder")}
                   value={formData.short_description || ""}
                   onChange={(e) => setFormData({ ...formData, short_description: e.target.value })}
                   className="w-full px-3 py-2 bg-background border border-border rounded-xl text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-primary"
@@ -222,11 +222,11 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
               </div>
               <div>
                 <label className="text-xs font-semibold text-muted-foreground block mb-1">
-                  Badge Label (Opsional)
+                  {t("hosting.plan.badgeLabel")}
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. Populer, Baru, Best Value, Diskon 20%"
+                  placeholder={t("hosting.plan.badgePlaceholder")}
                   value={formData.badge || ""}
                   onChange={(e) => setFormData({ ...formData, badge: e.target.value })}
                   className="w-full px-3 py-2 bg-background border border-border rounded-xl text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-primary"
@@ -239,28 +239,28 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
           <div className="space-y-4 pt-3 border-t border-border/50">
             <h3 className="text-xs font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
               <ImageIcon className="size-3.5 text-primary" />
-              <span>Gambar &amp; Icon Paket</span>
+              <span>{t("hosting.plan.imageSection")}</span>
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Icon / Logo */}
               <div className="space-y-2">
                 <label className="text-xs font-semibold text-muted-foreground block">
-                  Icon / Logo (SVG, PNG, JPG)
+                  {t("hosting.plan.iconLabel")}
                 </label>
                 <div className="flex items-center gap-3">
                   {formData.icon ? (
                     <div className="relative size-14 rounded-xl border border-border bg-muted/30 p-1 flex items-center justify-center shrink-0">
                       <img
                         src={getImageUrl(formData.icon)}
-                        alt="Icon Preview"
+                        alt={t("hosting.plan.iconPreviewAlt")}
                         className="max-h-full max-w-full object-contain rounded-lg"
                       />
                       <button
                         type="button"
                         onClick={() => setFormData((prev) => ({ ...prev, icon: "" }))}
                         className="absolute -top-1.5 -right-1.5 size-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center text-xs hover:opacity-90 cursor-pointer"
-                        title="Hapus icon"
+                        title={t("hosting.plan.removeIcon")}
                       >
                         <X className="size-3" />
                       </button>
@@ -278,7 +278,7 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
                       ) : (
                         <Upload className="size-3.5" />
                       )}
-                      <span>{formData.icon ? "Ganti File Icon" : "Pilih File Icon"}</span>
+                      <span>{formData.icon ? t("hosting.plan.changeIcon") : t("hosting.plan.chooseIcon")}</span>
                       <input
                         type="file"
                         accept="image/*"
@@ -287,7 +287,7 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
                         disabled={uploadingField !== null}
                       />
                     </label>
-                    <p className="text-[11px] text-muted-foreground mt-1">Format: SVG, PNG, JPG (Maks 5MB)</p>
+                    <p className="text-[11px] text-muted-foreground mt-1">{t("hosting.plan.iconFormat")}</p>
                   </div>
                 </div>
               </div>
@@ -295,21 +295,21 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
               {/* Thumbnail / Banner */}
               <div className="space-y-2">
                 <label className="text-xs font-semibold text-muted-foreground block">
-                  Banner / Thumbnail Cover (Opsional)
+                  {t("hosting.plan.thumbnailLabel")}
                 </label>
                 <div className="flex items-center gap-3">
                   {formData.thumbnail_url ? (
                     <div className="relative w-24 h-14 rounded-xl border border-border bg-muted/30 p-1 flex items-center justify-center shrink-0 overflow-hidden">
                       <img
                         src={getImageUrl(formData.thumbnail_url)}
-                        alt="Thumbnail Preview"
+                        alt={t("hosting.plan.thumbnailPreviewAlt")}
                         className="w-full h-full object-cover rounded-lg"
                       />
                       <button
                         type="button"
                         onClick={() => setFormData((prev) => ({ ...prev, thumbnail_url: "" }))}
                         className="absolute top-1 right-1 size-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center text-xs hover:opacity-90 cursor-pointer"
-                        title="Hapus banner"
+                        title={t("hosting.plan.removeBanner")}
                       >
                         <X className="size-3" />
                       </button>
@@ -327,7 +327,7 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
                       ) : (
                         <Upload className="size-3.5" />
                       )}
-                      <span>{formData.thumbnail_url ? "Ganti File Banner" : "Pilih File Banner"}</span>
+                      <span>{formData.thumbnail_url ? t("hosting.plan.changeBanner") : t("hosting.plan.chooseBanner")}</span>
                       <input
                         type="file"
                         accept="image/*"
@@ -336,7 +336,7 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
                         disabled={uploadingField !== null}
                       />
                     </label>
-                    <p className="text-[11px] text-muted-foreground mt-1">Rekomendasi rasio: 16:9 landscape</p>
+                    <p className="text-[11px] text-muted-foreground mt-1">{t("hosting.plan.bannerRatio")}</p>
                   </div>
                 </div>
               </div>
@@ -346,28 +346,28 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
           {/* Docker Image & Runtime Config */}
           <div className="space-y-4 pt-3 border-t border-border/50">
             <h3 className="text-xs font-bold text-foreground uppercase tracking-wider">
-              Image &amp; Eksekusi Container
+              {t("hosting.plan.imageExecSection")}
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="text-xs font-semibold text-muted-foreground block mb-1">
-                  Image Docker (Repository)
+                  {t("hosting.dockerImage")}
                 </label>
                 <input
                   type="text"
                   required
-                  placeholder="e.g. nginx, node, python, mariadb"
+                  placeholder={t("hosting.plan.dockerImagePlaceholder")}
                   value={formData.image_name}
                   onChange={(e) => setFormData({ ...formData, image_name: e.target.value })}
                   className="w-full px-3 py-2 bg-background border border-border rounded-xl text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </div>
               <div>
-                <label className="text-xs font-semibold text-muted-foreground block mb-1">Tag Image</label>
+                <label className="text-xs font-semibold text-muted-foreground block mb-1">{t("hosting.plan.imageTagLabel")}</label>
                 <input
                   type="text"
                   required
-                  placeholder="e.g. latest, alpine, 20-alpine"
+                  placeholder={t("hosting.plan.imageTagPlaceholder")}
                   value={formData.image_tag}
                   onChange={(e) => setFormData({ ...formData, image_tag: e.target.value })}
                   className="w-full px-3 py-2 bg-background border border-border rounded-xl text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-primary"
@@ -378,11 +378,11 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="text-xs font-semibold text-muted-foreground block mb-1">
-                  Custom Command (Opsional)
+                  {t("hosting.plan.customCommandLabel")}
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. nginx -g 'daemon off;'"
+                  placeholder={t("hosting.plan.customCommandPlaceholder")}
                   value={formData.command || ""}
                   onChange={(e) => setFormData({ ...formData, command: e.target.value })}
                   className="w-full px-3 py-2 bg-background border border-border rounded-xl text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-primary"
@@ -390,11 +390,11 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
               </div>
               <div>
                 <label className="text-xs font-semibold text-muted-foreground block mb-1">
-                  Custom Entrypoint (Opsional)
+                  {t("hosting.plan.customEntrypointLabel")}
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. /docker-entrypoint.sh"
+                  placeholder={t("hosting.plan.customEntrypointPlaceholder")}
                   value={formData.entrypoint || ""}
                   onChange={(e) => setFormData({ ...formData, entrypoint: e.target.value })}
                   className="w-full px-3 py-2 bg-background border border-border rounded-xl text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-primary"
@@ -409,7 +409,7 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
               <div className="flex items-center gap-1.5">
                 <Network className="size-4 text-primary" />
                 <h3 className="text-xs font-bold text-foreground uppercase tracking-wider">
-                  Open Ports / Port Forwarding Container
+                  {t("hosting.plan.portsSection")}
                 </h3>
               </div>
               <Button
@@ -420,18 +420,18 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
                 className="gap-1 cursor-pointer font-semibold text-xs"
               >
                 <Plus className="size-3" />
-                <span>Tambah Port</span>
+                <span>{t("hosting.plan.addPort")}</span>
               </Button>
             </div>
 
             <p className="text-xs text-muted-foreground">
-              Tentukan port internal image aplikasi. Host port acak akan di-forward secara otomatis ke port ini.
+              {t("hosting.plan.portsHint")}
             </p>
 
             <div className="space-y-2.5">
               {(formData.port_config || []).length === 0 ? (
                 <div className="p-4 bg-muted/40 rounded-xl text-center text-xs text-muted-foreground">
-                  Belum ada port yang di-expose. Klik &quot;Tambah Port&quot; untuk membuka port aplikasi.
+                  {t("hosting.plan.noPorts")}
                 </div>
               ) : (
                 (formData.port_config || []).map((port, idx) => (
@@ -441,14 +441,14 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
                   >
                     <div className="w-full md:w-32 shrink-0">
                       <label className="text-[11px] font-medium text-muted-foreground block mb-1 whitespace-nowrap">
-                        Internal Port
+                        {t("hosting.plan.internalPortLabel")}
                       </label>
                       <input
                         type="number"
                         required
                         min="1"
                         max="65535"
-                        placeholder="e.g. 80"
+                        placeholder={t("hosting.plan.internalPortPlaceholder")}
                         value={port.container_port}
                         onChange={(e) =>
                           handlePortChange(
@@ -463,14 +463,14 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
 
                     <div className="w-full md:w-28 shrink-0">
                       <label className="text-[11px] font-medium text-muted-foreground block mb-1 whitespace-nowrap">
-                        Protocol
+                        {t("hosting.plan.protocolLabel")}
                       </label>
                       <Select
                         value={port.protocol || "tcp"}
                         onValueChange={(val: any) => handlePortChange(idx, "protocol", val)}
                       >
                         <SelectTrigger size="sm" className="w-full h-8 text-xs bg-background border-border">
-                          <SelectValue placeholder="Protocol" />
+                          <SelectValue placeholder={t("hosting.plan.protocolPlaceholder")} />
                         </SelectTrigger>
                         <SelectContent className="z-[10000]">
                           <SelectItem value="tcp">TCP</SelectItem>
@@ -481,12 +481,12 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
 
                     <div className="w-full md:w-36 shrink-0">
                       <label className="text-[11px] font-medium text-muted-foreground block mb-1 whitespace-nowrap">
-                        Label / Key
+                        {t("hosting.plan.labelKey")}
                       </label>
                       <input
                         type="text"
                         required
-                        placeholder="e.g. http, api"
+                        placeholder={t("hosting.plan.labelKeyPlaceholder")}
                         value={port.name || ""}
                         onChange={(e) => handlePortChange(idx, "name", e.target.value)}
                         className="w-full h-8 px-2.5 py-1 bg-background border border-border rounded-lg text-foreground text-xs focus:outline-none focus:ring-1 focus:ring-primary"
@@ -495,11 +495,11 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
 
                     <div className="w-full md:flex-1 min-w-0">
                       <label className="text-[11px] font-medium text-muted-foreground block mb-1 whitespace-nowrap">
-                        Keterangan Port
+                        {t("hosting.plan.portDescLabel")}
                       </label>
                       <input
                         type="text"
-                        placeholder="e.g. Web Frontend Dashboard"
+                        placeholder={t("hosting.plan.portDescPlaceholder")}
                         value={port.description || ""}
                         onChange={(e) => handlePortChange(idx, "description", e.target.value)}
                         className="w-full h-8 px-2.5 py-1 bg-background border border-border rounded-lg text-foreground text-xs focus:outline-none focus:ring-1 focus:ring-primary"
@@ -524,12 +524,12 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
           {/* Resources & Pricing */}
           <div className="space-y-4 pt-3 border-t border-border/50">
             <h3 className="text-xs font-bold text-foreground uppercase tracking-wider">
-              Resource Hardware &amp; Harga
+              {t("hosting.plan.resourceSection")}
             </h3>
             <div className="grid grid-cols-3 gap-3">
               <div>
                 <label className="text-xs font-semibold text-muted-foreground block mb-1">
-                  vCPU Limit
+                  {t("hosting.plan.vcpuLabel")}
                 </label>
                 <input
                   type="number"
@@ -548,7 +548,7 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
               </div>
               <div>
                 <label className="text-xs font-semibold text-muted-foreground block mb-1">
-                  RAM (MB)
+                  {t("hosting.plan.ramLabel")}
                 </label>
                 <input
                   type="number"
@@ -566,7 +566,7 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
               </div>
               <div>
                 <label className="text-xs font-semibold text-muted-foreground block mb-1">
-                  Disk (GB)
+                  {t("hosting.plan.diskLabel")}
                 </label>
                 <input
                   type="number"
@@ -586,12 +586,12 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
 
             <div>
               <label className="text-xs font-semibold text-muted-foreground block mb-1">
-                Harga Bulanan (IDR)
+                {t("hosting.plan.pricingLabel")}
               </label>
               <input
                 type="number"
                 required
-                placeholder="e.g. 50000"
+                placeholder={t("hosting.plan.pricingPlaceholder")}
                 value={formData.price_monthly}
                 onChange={(e) =>
                   setFormData({
@@ -608,7 +608,7 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
 
         <DialogFooter>
           <Button type="button" variant="ghost" onClick={onClose} className="cursor-pointer">
-            Batal
+            {t("common.cancel")}
           </Button>
           <Button
             type="submit"
@@ -617,7 +617,7 @@ export const PlanFormDialog: React.FC<PlanFormDialogProps> = ({
             className="font-semibold cursor-pointer"
           >
             {isPending && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
-            Simpan Paket
+            {t("hosting.plan.save")}
           </Button>
         </DialogFooter>
       </DialogContent>

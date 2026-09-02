@@ -1,4 +1,5 @@
 import React, { useState } from "react"
+import { useTranslation } from "react-i18next"
 import { useAdminVouchersQuery } from "@/service/query/vouchers"
 import {
   useCreateVoucherMutation,
@@ -16,6 +17,7 @@ import type { Voucher, CreateVoucherRequest } from "@/service/api/vouchers"
 import { toast } from "sonner"
 
 export const AdminVouchersView: React.FC = () => {
+  const { t } = useTranslation()
   const { data: vouchers = [], isLoading } = useAdminVouchersQuery()
   const createMutation = useCreateVoucherMutation()
   const updateMutation = useUpdateVoucherMutation()
@@ -31,9 +33,9 @@ export const AdminVouchersView: React.FC = () => {
   const handleCreate = async (data: CreateVoucherRequest) => {
     try {
       await createMutation.mutateAsync(data)
-      toast.success("Voucher berhasil ditambahkan")
+      toast.success(t("hosting.voucher.toastCreated"))
     } catch (err: any) {
-      toast.error(err.response?.data?.message || "Gagal membuat voucher")
+      toast.error(err.response?.data?.message || t("hosting.voucher.toastCreateFailed"))
     }
   }
 
@@ -41,28 +43,28 @@ export const AdminVouchersView: React.FC = () => {
     if (!selectedVoucher) return
     try {
       await updateMutation.mutateAsync({ id: selectedVoucher.id, data })
-      toast.success("Voucher berhasil diupdate")
+      toast.success(t("hosting.voucher.toastUpdated"))
     } catch (err: any) {
-      toast.error(err.response?.data?.message || "Gagal mengupdate voucher")
+      toast.error(err.response?.data?.message || t("hosting.voucher.toastUpdateFailed"))
     }
   }
 
   const handleDelete = async (id: number) => {
-    if (!confirm("Yakin ingin menghapus voucher ini?")) return
+    if (!confirm(t("hosting.voucher.confirmDelete"))) return
     try {
       await deleteMutation.mutateAsync(id)
-      toast.success("Voucher berhasil dihapus")
+      toast.success(t("hosting.voucher.toastDeleted"))
     } catch (err: any) {
-      toast.error(err.response?.data?.message || "Gagal menghapus voucher")
+      toast.error(err.response?.data?.message || t("hosting.voucher.toastDeleteFailed"))
     }
   }
 
   const handleToggle = async (id: number) => {
     try {
       await toggleMutation.mutateAsync(id)
-      toast.success("Status voucher berhasil diubah")
+      toast.success(t("hosting.voucher.toastToggled"))
     } catch (err: any) {
-      toast.error(err.response?.data?.message || "Gagal mengubah status voucher")
+      toast.error(err.response?.data?.message || t("hosting.voucher.toastToggleFailed"))
     }
   }
 
@@ -85,13 +87,13 @@ export const AdminVouchersView: React.FC = () => {
             className="gap-1 mb-1 text-xs text-muted-foreground hover:text-foreground cursor-pointer -ml-2 h-7"
           >
             <ArrowLeft className="size-3.5" />
-            <span>Kembali ke Console</span>
+            <span>{t("hosting.voucher.backToConsole")}</span>
           </Button>
           <h1 className="text-2xl font-bold tracking-tight text-foreground">
-            Manajemen Voucher
+            {t("hosting.voucher.management")}
           </h1>
           <p className="text-sm text-muted-foreground mt-0.5">
-            Buat, edit, dan kelola voucher diskon untuk pelanggan.
+            {t("hosting.voucher.managementDesc")}
           </p>
         </div>
 
@@ -104,7 +106,7 @@ export const AdminVouchersView: React.FC = () => {
           className="gap-1.5 font-semibold text-xs cursor-pointer"
         >
           <Plus className="size-3.5" />
-          <span>Tambah Voucher</span>
+          <span>{t("hosting.voucher.addBtn")}</span>
         </Button>
       </div>
 
@@ -113,13 +115,13 @@ export const AdminVouchersView: React.FC = () => {
           <table className="w-full text-left text-sm">
             <thead className="bg-muted/40 border-b border-border/50 text-muted-foreground text-[11px] font-medium uppercase tracking-wider">
               <tr>
-                <th className="px-4 py-3">Kode</th>
-                <th className="px-4 py-3">Nama</th>
-                <th className="px-4 py-3">Diskon</th>
-                <th className="px-4 py-3">Min. Order</th>
-                <th className="px-4 py-3">Batasan</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3 text-right">Aksi</th>
+                <th className="px-4 py-3">{t("hosting.voucher.codeLabel")}</th>
+                <th className="px-4 py-3">{t("hosting.voucher.nameLabel")}</th>
+                <th className="px-4 py-3">{t("hosting.voucher.colDiscount")}</th>
+                <th className="px-4 py-3">{t("hosting.voucher.minOrderLabel")}</th>
+                <th className="px-4 py-3">{t("hosting.voucher.colLimit")}</th>
+                <th className="px-4 py-3">{t("hosting.status")}</th>
+                <th className="px-4 py-3 text-right">{t("common.actions")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/50">
@@ -127,14 +129,14 @@ export const AdminVouchersView: React.FC = () => {
                 <tr>
                   <td colSpan={7} className="px-4 py-12 text-center text-muted-foreground">
                     <Loader2 className="size-5 animate-spin mx-auto mb-2 text-primary" />
-                    <span className="text-xs">Memuat daftar voucher...</span>
+                    <span className="text-xs">{t("hosting.voucher.loading")}</span>
                   </td>
                 </tr>
               ) : vouchers.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="px-4 py-12 text-center text-xs text-muted-foreground">
                     <Ticket className="size-8 mx-auto mb-2 opacity-30" />
-                    <span>Belum ada voucher yang dibuat.</span>
+                    <span>{t("hosting.voucher.emptyRows")}</span>
                   </td>
                 </tr>
               ) : (
@@ -157,7 +159,7 @@ export const AdminVouchersView: React.FC = () => {
                       {formatDiscount(v)}
                       {v.max_discount_amount && v.discount_type === "percentage" && (
                         <div className="text-[11px] font-normal text-muted-foreground">
-                          Maks. {formatCurrency(v.max_discount_amount)}
+                          {t("hosting.voucher.maxPrefix")} {formatCurrency(v.max_discount_amount)}
                         </div>
                       )}
                     </td>
@@ -165,9 +167,9 @@ export const AdminVouchersView: React.FC = () => {
                       {v.min_order_amount > 0 ? formatCurrency(v.min_order_amount) : "—"}
                     </td>
                     <td className="px-4 py-3 text-xs text-muted-foreground">
-                      <div>{v.total_usage_limit ? `Total: ${v.total_usage_limit}` : "Tanpa batas"}</div>
+                      <div>{v.total_usage_limit ? `${t("hosting.voucher.totalPrefix")} ${v.total_usage_limit}` : t("hosting.voucher.noLimit")}</div>
                       {v.per_user_usage_limit && (
-                        <div className="text-[11px]">Per user: {v.per_user_usage_limit}</div>
+                        <div className="text-[11px]">{t("hosting.voucher.perUserPrefix")} {v.per_user_usage_limit}</div>
                       )}
                     </td>
                     <td className="px-4 py-3">
@@ -182,7 +184,7 @@ export const AdminVouchersView: React.FC = () => {
                               : "bg-muted text-muted-foreground"
                           }`}
                         >
-                          {v.is_active ? "Aktif" : "Nonaktif"}
+                          {v.is_active ? t("hosting.voucher.activeBadge") : t("hosting.voucher.inactiveBadge")}
                         </Badge>
                       </button>
                     </td>

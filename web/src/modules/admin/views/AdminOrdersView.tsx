@@ -29,7 +29,7 @@ export const AdminOrdersView: React.FC = () => {
             {t("hosting.adminOrders", "Daftar Transaksi Pesanan (Orders)")}
           </h1>
           <p className="text-sm text-muted-foreground mt-0.5">
-            Log seluruh transaksi pembelian dan langganan hosting pengguna.
+            {t("hosting.order.adminDesc")}
           </p>
         </div>
       </div>
@@ -40,8 +40,8 @@ export const AdminOrdersView: React.FC = () => {
             <thead className="bg-muted/40 border-b border-border/50 text-muted-foreground text-[11px] font-medium uppercase tracking-wider">
               <tr>
                 <th className="px-4 py-3">{t("hosting.invoiceNumber", "Nomor Order")}</th>
-                <th className="px-4 py-3">User ID</th>
-                <th className="px-4 py-3">Plan ID</th>
+                <th className="px-4 py-3">{t("hosting.colUserId")}</th>
+                <th className="px-4 py-3">{t("hosting.colPlanId")}</th>
                 <th className="px-4 py-3">{t("hosting.total", "Total Tagihan")}</th>
                 <th className="px-4 py-3">{t("hosting.status", "Status")}</th>
                 <th className="px-4 py-3">{t("hosting.date", "Waktu")}</th>
@@ -58,7 +58,7 @@ export const AdminOrdersView: React.FC = () => {
               ) : orders.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-4 py-12 text-center text-xs text-muted-foreground">
-                    Belum ada transaksi pesanan yang tercatat.
+                    {t("hosting.order.emptyRows")}
                   </td>
                 </tr>
               ) : (
