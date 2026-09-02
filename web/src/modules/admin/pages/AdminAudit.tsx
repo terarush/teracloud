@@ -1,5 +1,11 @@
 import { AdminAuditView } from "../views/AdminAuditView"
+import { Seo } from "@/components/seo"
 
 export const AdminAudit = () => {
-  return <AdminAuditView />
+  return (
+    <>
+      <Seo title="Audit Log" path="/app/admin/audit" robots="noindex, nofollow" />
+      <AdminAuditView />
+    </>
+  )
 }
