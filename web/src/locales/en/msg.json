@@ -1,0 +1,83 @@
+{
+  "msg": {
+    "auth": {
+      "registration_success": "Registration successful",
+      "login_success": "Login successful",
+      "profile_retrieved": "Profile retrieved successfully",
+      "profile_updated": "Profile updated successfully",
+      "username_updated": "Username updated successfully",
+      "password_changed": "Password changed successfully",
+      "logout_success": "Logout successful",
+      "token_refreshed": "Token refreshed successfully",
+      "check_done": "ok",
+      "reset_link_sent": "If the email is registered, a reset link will be sent",
+      "token_valid": "Token is valid",
+      "password_reset": "Password reset successfully",
+      "upload_success": "File uploaded successfully"
+    },
+    "users": {
+      "list_retrieved": "Users retrieved successfully",
+      "retrieved": "User retrieved successfully",
+      "created": "User created successfully",
+      "updated": "User updated successfully",
+      "profile_retrieved": "Profile retrieved successfully",
+      "stats_retrieved": "Platform statistics retrieved successfully",
+      "logs_retrieved": "Audit logs retrieved successfully"
+    },
+    "orders": {
+      "created": "Order created successfully",
+      "checkout_started": "Checkout initiated successfully",
+      "status_retrieved": "Order status retrieved",
+      "list_retrieved": "Orders retrieved successfully",
+      "retrieved": "Order retrieved successfully",
+      "all_retrieved": "All orders retrieved successfully",
+      "stats_retrieved": "Order statistics retrieved successfully",
+      "payment_confirmed": "Payment confirmed successfully",
+      "webhook_processed": "Webhook processed successfully"
+    },
+    "cart": {
+      "retrieved": "Cart retrieved successfully",
+      "item_added": "Item added to cart successfully",
+      "item_updated": "Cart item updated successfully",
+      "item_removed": "Item removed from cart successfully",
+      "cleared": "Cart cleared successfully"
+    },
+    "vouchers": {
+      "quote_valid": "Voucher validation completed",
+      "created": "Voucher created successfully",
+      "updated": "Voucher updated successfully",
+      "toggled": "Voucher toggled successfully",
+      "list_retrieved": "Vouchers retrieved successfully",
+      "retrieved": "Voucher retrieved successfully"
+    },
+    "plans": {
+      "list_retrieved": "Plans retrieved successfully",
+      "retrieved": "Plan retrieved successfully",
+      "created": "Plan created successfully",
+      "updated": "Plan updated successfully",
+      "toggled": "Plan toggled successfully"
+    },
+    "billing": {
+      "subs_retrieved": "Subscriptions retrieved successfully",
+      "invoices_retrieved": "Invoices retrieved successfully",
+      "invoice_retrieved": "Invoice retrieved successfully",
+      "auto_renew_updated": "Auto renew setting updated",
+      "all_subs_retrieved": "All subscriptions retrieved successfully",
+      "all_invoices_retrieved": "All invoices retrieved successfully",
+      "stats_retrieved": "Billing statistics retrieved successfully"
+    },
+    "containers": {
+      "list_retrieved": "Containers retrieved successfully",
+      "retrieved": "Container retrieved successfully",
+      "started": "Container started successfully",
+      "stopped": "Container stopped successfully",
+      "restarted": "Container restarted successfully",
+      "rebooted": "Container rebooted successfully",
+      "reset": "Container reset successfully",
+      "events_retrieved": "Container events retrieved successfully",
+      "stats_retrieved": "Container stats retrieved successfully",
+      "logs_retrieved": "Container logs retrieved successfully",
+      "suspended": "Container suspended successfully"
+    }
+  }
+}

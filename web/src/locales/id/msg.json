@@ -1,0 +1,83 @@
+{
+  "msg": {
+    "auth": {
+      "registration_success": "Pendaftaran berhasil",
+      "login_success": "Berhasil masuk",
+      "profile_retrieved": "Profil berhasil diambil",
+      "profile_updated": "Profil berhasil diperbarui",
+      "username_updated": "Username berhasil diperbarui",
+      "password_changed": "Kata sandi berhasil diubah",
+      "logout_success": "Berhasil keluar",
+      "token_refreshed": "Token berhasil diperbarui",
+      "check_done": "ok",
+      "reset_link_sent": "Jika email terdaftar, tautan reset akan dikirim",
+      "token_valid": "Token valid",
+      "password_reset": "Kata sandi berhasil direset",
+      "upload_success": "Berkas berhasil diunggah"
+    },
+    "users": {
+      "list_retrieved": "Data pengguna berhasil diambil",
+      "retrieved": "Pengguna berhasil diambil",
+      "created": "Pengguna berhasil dibuat",
+      "updated": "Pengguna berhasil diperbarui",
+      "profile_retrieved": "Profil berhasil diambil",
+      "stats_retrieved": "Statistik platform berhasil diambil",
+      "logs_retrieved": "Log audit berhasil diambil"
+    },
+    "orders": {
+      "created": "Pesanan berhasil dibuat",
+      "checkout_started": "Checkout berhasil dimulai",
+      "status_retrieved": "Status pesanan berhasil diambil",
+      "list_retrieved": "Data pesanan berhasil diambil",
+      "retrieved": "Pesanan berhasil diambil",
+      "all_retrieved": "Semua pesanan berhasil diambil",
+      "stats_retrieved": "Statistik pesanan berhasil diambil",
+      "payment_confirmed": "Pembayaran berhasil dikonfirmasi",
+      "webhook_processed": "Webhook berhasil diproses"
+    },
+    "cart": {
+      "retrieved": "Keranjang berhasil diambil",
+      "item_added": "Item berhasil ditambahkan ke keranjang",
+      "item_updated": "Item keranjang berhasil diperbarui",
+      "item_removed": "Item berhasil dihapus dari keranjang",
+      "cleared": "Keranjang berhasil dikosongkan"
+    },
+    "vouchers": {
+      "quote_valid": "Validasi voucher selesai",
+      "created": "Voucher berhasil dibuat",
+      "updated": "Voucher berhasil diperbarui",
+      "toggled": "Voucher berhasil diubah statusnya",
+      "list_retrieved": "Data voucher berhasil diambil",
+      "retrieved": "Voucher berhasil diambil"
+    },
+    "plans": {
+      "list_retrieved": "Data paket berhasil diambil",
+      "retrieved": "Paket berhasil diambil",
+      "created": "Paket berhasil dibuat",
+      "updated": "Paket berhasil diperbarui",
+      "toggled": "Paket berhasil diubah statusnya"
+    },
+    "billing": {
+      "subs_retrieved": "Data langganan berhasil diambil",
+      "invoices_retrieved": "Data tagihan berhasil diambil",
+      "invoice_retrieved": "Tagihan berhasil diambil",
+      "auto_renew_updated": "Setelan perpanjangan otomatis berhasil diperbarui",
+      "all_subs_retrieved": "Semua langganan berhasil diambil",
+      "all_invoices_retrieved": "Semua tagihan berhasil diambil",
+      "stats_retrieved": "Statistik penagihan berhasil diambil"
+    },
+    "containers": {
+      "list_retrieved": "Data kontainer berhasil diambil",
+      "retrieved": "Kontainer berhasil diambil",
+      "started": "Kontainer berhasil dimulai",
+      "stopped": "Kontainer berhasil dihentikan",
+      "restarted": "Kontainer berhasil dimulai ulang",
+      "rebooted": "Kontainer berhasil di-reboot",
+      "reset": "Kontainer berhasil di-reset",
+      "events_retrieved": "Event kontainer berhasil diambil",
+      "stats_retrieved": "Statistik kontainer berhasil diambil",
+      "logs_retrieved": "Log kontainer berhasil diambil",
+      "suspended": "Kontainer berhasil ditangguhkan"
+    }
+  }
+}
