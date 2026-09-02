@@ -1,24 +1,24 @@
 import { tl } from "@/lib/i18n"
 
 export const companyMeta = {
-  name: "TeraRush",
+  name: "TeraCloud",
   logo: "/company/logo.png",
   logoWhite: "/company/logo.png",
   icon: "/favicon.ico",
-  title: "TeraRush - Open Source Development Agency",
-  baseDomain: "terarush.dev",
+  title: "TeraCloud - Modern Cloud & Container Hosting Platform",
+  baseDomain: "teracloud.id",
   description:
-    "Empowering developers worldwide through open-source innovation. Build, collaborate, and scale with reliable web solutions.",
-  tagline: "Build. Collaborate. Innovate.",
-  url: "https://terarush.studio",
-  email: "hello@terarush.studio",
+    "High-performance cloud hosting and modern container deployment platform. Effortlessly deploy applications, manage databases, and scale infrastructure.",
+  tagline: "Deploy Faster. Scale Smarter.",
+  url: "https://teracloud.id",
+  email: "support@teracloud.id",
   phone: "+62 821 4333 8737",
   whatsapp: "https://wa.me/6282143338737",
   links: {
-    github: "https://github.com/terarush",
-    twitter: "https://twitter.com/terarush",
-    linkedin: "https://linkedin.com/company/terarush",
-    instagram: "https://instagram.com/terarush.tech",
+    github: "https://github.com/teracloud",
+    twitter: "https://twitter.com/teracloud",
+    linkedin: "https://linkedin.com/company/teracloud",
+    instagram: "https://instagram.com/teracloud.tech",
   },
   location: {
     country: "Indonesia",
@@ -26,8 +26,8 @@ export const companyMeta = {
     timezone: "GMT+7 (WIB)",
   },
   businessHours: {
-    weekdays: "3:00 PM - 10:00 PM PST",
-    weekends: "9:00 AM - 8:00 PM PST",
+    weekdays: "8:00 AM - 10:00 PM GMT+7",
+    weekends: "9:00 AM - 8:00 PM GMT+7",
   },
 }
 
